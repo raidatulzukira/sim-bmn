@@ -54,7 +54,9 @@
                                         @foreach($alertPeminjaman as $pinjam)
                                             <tr>
                                                 <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900">{{ $pinjam->user->name }}</td>
-                                                <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900">{{ $pinjam->asetBmn->nama_aset }}</td>
+                                                <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
+                                                    <a href="{{ route('operator.peminjaman.show', $pinjam->id) }}" class="text-indigo-600 hover:underline">{{ $pinjam->asetBmn->nama_aset }}</a>
+                                                </td>
                                                 <td class="px-4 py-2 whitespace-nowrap text-sm text-red-600 font-semibold">
                                                     {{ $pinjam->tanggal_kembali_rencana->format('d M Y') }}
                                                 </td>
@@ -90,7 +92,9 @@
                                     <tbody class="bg-white divide-y divide-gray-200">
                                         @foreach($alertPemeliharaan as $rawat)
                                             <tr>
-                                                <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900">{{ $rawat->asetBmn->nama_aset }}</td>
+                                                <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
+                                                    <a href="{{ route('operator.pemeliharaan.show', $rawat->id) }}" class="text-indigo-600 hover:underline">{{ $rawat->asetBmn->nama_aset }}</a>
+                                                </td>
                                                 <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900 capitalize">{{ $rawat->jenis }}</td>
                                                 <td class="px-4 py-2 whitespace-nowrap text-sm">
                                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $rawat->status == 'pending' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800' }}">

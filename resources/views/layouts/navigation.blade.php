@@ -31,13 +31,25 @@
                         <x-nav-link :href="route('operator.ruangan.index')" :active="request()->routeIs('operator.ruangan.*')">
                             {{ __('Kelola Ruangan') }}
                         </x-nav-link>
+                        <x-nav-link :href="route('operator.peminjaman.index')" :active="request()->routeIs('operator.peminjaman.*')">
+                            {{ __('Kelola Peminjaman') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('operator.pemeliharaan.index')" :active="request()->routeIs('operator.pemeliharaan.*')">
+                            {{ __('Kelola Pemeliharaan') }}
+                        </x-nav-link>
                     @elseif ($role === 'kasubag_tu')
-                        <x-nav-link :href="'#'" :active="false">
+                        <x-nav-link :href="route('kasubag.persetujuan.index')" :active="request()->routeIs('kasubag.persetujuan.*')">
                             {{ __('Approval Peminjaman') }}
                         </x-nav-link>
+                        <x-nav-link :href="route('kasubag.persetujuan_pemeliharaan.index')" :active="request()->routeIs('kasubag.persetujuan_pemeliharaan.*')">
+                            {{ __('Approval Pemeliharaan') }}
+                        </x-nav-link>
                     @elseif ($role === 'pegawai')
-                        <x-nav-link :href="'#'" :active="false">
+                        <x-nav-link :href="route('pegawai.peminjaman.index')" :active="request()->routeIs('pegawai.peminjaman.*')">
                             {{ __('Peminjaman Aset') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('pegawai.laporan_kerusakan.index')" :active="request()->routeIs('pegawai.laporan_kerusakan.*')">
+                            {{ __('Laporan Kerusakan') }}
                         </x-nav-link>
                     @endif
                 </div>
@@ -106,13 +118,25 @@
                 <x-responsive-nav-link :href="route('operator.ruangan.index')" :active="request()->routeIs('operator.ruangan.*')">
                     {{ __('Kelola Ruangan') }}
                 </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('operator.peminjaman.index')" :active="request()->routeIs('operator.peminjaman.*')">
+                    {{ __('Kelola Peminjaman') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('operator.pemeliharaan.index')" :active="request()->routeIs('operator.pemeliharaan.*')">
+                    {{ __('Kelola Pemeliharaan') }}
+                </x-responsive-nav-link>
             @elseif ($role === 'kasubag_tu')
-                <x-responsive-nav-link :href="'#'" :active="false">
+                <x-responsive-nav-link :href="route('kasubag.persetujuan.index')" :active="request()->routeIs('kasubag.persetujuan.*')">
                     {{ __('Approval Peminjaman') }}
                 </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('kasubag.persetujuan_pemeliharaan.index')" :active="request()->routeIs('kasubag.persetujuan_pemeliharaan.*')">
+                    {{ __('Approval Pemeliharaan') }}
+                </x-responsive-nav-link>
             @elseif ($role === 'pegawai')
-                <x-responsive-nav-link :href="'#'" :active="false">
+                <x-responsive-nav-link :href="route('pegawai.peminjaman.index')" :active="request()->routeIs('pegawai.peminjaman.*')">
                     {{ __('Peminjaman Aset') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('pegawai.laporan_kerusakan.index')" :active="request()->routeIs('pegawai.laporan_kerusakan.*')">
+                    {{ __('Laporan Kerusakan') }}
                 </x-responsive-nav-link>
             @endif
         </div>
