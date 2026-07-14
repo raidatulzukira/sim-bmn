@@ -38,6 +38,12 @@
                             {{ __('Kelola Pemeliharaan') }}
                         </x-nav-link>
                     @elseif ($role === 'kasubag_tu')
+                        <x-nav-link :href="route('kasubag.aset.index')" :active="request()->routeIs('kasubag.aset.*')">
+                            {{ __('Data Aset') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('kasubag.ruangan.index')" :active="request()->routeIs('kasubag.ruangan.*')">
+                            {{ __('Data Ruangan') }}
+                        </x-nav-link>
                         <x-nav-link :href="route('kasubag.persetujuan.index')" :active="request()->routeIs('kasubag.persetujuan.*')">
                             {{ __('Approval Peminjaman') }}
                         </x-nav-link>
@@ -45,6 +51,9 @@
                             {{ __('Approval Pemeliharaan') }}
                         </x-nav-link>
                     @elseif ($role === 'pegawai')
+                        <x-nav-link :href="route('pegawai.katalog_aset.index')" :active="request()->routeIs('pegawai.katalog_aset.*')">
+                            {{ __('Katalog Aset') }}
+                        </x-nav-link>
                         <x-nav-link :href="route('pegawai.peminjaman.index')" :active="request()->routeIs('pegawai.peminjaman.*')">
                             {{ __('Peminjaman Aset') }}
                         </x-nav-link>
@@ -125,6 +134,12 @@
                     {{ __('Kelola Pemeliharaan') }}
                 </x-responsive-nav-link>
             @elseif ($role === 'kasubag_tu')
+                <x-responsive-nav-link :href="route('kasubag.aset.index')" :active="request()->routeIs('kasubag.aset.*')">
+                    {{ __('Data Aset') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('kasubag.ruangan.index')" :active="request()->routeIs('kasubag.ruangan.*')">
+                    {{ __('Data Ruangan') }}
+                </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('kasubag.persetujuan.index')" :active="request()->routeIs('kasubag.persetujuan.*')">
                     {{ __('Approval Peminjaman') }}
                 </x-responsive-nav-link>
@@ -132,6 +147,9 @@
                     {{ __('Approval Pemeliharaan') }}
                 </x-responsive-nav-link>
             @elseif ($role === 'pegawai')
+                <x-responsive-nav-link :href="route('pegawai.katalog_aset.index')" :active="request()->routeIs('pegawai.katalog_aset.*')">
+                    {{ __('Katalog Aset') }}
+                </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('pegawai.peminjaman.index')" :active="request()->routeIs('pegawai.peminjaman.*')">
                     {{ __('Peminjaman Aset') }}
                 </x-responsive-nav-link>

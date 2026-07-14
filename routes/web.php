@@ -52,6 +52,9 @@ Route::middleware(['auth', 'verified', 'role:operator'])->prefix('operator')->na
 Route::middleware(['auth', 'verified', 'role:kasubag_tu'])->prefix('kasubag')->name('kasubag.')->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\Kasubag\DashboardController::class, 'index'])->name('dashboard');
 
+    Route::resource('aset', \App\Http\Controllers\Kasubag\AsetController::class)->only(['index', 'show']);
+    Route::resource('ruangan', \App\Http\Controllers\Kasubag\RuanganController::class)->only(['index']);
+
     Route::get('persetujuan-peminjaman', [\App\Http\Controllers\Kasubag\PersetujuanPeminjamanController::class, 'index'])->name('persetujuan.index');
     Route::get('persetujuan-peminjaman/{peminjaman}', [\App\Http\Controllers\Kasubag\PersetujuanPeminjamanController::class, 'show'])->name('persetujuan.show');
     Route::post('persetujuan-peminjaman/{peminjaman}/approve', [\App\Http\Controllers\Kasubag\PersetujuanPeminjamanController::class, 'approve'])->name('persetujuan.approve');
@@ -71,10 +74,9 @@ Route::middleware(['auth', 'verified', 'role:kasubag_tu'])->prefix('kasubag')->n
 Route::middleware(['auth', 'verified', 'role:pegawai'])->prefix('pegawai')->name('pegawai.')->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\Pegawai\DashboardController::class, 'index'])->name('dashboard');
 
+    Route::resource('katalog-aset', \App\Http\Controllers\Pegawai\KatalogAsetController::class)->only(['index', 'show'])->names('katalog_aset');
     Route::resource('peminjaman', \App\Http\Controllers\Pegawai\PeminjamanController::class)->only(['index', 'create', 'store', 'show']);
     Route::resource('laporan-kerusakan', \App\Http\Controllers\Pegawai\LaporanKerusakanController::class)->only(['index', 'create', 'store', 'show'])->names('laporan_kerusakan');
-
-    Route::resource('peminjaman', \App\Http\Controllers\Pegawai\PeminjamanController::class)->only(['index', 'create', 'store', 'show']);
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
