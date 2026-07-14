@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('aset_bmn', function (Blueprint $table) {
             $table->id();
-            $table->string('kode_aset')->unique();
+            $table->string('kode_aset');
             $table->string('nama_aset');
             $table->string('kategori');
             $table->text('spesifikasi')->nullable();

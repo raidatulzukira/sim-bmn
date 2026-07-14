@@ -14,13 +14,18 @@ class StoreAsetRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'kode_aset' => ['required', 'string', 'max:50', 'unique:aset_bmn,kode_aset'],
-            'nama_aset' => ['required', 'string', 'max:255'],
-            'kategori' => ['required', 'string', 'max:100'],
-            'spesifikasi' => ['nullable', 'string'],
+            'kode_barang' => ['required', 'string', 'max:50'],
+            'nama_barang' => ['required', 'string', 'max:255'],
+            'jenis_bmn' => ['required', 'string', 'max:100'],
+            'nup' => ['nullable', 'string', 'max:50'],
+            'merk' => ['nullable', 'string', 'max:100'],
+            'tipe' => ['nullable', 'string', 'max:100'],
+            'nama' => ['nullable', 'string', 'max:255'],
+            'tanggal_perolehan' => ['required', 'date'],
+            'nilai_perolehan_pertama' => ['required', 'numeric', 'min:0'],
             'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
-            'ruangan_id' => ['required', 'exists:ruangan,id'],
-            'status' => ['required', 'in:tersedia,dipinjam,servis'],
+            'ruangan_id' => ['nullable', 'exists:ruangan,id'],
+            'status' => ['nullable', 'in:tersedia,dipinjam,servis'],
         ];
     }
 }
