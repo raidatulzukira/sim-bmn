@@ -36,7 +36,7 @@
                             {{ __('Approval Peminjaman') }}
                         </x-nav-link>
                     @elseif ($role === 'pegawai')
-                        <x-nav-link :href="'#'" :active="false">
+                        <x-nav-link :href="route('pegawai.peminjaman.index')" :active="request()->routeIs('pegawai.peminjaman.*')">
                             {{ __('Peminjaman Aset') }}
                         </x-nav-link>
                     @endif
@@ -111,7 +111,7 @@
                     {{ __('Approval Peminjaman') }}
                 </x-responsive-nav-link>
             @elseif ($role === 'pegawai')
-                <x-responsive-nav-link :href="'#'" :active="false">
+                <x-responsive-nav-link :href="route('pegawai.peminjaman.index')" :active="request()->routeIs('pegawai.peminjaman.*')">
                     {{ __('Peminjaman Aset') }}
                 </x-responsive-nav-link>
             @endif

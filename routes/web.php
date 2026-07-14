@@ -52,6 +52,8 @@ Route::middleware(['auth', 'verified', 'role:pegawai'])->prefix('pegawai')->name
         return view('pegawai.dashboard');
     })->name('dashboard');
 
+    Route::resource('peminjaman', \App\Http\Controllers\Pegawai\PeminjamanController::class)->only(['index', 'create', 'store', 'show']);
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
