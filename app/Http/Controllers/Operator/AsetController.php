@@ -9,24 +9,27 @@ use App\Http\Requests\StoreAsetRequest;
 use App\Http\Requests\UpdateAsetRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\AsetBmnImport;
 
 class AsetController extends Controller
 {
     public function index(Request $request)
     {
         $search = $request->input('search');
-        $kategori = $request->input('kategori');
+        $jenis_bmn = $request->input('jenis_bmn');
         $status = $request->input('status');
 
         $asets = AsetBmn::with('ruangan')
             ->when($search, function ($query, $search) {
                 return $query->where(function($q) use ($search) {
-                    $q->where('kode_aset', 'like', "%{$search}%")
-                      ->orWhere('nama_aset', 'like', "%{$search}%");
+                    $q->where('kode_barang', 'like', "%{$search}%")
+                      ->orWhere('nama_barang', 'like', "%{$search}%")
+                      ->orWhere('nup', 'like', "%{$search}%");
                 });
             })
-            ->when($kategori, function ($query, $kategori) {
-                return $query->where('kategori', $kategori);
+            ->when($jenis_bmn, function ($query, $jenis_bmn) {
+                return $query->where('jenis_bmn', 'like', "%{$jenis_bmn}%");
             })
             ->when($status, function ($query, $status) {
                 return $query->where('status', $status);
@@ -35,7 +38,7 @@ class AsetController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('operator.aset.index', compact('asets', 'search', 'kategori', 'status'));
+        return view('operator.aset.index', compact('asets', 'search', 'jenis_bmn', 'status'));
     }
 
     public function create()
@@ -110,5 +113,33 @@ class AsetController extends Controller
 
         return redirect()->route('operator.aset.index')
             ->with('success', 'Data Aset berhasil dihapus.');
+    }
+
+    public function importForm()
+    {
+        return view('operator.aset.import');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file_excel' => 'required|mimes:xlsx,xls,csv|max:5120' // 5MB Max
+        ]);
+
+        try {
+            Excel::import(new AsetBmnImport, $request->file('file_excel'));
+
+            return redirect()->route('operator.aset.index')
+                ->with('success', 'Data Aset BMN berhasil diimpor.');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+            $messages = [];
+            foreach ($failures as $failure) {
+                $messages[] = 'Baris ' . $failure->row() . ': ' . implode(', ', $failure->errors());
+            }
+            return redirect()->back()->with('error', 'Terjadi kesalahan validasi: <br>' . implode('<br>', $messages));
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat impor data: ' . $e->getMessage());
+        }
     }
 }

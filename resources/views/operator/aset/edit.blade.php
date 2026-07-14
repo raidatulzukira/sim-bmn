@@ -14,31 +14,63 @@
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="mb-4">
-                            <x-input-label for="kode_aset" value="Kode Aset *" />
-                            <x-text-input id="kode_aset" name="kode_aset" type="text" class="mt-1 block w-full" :value="old('kode_aset', $aset->kode_aset)" required autofocus />
-                            <x-input-error :messages="$errors->get('kode_aset')" class="mt-2" />
+                            <x-input-label for="kode_barang" value="Kode Aset *" />
+                            <x-text-input id="kode_barang" name="kode_barang" type="text" class="mt-1 block w-full" :value="old('kode_barang', $aset->kode_barang)" required autofocus />
+                            <x-input-error :messages="$errors->get('kode_barang')" class="mt-2" />
                         </div>
 
                         <div class="mb-4">
-                            <x-input-label for="nama_aset" value="Nama Aset *" />
-                            <x-text-input id="nama_aset" name="nama_aset" type="text" class="mt-1 block w-full" :value="old('nama_aset', $aset->nama_aset)" required />
-                            <x-input-error :messages="$errors->get('nama_aset')" class="mt-2" />
+                            <x-input-label for="nama_barang" value="Nama Aset *" />
+                            <x-text-input id="nama_barang" name="nama_barang" type="text" class="mt-1 block w-full" :value="old('nama_barang', $aset->nama_barang)" required />
+                            <x-input-error :messages="$errors->get('nama_barang')" class="mt-2" />
                         </div>
 
                         <div class="mb-4">
-                            <x-input-label for="kategori" value="Kategori *" />
-                            <select id="kategori" name="kategori" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
-                                <option value="Elektronik" {{ old('kategori', $aset->kategori) == 'Elektronik' ? 'selected' : '' }}>Elektronik</option>
-                                <option value="Furnitur" {{ old('kategori', $aset->kategori) == 'Furnitur' ? 'selected' : '' }}>Furnitur</option>
-                                <option value="Kendaraan" {{ old('kategori', $aset->kategori) == 'Kendaraan' ? 'selected' : '' }}>Kendaraan</option>
-                                <option value="Lainnya" {{ old('kategori', $aset->kategori) == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
-                            </select>
-                            <x-input-error :messages="$errors->get('kategori')" class="mt-2" />
+                            <x-input-label for="jenis_bmn" value="Jenis BMN *" />
+                            <x-text-input id="jenis_bmn" name="jenis_bmn" type="text" class="mt-1 block w-full" :value="old('jenis_bmn', $aset->jenis_bmn)" required />
+                            <x-input-error :messages="$errors->get('jenis_bmn')" class="mt-2" />
                         </div>
 
                         <div class="mb-4">
-                            <x-input-label for="ruangan_id" value="Ruangan *" />
-                            <select id="ruangan_id" name="ruangan_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                            <x-input-label for="nup" value="NUP" />
+                            <x-text-input id="nup" name="nup" type="text" class="mt-1 block w-full" :value="old('nup', $aset->nup)" />
+                            <x-input-error :messages="$errors->get('nup')" class="mt-2" />
+                        </div>
+
+                        <div class="mb-4">
+                            <x-input-label for="merk" value="Merk" />
+                            <x-text-input id="merk" name="merk" type="text" class="mt-1 block w-full" :value="old('merk', $aset->merk)" />
+                            <x-input-error :messages="$errors->get('merk')" class="mt-2" />
+                        </div>
+
+                        <div class="mb-4">
+                            <x-input-label for="tipe" value="Tipe" />
+                            <x-text-input id="tipe" name="tipe" type="text" class="mt-1 block w-full" :value="old('tipe', $aset->tipe)" />
+                            <x-input-error :messages="$errors->get('tipe')" class="mt-2" />
+                        </div>
+
+                        <div class="mb-4">
+                            <x-input-label for="nama" value="Nama" />
+                            <x-text-input id="nama" name="nama" type="text" class="mt-1 block w-full" :value="old('nama', $aset->nama)" />
+                            <x-input-error :messages="$errors->get('nama')" class="mt-2" />
+                        </div>
+
+                        <div class="mb-4">
+                            <x-input-label for="tanggal_perolehan" value="Tanggal Perolehan *" />
+                            <x-text-input id="tanggal_perolehan" name="tanggal_perolehan" type="date" class="mt-1 block w-full" :value="old('tanggal_perolehan', $aset->tanggal_perolehan)" required />
+                            <x-input-error :messages="$errors->get('tanggal_perolehan')" class="mt-2" />
+                        </div>
+
+                        <div class="mb-4">
+                            <x-input-label for="nilai_perolehan_pertama" value="Nilai Perolehan Pertama *" />
+                            <x-text-input id="nilai_perolehan_pertama" name="nilai_perolehan_pertama" type="number" step="0.01" min="0" class="mt-1 block w-full" :value="old('nilai_perolehan_pertama', $aset->nilai_perolehan_pertama)" required />
+                            <x-input-error :messages="$errors->get('nilai_perolehan_pertama')" class="mt-2" />
+                        </div>
+
+                        <div class="mb-4">
+                            <x-input-label for="ruangan_id" value="Ruangan" />
+                            <select id="ruangan_id" name="ruangan_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                <option value="">-- Boleh Kosong --</option>
                                 @foreach($ruangans as $ruangan)
                                     <option value="{{ $ruangan->id }}" {{ old('ruangan_id', $aset->ruangan_id) == $ruangan->id ? 'selected' : '' }}>
                                         {{ $ruangan->nama_ruangan }}
@@ -49,13 +81,7 @@
                         </div>
                     </div>
 
-                    <div class="mb-4">
-                        <x-input-label for="spesifikasi" value="Spesifikasi" />
-                        <textarea id="spesifikasi" name="spesifikasi" rows="4" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">{{ old('spesifikasi', $aset->spesifikasi) }}</textarea>
-                        <x-input-error :messages="$errors->get('spesifikasi')" class="mt-2" />
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
                         <div class="mb-4">
                             <x-input-label for="status" value="Status *" />
                             <select id="status" name="status" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>

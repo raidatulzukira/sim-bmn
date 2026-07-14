@@ -81,4 +81,19 @@ class UserController extends Controller
         return redirect()->route('operator.pengguna.index')
             ->with('success', 'Pengguna berhasil dihapus.');
     }
+
+    public function toggleActive(User $pengguna)
+    {
+        if ($pengguna->id === auth()->id()) {
+            return redirect()->route('operator.pengguna.index')
+                ->with('error', 'Anda tidak dapat mengubah status akun Anda sendiri.');
+        }
+
+        $pengguna->update(['is_active' => !$pengguna->is_active]);
+
+        $status = $pengguna->is_active ? 'diaktifkan' : 'dinonaktifkan';
+        
+        return redirect()->route('operator.pengguna.index')
+            ->with('success', "Akun pengguna berhasil {$status}.");
+    }
 }

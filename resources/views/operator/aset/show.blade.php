@@ -22,7 +22,7 @@
                 <div class="p-6 bg-white border-b border-gray-200 grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="md:col-span-1 border-r border-gray-200 pr-4">
                         @if($aset->foto)
-                            <img src="{{ asset('storage/' . $aset->foto) }}" alt="{{ $aset->nama_aset }}" class="w-full h-auto rounded-lg shadow-sm">
+                            <img src="{{ asset('storage/' . $aset->foto) }}" alt="{{ $aset->nama_barang }}" class="w-full h-auto rounded-lg shadow-sm">
                         @else
                             <div class="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center text-gray-500">
                                 Tidak ada foto
@@ -41,21 +41,37 @@
                             </div>
                         </div>
 
-                        <h3 class="text-2xl font-bold text-gray-900 mb-1">{{ $aset->nama_aset }}</h3>
-                        <p class="text-gray-600 text-sm mb-6">Kode Aset: <span class="font-mono bg-gray-100 px-1 py-0.5 rounded">{{ $aset->kode_aset }}</span></p>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-1">{{ $aset->nama_barang }}</h3>
+                        <p class="text-gray-600 text-sm mb-6">Kode Aset: <span class="font-mono bg-gray-100 px-1 py-0.5 rounded">{{ $aset->kode_barang }}</span></p>
                         
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                             <div>
-                                <span class="block text-sm font-medium text-gray-500">Kategori</span>
-                                <span class="block text-gray-900">{{ $aset->kategori }}</span>
+                                <span class="block text-sm font-medium text-gray-500">Jenis BMN</span>
+                                <span class="block text-gray-900">{{ $aset->jenis_bmn }}</span>
                             </div>
                             <div>
+                                <span class="block text-sm font-medium text-gray-500">NUP</span>
+                                <span class="block text-gray-900">{{ $aset->nup ?? '-' }}</span>
+                            </div>
+                            <div>
+                                <span class="block text-sm font-medium text-gray-500">Merk / Tipe</span>
+                                <span class="block text-gray-900">{{ $aset->merk ?? '-' }} / {{ $aset->tipe ?? '-' }}</span>
+                            </div>
+                            <div>
+                                <span class="block text-sm font-medium text-gray-500">Nama (Opsional)</span>
+                                <span class="block text-gray-900">{{ $aset->nama ?? '-' }}</span>
+                            </div>
+                            <div>
+                                <span class="block text-sm font-medium text-gray-500">Tanggal Perolehan</span>
+                                <span class="block text-gray-900">{{ \Carbon\Carbon::parse($aset->tanggal_perolehan)->format('d M Y') }}</span>
+                            </div>
+                            <div>
+                                <span class="block text-sm font-medium text-gray-500">Nilai Perolehan Pertama</span>
+                                <span class="block text-gray-900">Rp {{ number_format($aset->nilai_perolehan_pertama, 2, ',', '.') }}</span>
+                            </div>
+                            <div class="sm:col-span-2 md:col-span-3">
                                 <span class="block text-sm font-medium text-gray-500">Lokasi Ruangan</span>
-                                <span class="block text-gray-900">{{ $aset->ruangan->nama_ruangan }}</span>
-                            </div>
-                            <div class="sm:col-span-2">
-                                <span class="block text-sm font-medium text-gray-500">Spesifikasi</span>
-                                <p class="text-gray-900 whitespace-pre-wrap mt-1">{{ $aset->spesifikasi ?? '-' }}</p>
+                                <span class="block text-gray-900">{{ $aset->ruangan ? $aset->ruangan->nama_ruangan : '-' }}</span>
                             </div>
                         </div>
                     </div>
