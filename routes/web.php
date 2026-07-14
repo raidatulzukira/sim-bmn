@@ -74,6 +74,8 @@ Route::middleware(['auth', 'verified', 'role:pegawai'])->prefix('pegawai')->name
     Route::resource('peminjaman', \App\Http\Controllers\Pegawai\PeminjamanController::class)->only(['index', 'create', 'store', 'show']);
     Route::resource('laporan-kerusakan', \App\Http\Controllers\Pegawai\LaporanKerusakanController::class)->only(['index', 'create', 'store', 'show'])->names('laporan_kerusakan');
 
+    Route::resource('peminjaman', \App\Http\Controllers\Pegawai\PeminjamanController::class)->only(['index', 'create', 'store', 'show']);
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
