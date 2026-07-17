@@ -13,7 +13,16 @@
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
+    @php
+        $role = auth()->user()->role;
+        $routePrefix = match ($role) {
+            'operator' => 'operator.',
+            'kasubag_tu' => 'kasubag.',
+            'pegawai' => 'pegawai.',
+            default => '',
+        };
+    @endphp
+    <form method="post" action="{{ route($routePrefix . 'profile.update') }}" class="mt-6 space-y-6">
         @csrf
         @method('patch')
 

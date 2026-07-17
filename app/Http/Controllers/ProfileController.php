@@ -34,7 +34,15 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        $role = $request->user()->role;
+        $routePrefix = match ($role) {
+            'operator' => 'operator.',
+            'kasubag_tu' => 'kasubag.',
+            'pegawai' => 'pegawai.',
+            default => '',
+        };
+
+        return Redirect::route($routePrefix . 'profile.edit')->with('status', 'profile-updated');
     }
 
     /**

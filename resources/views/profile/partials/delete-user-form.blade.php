@@ -15,7 +15,16 @@
     >{{ __('Delete Account') }}</x-danger-button>
 
     <x-modal name="confirm-user-deletion" :show="$errors->userDeletion->isNotEmpty()" focusable>
-        <form method="post" action="{{ route('profile.destroy') }}" class="p-6">
+        @php
+            $role = auth()->user()->role;
+            $routePrefix = match ($role) {
+                'operator' => 'operator.',
+                'kasubag_tu' => 'kasubag.',
+                'pegawai' => 'pegawai.',
+                default => '',
+            };
+        @endphp
+        <form method="post" action="{{ route($routePrefix . 'profile.destroy') }}" class="p-6">
             @csrf
             @method('delete')
 
