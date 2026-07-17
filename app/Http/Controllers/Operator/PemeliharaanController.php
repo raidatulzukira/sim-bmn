@@ -39,7 +39,7 @@ class PemeliharaanController extends Controller
     public function create()
     {
         // Operator hanya bisa mengajukan servis rutin untuk aset yang 'tersedia'
-        $asets = AsetBmn::where('status', 'tersedia')->orderBy('nama_aset')->get();
+        $asets = AsetBmn::where('status', 'tersedia')->orderBy('nama_barang')->get();
         return view('operator.pemeliharaan.create', compact('asets'));
     }
 
@@ -47,7 +47,7 @@ class PemeliharaanController extends Controller
     {
         $validated = $request->validated();
         
-        Pemeliharaan::create([
+        $pemeliharaan = Pemeliharaan::create([
             'aset_id' => $validated['aset_id'],
             'jenis' => 'rutin',
             'dilaporkan_oleh' => null,
@@ -55,6 +55,8 @@ class PemeliharaanController extends Controller
             'status' => 'pending',
             'tanggal_pengajuan' => now(),
         ]);
+
+        \App\Jobs\SendMaintenanceNotificationJob::dispatch($pemeliharaan->id);
 
         return redirect()->route('operator.pemeliharaan.index')
             ->with('success', 'Pengajuan servis rutin berhasil dikirim dan menunggu persetujuan Kasubag TU.');

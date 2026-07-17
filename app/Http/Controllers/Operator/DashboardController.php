@@ -35,12 +35,25 @@ class DashboardController extends Controller
             ->whereIn('status', ['pending', 'proses'])
             ->get();
 
+        // 6. Notifikasi: daftar aset yang perlu servis rutin (H-30 atau terlewat)
+        $asetMembutuhkanServis = AsetBmn::whereNotNull('interval_servis_tahun')
+            ->whereNotNull('tanggal_servis_terakhir')
+            ->where('status', 'tersedia')
+            ->whereDoesntHave('pemeliharaan', function ($query) {
+                $query->whereIn('status', ['pending', 'disetujui', 'proses']);
+            })
+            ->get()
+            ->filter(function($aset) {
+                return $aset->is_servis_warning;
+            });
+
         return view('operator.dashboard', compact(
             'totalAset',
             'asetDipinjam',
             'asetServis',
             'alertPeminjaman',
-            'alertPemeliharaan'
+            'alertPemeliharaan',
+            'asetMembutuhkanServis'
         ));
     }
 }

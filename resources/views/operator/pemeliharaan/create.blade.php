@@ -22,8 +22,8 @@
                             <select id="aset_id" name="aset_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required autofocus>
                                 <option value="">-- Pilih Aset --</option>
                                 @foreach($asets as $aset)
-                                    <option value="{{ $aset->id }}" {{ old('aset_id') == $aset->id ? 'selected' : '' }}>
-                                        {{ $aset->kode_aset }} - {{ $aset->nama_aset }} ({{ $aset->kategori }})
+                                    <option value="{{ $aset->id }}" {{ old('aset_id', request('aset_id')) == $aset->id ? 'selected' : '' }}>
+                                        {{ $aset->kode_barang }} - {{ $aset->nama_barang }} ({{ $aset->jenis_bmn }})
                                     </option>
                                 @endforeach
                             </select>

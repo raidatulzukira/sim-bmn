@@ -37,7 +37,7 @@
                             @forelse($peminjamans as $pinjam)
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $pinjam->user->name }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $pinjam->asetBmn->nama_aset }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $pinjam->asetBmn->nama_barang }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $pinjam->created_at->format('d M Y H:i') }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm">
                                         @php

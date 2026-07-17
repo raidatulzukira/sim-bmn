@@ -74,17 +74,24 @@ class PeminjamanController extends Controller
 
     public function konfirmasiDikembalikan(Request $request, Peminjaman $peminjaman)
     {
+        $request->validate([
+            'foto_pengembalian' => 'required|image|max:2048',
+        ]);
+
         try {
-            DB::transaction(function () use ($peminjaman) {
+            DB::transaction(function () use ($request, $peminjaman) {
                 $lockedPeminjaman = Peminjaman::where('id', $peminjaman->id)->lockForUpdate()->first();
 
                 if ($lockedPeminjaman->status !== 'dipinjam') {
                     throw new \Exception('Status peminjaman tidak valid untuk dikonfirmasi kembali.');
                 }
 
+                $path = $request->file('foto_pengembalian')->store('pengembalian', 'public');
+
                 $lockedPeminjaman->update([
                     'status' => 'dikembalikan',
-                    'tanggal_kembali_aktual' => now()
+                    'tanggal_kembali_aktual' => now(),
+                    'foto_pengembalian' => $path
                 ]);
 
                 // Update Aset status back to tersedia
@@ -93,28 +100,63 @@ class PeminjamanController extends Controller
 
             // WA Notification
             $peminjaman->refresh();
-            $pesan = "Pengembalian aset {$peminjaman->asetBmn->nama_aset} telah kami konfirmasi. Terima kasih!";
+            $pesan = "Pengembalian aset {$peminjaman->asetBmn->nama_barang} telah kami konfirmasi beserta dokumentasinya. Terima kasih!";
             if ($peminjaman->user->no_wa) {
                 $this->waService->kirimPesan($peminjaman->user->no_wa, $pesan, $peminjaman->user_id, 'peminjaman', $peminjaman->id);
             }
 
-            return redirect()->route('operator.peminjaman.show', $peminjaman->id)->with('success', 'Peminjaman berhasil dikonfirmasi selesai.');
+            return redirect()->route('operator.peminjaman.show', $peminjaman->id)->with('success', 'Peminjaman berhasil dikonfirmasi selesai beserta dokumentasi fotonya.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
 
-    public function kirimReminder(Request $request, Peminjaman $peminjaman)
+    public function sendReminder(Peminjaman $peminjaman)
     {
         if ($peminjaman->status !== 'dipinjam') {
             return redirect()->back()->with('error', 'Hanya aset yang sedang dipinjam yang dapat dikirimi reminder.');
         }
 
-        $pesan = "Peringatan! Waktu peminjaman aset {$peminjaman->asetBmn->nama_aset} Anda akan/telah habis pada {$peminjaman->tanggal_kembali_rencana->format('d M Y')}. Segera kembalikan aset tersebut ke Operator.";
+        $pesan = "Halo pegawai atas nama {$peminjaman->user->name}, mengingatkan bahwa batas waktu pengembalian untuk aset {$peminjaman->asetBmn->nama_barang} adalah pada tanggal {$peminjaman->tanggal_kembali_rencana->format('d M Y')}. Harap untuk segera dikembalikan ke ruangan Operator.";
         
-        if ($peminjaman->user->no_wa) {
-            $this->waService->kirimPesan($peminjaman->user->no_wa, $pesan, $peminjaman->user_id, 'peminjaman', $peminjaman->id);
-            return redirect()->back()->with('success', 'Reminder berhasil dikirim ke peminjam.');
+        $phone = $peminjaman->user->no_wa;
+        
+        if ($phone) {
+            try {
+                // Format nomor untuk WAHA: ganti awalan 0 menjadi 62, lalu tambahkan @c.us
+                if (str_starts_with($phone, '0')) {
+                    $phone = '62' . substr($phone, 1);
+                }
+                
+                if (!str_ends_with($phone, '@c.us')) {
+                    $phone .= '@c.us';
+                }
+
+                $baseUrl = env('WAHA_BASE_URL', 'http://localhost:3000');
+                $apiKey = env('WAHA_API_KEY', '');
+                $wahaSession = env('WAHA_SESSION', 'default'); 
+
+                $response = \Illuminate\Support\Facades\Http::timeout(5)
+                    ->withHeaders([
+                        'X-Api-Key' => $apiKey,
+                        'Accept' => 'application/json',
+                    ])
+                    ->post($baseUrl . '/api/sendText', [
+                        'chatId' => $phone,
+                        'text' => $pesan,
+                        'session' => $wahaSession
+                    ]);
+
+                if ($response->failed()) {
+                    \Illuminate\Support\Facades\Log::error('WAHA Gateway Error (Reminder): ' . $response->body());
+                    return redirect()->back()->with('error', 'Gagal mengirim notifikasi WhatsApp: Layanan tidak merespon dengan baik.');
+                }
+                
+                return redirect()->back()->with('success', 'Notifikasi WhatsApp berhasil dikirim ke Pegawai');
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('WAHA Gateway Exception (Reminder): ' . $e->getMessage());
+                return redirect()->back()->with('error', 'Gagal mengirim notifikasi WhatsApp: ' . $e->getMessage());
+            }
         }
 
         return redirect()->back()->with('error', 'Peminjam tidak memiliki nomor WhatsApp yang terdaftar.');

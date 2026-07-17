@@ -31,6 +31,8 @@ class UpdateAsetRequest extends FormRequest
             'foto' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
             'ruangan_id' => ['nullable', 'exists:ruangan,id'],
             'status' => ['nullable', 'in:tersedia,dipinjam,servis'],
+            'interval_servis_tahun' => ['nullable', 'integer', 'min:1', 'max:20'],
+            'tanggal_servis_terakhir' => ['nullable', 'date'],
         ];
     }
 }

@@ -61,7 +61,8 @@ class PeminjamanController extends Controller
             ->get();
 
         $namaPegawai = auth()->user()->name;
-        $pesan = "Halo, terdapat pengajuan peminjaman aset baru dari {$namaPegawai}. Mohon untuk segera dicek pada sistem.";
+        $namaAset = AsetBmn::where('id', $request->aset_id)->first()->nama_barang;
+        $pesan = "Halo, terdapat pengajuan peminjaman aset baru dari pegawai {$namaPegawai}. Aset yang dipinjam adalah {$namaAset}. Mohon untuk segera diproses.";
 
         foreach ($usersToNotify as $user) {
             try {

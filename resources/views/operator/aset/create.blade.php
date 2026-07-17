@@ -82,6 +82,21 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
                         <div class="mb-4">
+                            <x-input-label for="interval_servis_tahun" value="Interval Servis Rutin (Tahun)" />
+                            <x-text-input id="interval_servis_tahun" name="interval_servis_tahun" type="number" min="1" max="20" class="mt-1 block w-full" :value="old('interval_servis_tahun')" placeholder="Opsional (misal: 1 atau 5)" />
+                            <p class="text-xs text-gray-500 mt-1">Isi jika aset ini membutuhkan pemeliharaan rutin.</p>
+                            <x-input-error :messages="$errors->get('interval_servis_tahun')" class="mt-2" />
+                        </div>
+                        
+                        <div class="mb-4">
+                            <x-input-label for="tanggal_servis_terakhir" value="Tanggal Servis Terakhir" />
+                            <x-text-input id="tanggal_servis_terakhir" name="tanggal_servis_terakhir" type="date" class="mt-1 block w-full" :value="old('tanggal_servis_terakhir')" />
+                            <x-input-error :messages="$errors->get('tanggal_servis_terakhir')" class="mt-2" />
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                        <div class="mb-4">
                             <x-input-label for="status" value="Status *" />
                             <select id="status" name="status" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
                                 <option value="tersedia" {{ old('status') == 'tersedia' ? 'selected' : '' }}>Tersedia</option>

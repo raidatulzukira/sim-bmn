@@ -22,8 +22,8 @@
                                     {{ ucfirst($pemeliharaan->jenis) }}
                                 </span>
                             </div>
-                            <h3 class="text-2xl font-bold text-gray-900">{{ $pemeliharaan->asetBmn->nama_aset }}</h3>
-                            <p class="text-gray-500 mt-1">Kode Aset: <span class="font-mono bg-gray-100 px-1 py-0.5 rounded">{{ $pemeliharaan->asetBmn->kode_aset }}</span></p>
+                            <h3 class="text-2xl font-bold text-gray-900">{{ $pemeliharaan->asetBmn->nama_barang }}</h3>
+                            <p class="text-gray-500 mt-1">Kode Aset: <span class="font-mono bg-gray-100 px-1 py-0.5 rounded">{{ $pemeliharaan->asetBmn->kode_barang }}</span></p>
                         </div>
                         <div class="text-right">
                             <span class="block text-sm text-gray-500 mb-1">Status</span>
@@ -83,6 +83,13 @@
                         <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Catatan / Deskripsi Kerusakan</h4>
                         <div class="bg-gray-50 p-4 rounded-md border border-gray-200 text-sm text-gray-800 whitespace-pre-wrap">{{ $pemeliharaan->deskripsi_kerusakan ?? 'Tidak ada catatan yang diberikan.' }}</div>
                     </div>
+
+                    @if($pemeliharaan->foto)
+                        <div class="mb-6">
+                            <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Foto Bukti Kerusakan</h4>
+                            <img src="{{ asset('storage/' . $pemeliharaan->foto) }}" alt="Foto Kerusakan" class="w-full max-w-md h-auto rounded-lg shadow-sm border border-gray-200">
+                        </div>
+                    @endif
 
                     <!-- AKSI KASUBAG TU -->
                     @if($pemeliharaan->status === 'pending')

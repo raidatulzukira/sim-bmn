@@ -108,6 +108,47 @@
                     </div>
                 </div>
 
+                <!-- Servis Rutin Jatuh Tempo -->
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg lg:col-span-2">
+                    <div class="p-6 bg-white border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-yellow-600 mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Peringatan: Jadwal Servis Rutin Aset (H-30 / Melewati Jadwal)
+                        </h3>
+                        
+                        @if($asetMembutuhkanServis->count() > 0)
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aset</th>
+                                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Servis Terakhir</th>
+                                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jadwal Servis Berikutnya</th>
+                                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                        @foreach($asetMembutuhkanServis as $aset)
+                                            <tr class="bg-yellow-100 animate-pulse [animation-duration:0.9s] border-l-4 border-yellow-500">
+                                                <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900 font-medium">{{ $aset->nama_barang }} ({{ $aset->kode_barang }})</td>
+                                                <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{{ $aset->tanggal_servis_terakhir->format('d M Y') }}</td>
+                                                <td class="px-4 py-2 whitespace-nowrap text-sm text-red-600 font-semibold">
+                                                    {{ $aset->jadwal_servis_berikutnya->format('d M Y') }}
+                                                </td>
+                                                <td class="px-4 py-2 whitespace-nowrap text-sm">
+                                                    <a href="{{ route('operator.pemeliharaan.create', ['aset_id' => $aset->id]) }}" class="text-indigo-600 hover:text-indigo-900 font-medium bg-white px-2 py-1 rounded border border-indigo-200">Ajukan Servis &rarr;</a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @else
+                            <p class="text-sm text-gray-500">Saat ini tidak ada aset yang jadwal servis rutinnya mendekati (H-30) atau terlewat.</p>
+                        @endif
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>

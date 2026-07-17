@@ -34,7 +34,7 @@ Route::middleware(['auth', 'verified', 'role:operator'])->prefix('operator')->na
     Route::get('peminjaman/{peminjaman}', [\App\Http\Controllers\Operator\PeminjamanController::class, 'show'])->name('peminjaman.show');
     Route::post('peminjaman/{peminjaman}/serah-terima', [\App\Http\Controllers\Operator\PeminjamanController::class, 'prosesSerahTerima'])->name('peminjaman.serah_terima');
     Route::post('peminjaman/{peminjaman}/dikembalikan', [\App\Http\Controllers\Operator\PeminjamanController::class, 'konfirmasiDikembalikan'])->name('peminjaman.dikembalikan');
-    Route::post('peminjaman/{peminjaman}/reminder', [\App\Http\Controllers\Operator\PeminjamanController::class, 'kirimReminder'])->name('peminjaman.reminder');
+    Route::post('peminjaman/{peminjaman}/reminder', [\App\Http\Controllers\Operator\PeminjamanController::class, 'sendReminder'])->name('peminjaman.reminder');
 
     Route::get('pemeliharaan', [\App\Http\Controllers\Operator\PemeliharaanController::class, 'index'])->name('pemeliharaan.index');
     Route::get('pemeliharaan/create', [\App\Http\Controllers\Operator\PemeliharaanController::class, 'create'])->name('pemeliharaan.create');

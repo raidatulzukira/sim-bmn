@@ -59,7 +59,7 @@
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             @forelse($asets as $index => $aset)
-                                <tr>
+                                <tr class="{{ $aset->is_servis_warning ? 'bg-yellow-50 animate-pulse [animation-duration:0.7s] border-l-4 border-yellow-500' : '' }}">
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ ($asets->currentPage() - 1) * $asets->perPage() + $loop->iteration }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $aset->kode_barang }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $aset->nup ?? '-' }}</td>
@@ -69,7 +69,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                                             {{ $aset->status === 'tersedia' ? 'bg-green-100 text-green-800' : ($aset->status === 'dipinjam' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
-                                            {{ ucfirst($aset->status) }}
+                                            {{ $aset->status === 'dipinjam' ? 'Sedang Dipinjam' : ucfirst($aset->status) }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">

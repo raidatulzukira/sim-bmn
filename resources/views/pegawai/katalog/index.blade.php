@@ -38,7 +38,7 @@
                             <div class="absolute top-2 right-2">
                                 <span class="px-2 py-1 text-xs font-semibold rounded-full 
                                     {{ $aset->status === 'tersedia' ? 'bg-green-100 text-green-800' : ($aset->status === 'dipinjam' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
-                                    {{ ucfirst($aset->status) }}
+                                    {{ $aset->status === 'dipinjam' ? 'Sedang Dipinjam' : ucfirst($aset->status) }}
                                 </span>
                             </div>
                         </div>

@@ -30,7 +30,7 @@ class LaporanKerusakanController extends Controller
     public function create()
     {
         // Aset yang bisa dilaporkan adalah aset yang tidak sedang dalam perbaikan
-        $asets = AsetBmn::where('status', '!=', 'servis')->orderBy('nama_aset')->get();
+        $asets = AsetBmn::where('status', '!=', 'servis')->orderBy('nama_barang')->get();
         return view('pegawai.pemeliharaan.create', compact('asets'));
     }
 
@@ -38,15 +38,23 @@ class LaporanKerusakanController extends Controller
     {
         $validated = $request->validated();
         
+        $fotoPath = null;
+        if ($request->hasFile('foto')) {
+            $fotoPath = $request->file('foto')->store('pemeliharaan', 'public');
+        }
+
         // Simpan sebagai laporan situasional
-        Pemeliharaan::create([
+        $pemeliharaan = Pemeliharaan::create([
             'aset_id' => $validated['aset_id'],
             'jenis' => 'situasional',
             'dilaporkan_oleh' => auth()->id(),
             'deskripsi_kerusakan' => $validated['deskripsi_kerusakan'],
+            'foto' => $fotoPath,
             'status' => 'pending',
             'tanggal_pengajuan' => now(),
         ]);
+
+        \App\Jobs\SendMaintenanceNotificationJob::dispatch($pemeliharaan->id);
 
         return redirect()->route('pegawai.laporan_kerusakan.index')
             ->with('success', 'Laporan kerusakan berhasil dikirim dan menunggu validasi Kasubag TU.');

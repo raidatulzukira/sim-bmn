@@ -62,11 +62,11 @@ class PersetujuanPemeliharaanController extends Controller
             // WA Notification (Hanya untuk situasional, rutin cukup internal)
             $pemeliharaan->refresh();
             if ($pemeliharaan->jenis === 'situasional' && $pemeliharaan->pelapor && $pemeliharaan->pelapor->no_wa) {
-                $pesan = "Halo, Laporan kerusakan untuk aset {$pemeliharaan->asetBmn->nama_aset} telah DISETUJUI. Operator akan segera menindaklanjuti perbaikannya.";
+                $pesan = "Halo, Laporan kerusakan untuk aset {$pemeliharaan->asetBmn->nama_barang} telah DISETUJUI. Operator akan segera menindaklanjuti perbaikannya.";
                 $this->waService->kirimPesan($pemeliharaan->pelapor->no_wa, $pesan, $pemeliharaan->dilaporkan_oleh, 'pemeliharaan', $pemeliharaan->id);
             } else if ($pemeliharaan->jenis === 'rutin') {
                 // Log internal (tanpa kirim WA ke peminjam karena tidak ada pelapor)
-                $this->waService->kirimPesan('internal_log', "Servis rutin {$pemeliharaan->asetBmn->nama_aset} disetujui", null, 'pemeliharaan', $pemeliharaan->id);
+                $this->waService->kirimPesan('internal_log', "Servis rutin {$pemeliharaan->asetBmn->nama_barang} disetujui", auth()->id(), 'pemeliharaan', $pemeliharaan->id);
             }
 
             return redirect()->route('kasubag.persetujuan_pemeliharaan.index')->with('success', 'Pengajuan pemeliharaan berhasil disetujui.');
@@ -96,10 +96,10 @@ class PersetujuanPemeliharaanController extends Controller
             // WA Notification
             $pemeliharaan->refresh();
             if ($pemeliharaan->jenis === 'situasional' && $pemeliharaan->pelapor && $pemeliharaan->pelapor->no_wa) {
-                $pesan = "Mohon maaf, laporan kerusakan aset {$pemeliharaan->asetBmn->nama_aset} DITOLAK oleh Kasubag TU.\nAlasan: {$pemeliharaan->catatan_validasi}";
+                $pesan = "Mohon maaf, laporan kerusakan aset {$pemeliharaan->asetBmn->nama_barang} DITOLAK oleh Kasubag TU.\nAlasan: {$pemeliharaan->catatan_validasi}";
                 $this->waService->kirimPesan($pemeliharaan->pelapor->no_wa, $pesan, $pemeliharaan->dilaporkan_oleh, 'pemeliharaan', $pemeliharaan->id);
             } else if ($pemeliharaan->jenis === 'rutin') {
-                $this->waService->kirimPesan('internal_log', "Servis rutin {$pemeliharaan->asetBmn->nama_aset} ditolak. Alasan: {$pemeliharaan->catatan_validasi}", null, 'pemeliharaan', $pemeliharaan->id);
+                $this->waService->kirimPesan('internal_log', "Servis rutin {$pemeliharaan->asetBmn->nama_barang} ditolak. Alasan: {$pemeliharaan->catatan_validasi}", auth()->id(), 'pemeliharaan', $pemeliharaan->id);
             }
 
             return redirect()->route('kasubag.persetujuan_pemeliharaan.index')->with('success', 'Pengajuan pemeliharaan berhasil ditolak.');

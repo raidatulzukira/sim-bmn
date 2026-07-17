@@ -68,6 +68,28 @@
                         </div>
                     @endif
 
+                    @if($peminjaman->foto_serah_terima || $peminjaman->foto_pengembalian)
+                        <div class="mt-6 pt-4 border-t border-gray-200">
+                            <h4 class="text-sm font-semibold text-gray-800 mb-4">Dokumentasi Aset</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                @if($peminjaman->foto_serah_terima)
+                                    <div>
+                                        <h5 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Bukti Serah Terima</h5>
+                                        <img src="{{ asset('storage/' . $peminjaman->foto_serah_terima) }}" class="w-full max-w-sm rounded-lg shadow-sm border border-gray-200" alt="Bukti Serah Terima">
+                                        <p class="mt-2 text-xs text-gray-600">Diserahkan pada: {{ $peminjaman->tanggal_pinjam?->format('d F Y H:i') }}</p>
+                                    </div>
+                                @endif
+                                @if($peminjaman->foto_pengembalian)
+                                    <div>
+                                        <h5 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Bukti Pengembalian</h5>
+                                        <img src="{{ asset('storage/' . $peminjaman->foto_pengembalian) }}" class="w-full max-w-sm rounded-lg shadow-sm border border-gray-200" alt="Bukti Pengembalian">
+                                        <p class="mt-2 text-xs text-gray-600">Dikembalikan pada: {{ $peminjaman->tanggal_kembali_aktual?->format('d F Y H:i') }}</p>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    @endif
+
                     <div class="mt-8 pt-4 border-t border-gray-200 flex justify-start">
                         <a href="{{ route('pegawai.peminjaman.index') }}" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md text-sm font-semibold hover:bg-gray-300">
                             Kembali ke Riwayat

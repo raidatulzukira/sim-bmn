@@ -57,7 +57,7 @@
 
                         <div class="mb-4">
                             <x-input-label for="tanggal_perolehan" value="Tanggal Perolehan *" />
-                            <x-text-input id="tanggal_perolehan" name="tanggal_perolehan" type="date" class="mt-1 block w-full" :value="old('tanggal_perolehan', $aset->tanggal_perolehan)" required />
+                            <x-text-input id="tanggal_perolehan" name="tanggal_perolehan" type="date" class="mt-1 block w-full" :value="old('tanggal_perolehan', optional($aset->tanggal_perolehan)->format('Y-m-d'))" required />
                             <x-input-error :messages="$errors->get('tanggal_perolehan')" class="mt-2" />
                         </div>
 
@@ -78,6 +78,21 @@
                                 @endforeach
                             </select>
                             <x-input-error :messages="$errors->get('ruangan_id')" class="mt-2" />
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                        <div class="mb-4">
+                            <x-input-label for="interval_servis_tahun" value="Interval Servis Rutin (Tahun)" />
+                            <x-text-input id="interval_servis_tahun" name="interval_servis_tahun" type="number" min="1" max="20" class="mt-1 block w-full" :value="old('interval_servis_tahun', $aset->interval_servis_tahun)" placeholder="Opsional (misal: 1 atau 5)" />
+                            <p class="text-xs text-gray-500 mt-1">Isi jika aset ini membutuhkan pemeliharaan rutin.</p>
+                            <x-input-error :messages="$errors->get('interval_servis_tahun')" class="mt-2" />
+                        </div>
+                        
+                        <div class="mb-4">
+                            <x-input-label for="tanggal_servis_terakhir" value="Tanggal Servis Terakhir" />
+                            <x-text-input id="tanggal_servis_terakhir" name="tanggal_servis_terakhir" type="date" class="mt-1 block w-full" :value="old('tanggal_servis_terakhir', optional($aset->tanggal_servis_terakhir)->format('Y-m-d'))" />
+                            <x-input-error :messages="$errors->get('tanggal_servis_terakhir')" class="mt-2" />
                         </div>
                     </div>
 

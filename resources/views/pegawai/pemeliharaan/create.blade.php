@@ -14,7 +14,7 @@
                         <p class="text-sm text-yellow-700">Tidak ada aset BMN yang dapat dilaporkan kerusakannya saat ini (semua aset mungkin sedang dalam perbaikan).</p>
                     </div>
                 @else
-                    <form action="{{ route('pegawai.laporan_kerusakan.store') }}" method="POST">
+                    <form action="{{ route('pegawai.laporan_kerusakan.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         
                         <div class="mb-4">
@@ -23,7 +23,7 @@
                                 <option value="">-- Pilih Aset --</option>
                                 @foreach($asets as $aset)
                                     <option value="{{ $aset->id }}" {{ old('aset_id') == $aset->id ? 'selected' : '' }}>
-                                        {{ $aset->kode_aset }} - {{ $aset->nama_aset }} ({{ $aset->kategori }})
+                                        {{ $aset->kode_barang }} - {{ $aset->nama_barang }} ({{ $aset->jenis_bmn }})
                                     </option>
                                 @endforeach
                             </select>
@@ -35,6 +35,13 @@
                             <x-input-label for="deskripsi_kerusakan" value="Deskripsi Kerusakan / Kendala *" />
                             <textarea id="deskripsi_kerusakan" name="deskripsi_kerusakan" rows="5" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required placeholder="Jelaskan kendala atau kerusakan yang terjadi secara detail...">{{ old('deskripsi_kerusakan') }}</textarea>
                             <x-input-error :messages="$errors->get('deskripsi_kerusakan')" class="mt-2" />
+                        </div>
+
+                        <div class="mb-4">
+                            <x-input-label for="foto" value="Foto Kerusakan Aset *" />
+                            <input type="file" id="foto" name="foto" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" accept="image/*" required />
+                            <p class="text-xs text-gray-500 mt-1">Unggah foto bukti kerusakan. Format gambar, maks 2MB.</p>
+                            <x-input-error :messages="$errors->get('foto')" class="mt-2" />
                         </div>
 
                         <div class="flex items-center justify-end mt-6 border-t border-gray-100 pt-4">

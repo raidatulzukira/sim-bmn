@@ -47,7 +47,7 @@
                         <tbody class="bg-white divide-y divide-gray-200">
                             @forelse($laporans as $laporan)
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $laporan->asetBmn->nama_aset }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $laporan->asetBmn->nama_barang }}</td>
                                     <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">{{ $laporan->deskripsi_kerusakan }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $laporan->tanggal_pengajuan->format('d M Y H:i') }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm">

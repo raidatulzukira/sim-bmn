@@ -56,8 +56,8 @@
                             <p class="text-base text-gray-900">{{ $katalog_aset->ruangan ? $katalog_aset->ruangan->nama_ruangan : '-' }}</p>
                         </div>
                         <div>
-                            <h4 class="text-sm font-medium text-gray-500">Tahun Perolehan</h4>
-                            <p class="text-base text-gray-900">{{ $katalog_aset->tanggal_perolehan ? \Carbon\Carbon::parse($katalog_aset->tanggal_perolehan)->format('Y') : '-' }}</p>
+                            <h4 class="text-sm font-medium text-gray-500">Tanggal Perolehan</h4>
+                            <p class="text-base text-gray-900">{{ $katalog_aset->tanggal_perolehan ? \Carbon\Carbon::parse($katalog_aset->tanggal_perolehan)->format('d M Y') : '-' }}</p>
                         </div>
                         <div>
                             <h4 class="text-sm font-medium text-gray-500">Nilai Perolehan Pertama</h4>

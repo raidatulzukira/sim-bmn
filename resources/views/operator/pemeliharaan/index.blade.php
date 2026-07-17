@@ -54,7 +54,7 @@
                         <tbody class="bg-white divide-y divide-gray-200">
                             @forelse($pemeliharaans as $rawat)
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $rawat->asetBmn->nama_aset }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $rawat->asetBmn->nama_barang }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                         <span class="px-2 py-1 text-xs font-semibold rounded-md {{ $rawat->jenis === 'rutin' ? 'bg-gray-100 text-gray-800' : 'bg-pink-100 text-pink-800' }}">
                                             {{ ucfirst($rawat->jenis) }}

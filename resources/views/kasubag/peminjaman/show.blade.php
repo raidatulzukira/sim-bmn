@@ -17,8 +17,8 @@
                     
                     <div class="flex justify-between items-start mb-6 pb-6 border-b border-gray-100">
                         <div>
-                            <h3 class="text-2xl font-bold text-gray-900">{{ $peminjaman->asetBmn->nama_aset }}</h3>
-                            <p class="text-gray-500 mt-1">Kode Aset: <span class="font-mono bg-gray-100 px-1 py-0.5 rounded">{{ $peminjaman->asetBmn->kode_aset }}</span></p>
+                            <h3 class="text-2xl font-bold text-gray-900">{{ $peminjaman->asetBmn->nama_barang }}</h3>
+                            <p class="text-gray-500 mt-1">Kode Aset: <span class="font-mono bg-gray-100 px-1 py-0.5 rounded">{{ $peminjaman->asetBmn->kode_barang }}</span></p>
                         </div>
                         <div class="text-right">
                             <span class="block text-sm text-gray-500 mb-1">Status Peminjaman</span>
@@ -76,6 +76,28 @@
                         <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Keperluan Peminjaman</h4>
                         <div class="bg-gray-50 p-4 rounded-md border border-gray-200 text-sm text-gray-800 whitespace-pre-wrap">{{ $peminjaman->keperluan }}</div>
                     </div>
+
+                    @if($peminjaman->foto_serah_terima || $peminjaman->foto_pengembalian)
+                        <div class="mb-6">
+                            <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Dokumentasi Aset</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                @if($peminjaman->foto_serah_terima)
+                                    <div>
+                                        <h5 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Bukti Serah Terima</h5>
+                                        <img src="{{ asset('storage/' . $peminjaman->foto_serah_terima) }}" class="w-full max-w-sm rounded-lg shadow-sm border border-gray-200" alt="Bukti Serah Terima">
+                                        <p class="mt-2 text-xs text-gray-600">Diserahkan pada: {{ $peminjaman->tanggal_pinjam?->format('d F Y H:i') }}</p>
+                                    </div>
+                                @endif
+                                @if($peminjaman->foto_pengembalian)
+                                    <div>
+                                        <h5 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Bukti Pengembalian</h5>
+                                        <img src="{{ asset('storage/' . $peminjaman->foto_pengembalian) }}" class="w-full max-w-sm rounded-lg shadow-sm border border-gray-200" alt="Bukti Pengembalian">
+                                        <p class="mt-2 text-xs text-gray-600">Dikembalikan pada: {{ $peminjaman->tanggal_kembali_aktual?->format('d F Y H:i') }}</p>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    @endif
 
                     @if($peminjaman->status === 'pending')
                         <div class="border-t border-gray-200 pt-6 mt-6">

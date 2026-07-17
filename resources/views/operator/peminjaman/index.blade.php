@@ -5,6 +5,16 @@
         </h2>
     </x-slot>
 
+    <style>
+        @keyframes flash-red {
+            0%, 100% { background-color: transparent; }
+            50% { background-color: #fedcdcff; } /* bg-red-200 */
+        }
+        .animate-flash-red {
+            animation: flash-red 1s infinite;
+        }
+    </style>
+
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             
@@ -41,9 +51,26 @@
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             @forelse($peminjamans as $pinjam)
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $pinjam->user->name }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $pinjam->asetBmn->nama_aset }}</td>
+                                @php
+                                    $isWarning = false;
+                                    if ($pinjam->status === 'dipinjam' && $pinjam->tanggal_kembali_rencana) {
+                                        // $daysDiff positif berarti di masa depan, <= 1 artinya besok, hari ini, atau sudah lewat
+                                        $daysDiff = now()->startOfDay()->diffInDays($pinjam->tanggal_kembali_rencana->startOfDay(), false);
+                                        if ($daysDiff <= 1) {
+                                            $isWarning = true;
+                                        }
+                                    }
+                                @endphp
+                                <tr class="{{ $isWarning ? 'animate-flash-red' : '' }}">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                        {{ $pinjam->user->name }}
+                                        @if($isWarning)
+                                            <span class="inline-flex items-center ml-2 px-2 py-0.5 rounded text-xs font-medium bg-red-600 text-white animate-pulse">
+                                                Segera Kembali!
+                                            </span>
+                                        @endif
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $pinjam->asetBmn->nama_barang ?? '-' }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $pinjam->created_at->format('d M Y H:i') }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm">
                                         @php
