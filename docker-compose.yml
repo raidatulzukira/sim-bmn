@@ -1,0 +1,6 @@
+services:
+  waha:
+    image: devlikeapro/waha # Sesuaikan jika kamu menggunakan versi waha-plus
+    ports:
+      - "3000:3000"
+    restart: unless-stopped

@@ -5,9 +5,12 @@ namespace App\Http\Controllers\Pegawai;
 use App\Http\Controllers\Controller;
 use App\Models\Peminjaman;
 use App\Models\AsetBmn;
+use App\Models\User;
 use App\Http\Requests\Pegawai\StorePeminjamanRequest;
 use App\Services\WhatsAppNotificationService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class PeminjamanController extends Controller
 {
@@ -51,8 +54,50 @@ class PeminjamanController extends Controller
             'status' => 'pending',
         ]);
 
-        // Kirim Notifikasi WA (saat ini log ke DB dan laravel.log)
-        WhatsAppNotificationService::sendPeminjamanBaru($peminjaman);
+        // Mengambil nomor telepon dari Kasubag TU dan Operator
+        $usersToNotify = User::whereIn('role', ['kasubag_tu', 'operator'])
+            ->whereNotNull('no_wa')
+            ->where('no_wa', '!=', '')
+            ->get();
+
+        $namaPegawai = auth()->user()->name;
+        $pesan = "Halo, terdapat pengajuan peminjaman aset baru dari {$namaPegawai}. Mohon untuk segera dicek pada sistem.";
+
+        foreach ($usersToNotify as $user) {
+            try {
+                // Format nomor untuk WAHA: ganti awalan 0 menjadi 62, lalu tambahkan @c.us
+                $phone = $user->no_wa;
+                if (str_starts_with($phone, '0')) {
+                    $phone = '62' . substr($phone, 1);
+                }
+                
+                if (!str_ends_with($phone, '@c.us')) {
+                    $phone .= '@c.us';
+                }
+
+                $baseUrl = env('WAHA_BASE_URL', 'http://localhost:3000');
+                $apiKey = env('WAHA_API_KEY', '');
+                $wahaSession = env('WAHA_SESSION', 'sim-bmn'); // default to 'default' if not set in .env
+
+                $response = Http::timeout(5)
+                    ->withHeaders([
+                        'X-Api-Key' => $apiKey,
+                        'Accept' => 'application/json',
+                    ])
+                    ->post($baseUrl . '/api/sendText', [
+                        'chatId' => $phone,
+                        'text' => $pesan,
+                        'session' => $wahaSession
+                    ]);
+
+                if ($response->failed()) {
+                    Log::error('WAHA Gateway Error (Response): ' . $response->body());
+                }
+            } catch (\Exception $e) {
+                Log::error('WAHA Gateway Exception (Kirim Notifikasi Peminjaman): ' . $e->getMessage());
+                // Error diabaikan agar proses submit form tetap berhasil
+            }
+        }
 
         return redirect()->route('pegawai.peminjaman.index')
             ->with('success', 'Pengajuan peminjaman aset berhasil dikirim dan sedang menunggu persetujuan.');

@@ -43,6 +43,9 @@ Route::middleware(['auth', 'verified', 'role:operator'])->prefix('operator')->na
     Route::post('pemeliharaan/{pemeliharaan}/proses', [\App\Http\Controllers\Operator\PemeliharaanController::class, 'proses'])->name('pemeliharaan.proses');
     Route::post('pemeliharaan/{pemeliharaan}/selesai', [\App\Http\Controllers\Operator\PemeliharaanController::class, 'selesai'])->name('pemeliharaan.selesai');
 
+    Route::get('laporan', [\App\Http\Controllers\LaporanController::class, 'index'])->name('laporan.index');
+    Route::post('laporan/generate', [\App\Http\Controllers\LaporanController::class, 'generate'])->name('laporan.generate');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -64,6 +67,9 @@ Route::middleware(['auth', 'verified', 'role:kasubag_tu'])->prefix('kasubag')->n
     Route::get('persetujuan-pemeliharaan/{pemeliharaan}', [\App\Http\Controllers\Kasubag\PersetujuanPemeliharaanController::class, 'show'])->name('persetujuan_pemeliharaan.show');
     Route::post('persetujuan-pemeliharaan/{pemeliharaan}/approve', [\App\Http\Controllers\Kasubag\PersetujuanPemeliharaanController::class, 'approve'])->name('persetujuan_pemeliharaan.approve');
     Route::post('persetujuan-pemeliharaan/{pemeliharaan}/reject', [\App\Http\Controllers\Kasubag\PersetujuanPemeliharaanController::class, 'reject'])->name('persetujuan_pemeliharaan.reject');
+
+    Route::get('laporan', [\App\Http\Controllers\LaporanController::class, 'index'])->name('laporan.index');
+    Route::post('laporan/generate', [\App\Http\Controllers\LaporanController::class, 'generate'])->name('laporan.generate');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
