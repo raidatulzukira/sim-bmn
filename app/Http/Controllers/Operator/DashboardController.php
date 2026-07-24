@@ -40,7 +40,8 @@ class DashboardController extends Controller
             ->whereNotNull('tanggal_servis_terakhir')
             ->where('status', 'tersedia')
             ->whereDoesntHave('pemeliharaan', function ($query) {
-                $query->whereIn('status', ['pending', 'disetujui', 'proses']);
+                $query->where('jenis', 'rutin')
+                      ->whereIn('status', ['pending', 'disetujui', 'proses']);
             })
             ->get()
             ->filter(function($aset) {

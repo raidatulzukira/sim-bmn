@@ -50,7 +50,7 @@ class PemeliharaanController extends Controller
         $pemeliharaan = Pemeliharaan::create([
             'aset_id' => $validated['aset_id'],
             'jenis' => 'rutin',
-            'dilaporkan_oleh' => null,
+            'dilaporkan_oleh' => auth()->id(),
             'deskripsi_kerusakan' => $validated['deskripsi_kerusakan'],
             'status' => 'pending',
             'tanggal_pengajuan' => now(),
@@ -121,10 +121,13 @@ class PemeliharaanController extends Controller
                     'nota_teknisi' => $path
                 ]);
 
-                // Ubah kembali status aset menjadi tersedia
-                AsetBmn::where('id', $lockedPemeliharaan->aset_id)->update([
-                    'status' => 'tersedia'
-                ]);
+                $updateData = ['status' => 'tersedia'];
+                if ($lockedPemeliharaan->jenis === 'rutin') {
+                    $updateData['tanggal_servis_terakhir'] = now();
+                }
+
+                // Ubah kembali status aset menjadi tersedia dan perbarui tanggal jika rutin
+                AsetBmn::where('id', $lockedPemeliharaan->aset_id)->update($updateData);
             });
 
             // WA Notification jika itu situasional

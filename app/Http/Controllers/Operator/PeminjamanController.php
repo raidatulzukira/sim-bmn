@@ -122,41 +122,8 @@ class PeminjamanController extends Controller
         $phone = $peminjaman->user->no_wa;
         
         if ($phone) {
-            try {
-                // Format nomor untuk WAHA: ganti awalan 0 menjadi 62, lalu tambahkan @c.us
-                if (str_starts_with($phone, '0')) {
-                    $phone = '62' . substr($phone, 1);
-                }
-                
-                if (!str_ends_with($phone, '@c.us')) {
-                    $phone .= '@c.us';
-                }
-
-                $baseUrl = env('WAHA_BASE_URL', 'http://localhost:3000');
-                $apiKey = env('WAHA_API_KEY', '');
-                $wahaSession = env('WAHA_SESSION', 'default'); 
-
-                $response = \Illuminate\Support\Facades\Http::timeout(5)
-                    ->withHeaders([
-                        'X-Api-Key' => $apiKey,
-                        'Accept' => 'application/json',
-                    ])
-                    ->post($baseUrl . '/api/sendText', [
-                        'chatId' => $phone,
-                        'text' => $pesan,
-                        'session' => $wahaSession
-                    ]);
-
-                if ($response->failed()) {
-                    \Illuminate\Support\Facades\Log::error('WAHA Gateway Error (Reminder): ' . $response->body());
-                    return redirect()->back()->with('error', 'Gagal mengirim notifikasi WhatsApp: Layanan tidak merespon dengan baik.');
-                }
-                
-                return redirect()->back()->with('success', 'Notifikasi WhatsApp berhasil dikirim ke Pegawai');
-            } catch (\Exception $e) {
-                \Illuminate\Support\Facades\Log::error('WAHA Gateway Exception (Reminder): ' . $e->getMessage());
-                return redirect()->back()->with('error', 'Gagal mengirim notifikasi WhatsApp: ' . $e->getMessage());
-            }
+            $this->waService->kirimPesan($phone, $pesan, $peminjaman->user_id, 'peminjaman', $peminjaman->id);
+            return redirect()->back()->with('success', 'Notifikasi WhatsApp berhasil dikirim ke Pegawai');
         }
 
         return redirect()->back()->with('error', 'Peminjam tidak memiliki nomor WhatsApp yang terdaftar.');

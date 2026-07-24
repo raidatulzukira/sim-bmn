@@ -64,39 +64,11 @@ class PeminjamanController extends Controller
         $namaAset = AsetBmn::where('id', $request->aset_id)->first()->nama_barang;
         $pesan = "Halo, terdapat pengajuan peminjaman aset baru dari pegawai {$namaPegawai}. Aset yang dipinjam adalah {$namaAset}. Mohon untuk segera diproses.";
 
+        $waService = app(\App\Services\WhatsappService::class);
+
         foreach ($usersToNotify as $user) {
-            try {
-                // Format nomor untuk WAHA: ganti awalan 0 menjadi 62, lalu tambahkan @c.us
-                $phone = $user->no_wa;
-                if (str_starts_with($phone, '0')) {
-                    $phone = '62' . substr($phone, 1);
-                }
-                
-                if (!str_ends_with($phone, '@c.us')) {
-                    $phone .= '@c.us';
-                }
-
-                $baseUrl = env('WAHA_BASE_URL', 'http://localhost:3000');
-                $apiKey = env('WAHA_API_KEY', '');
-                $wahaSession = env('WAHA_SESSION', 'sim-bmn'); // default to 'default' if not set in .env
-
-                $response = Http::timeout(5)
-                    ->withHeaders([
-                        'X-Api-Key' => $apiKey,
-                        'Accept' => 'application/json',
-                    ])
-                    ->post($baseUrl . '/api/sendText', [
-                        'chatId' => $phone,
-                        'text' => $pesan,
-                        'session' => $wahaSession
-                    ]);
-
-                if ($response->failed()) {
-                    Log::error('WAHA Gateway Error (Response): ' . $response->body());
-                }
-            } catch (\Exception $e) {
-                Log::error('WAHA Gateway Exception (Kirim Notifikasi Peminjaman): ' . $e->getMessage());
-                // Error diabaikan agar proses submit form tetap berhasil
+            if ($user->no_wa) {
+                $waService->kirimPesan($user->no_wa, $pesan, $user->id, 'peminjaman', $peminjaman->id);
             }
         }
 
