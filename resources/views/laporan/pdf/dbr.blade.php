@@ -37,8 +37,8 @@
                 <th>NUP</th>
                 <th>Nama Barang</th>
                 <th>Merk/Tipe</th>
-                <th>Tahun Perolehan</th>
-                <th>Kondisi/Status</th>
+                <th>Tanggal Perolehan</th>
+                <th>Kondisi</th>
             </tr>
         </thead>
         <tbody>
@@ -49,7 +49,7 @@
                 <td>{{ $aset->nup ?? '-' }}</td>
                 <td style="text-align: left;">{{ $aset->nama_barang }}</td>
                 <td style="text-align: left;">{{ $aset->merk ?? '-' }} / {{ $aset->tipe ?? '-' }}</td>
-                <td>{{ $aset->tanggal_perolehan ? \Carbon\Carbon::parse($aset->tanggal_perolehan)->format('Y') : '-' }}</td>
+                <td>{{ $aset->tanggal_perolehan ? \Carbon\Carbon::parse($aset->tanggal_perolehan)->format('d F Y') : '-' }}</td>
                 <td style="text-transform: capitalize;">{{ $aset->status }}</td>
             </tr>
             @empty

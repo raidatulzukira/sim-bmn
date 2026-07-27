@@ -37,20 +37,22 @@
         <thead>
             <tr>
                 <th>No</th>
-                <th>Tanggal Pengajuan</th>
-                <th>Jenis Pemeliharaan</th>
-                <th>Tgl Selesai</th>
+                <th>Tgl Pengajuan</th>
+                <th>Jenis</th>
+                <th>Deskripsi Kerusakan</th>
                 <th>Status</th>
+                <th>Tgl Selesai</th>
             </tr>
         </thead>
         <tbody>
             @foreach($pemeliharaans as $index => $item)
             <tr>
                 <td>{{ $index + 1 }}</td>
-                <td>{{ \Carbon\Carbon::parse($item->tanggal_pengajuan)->format('d/m/Y') }}</td>
+                <td>{{ $item->tanggal_pengajuan ? \Carbon\Carbon::parse($item->tanggal_pengajuan)->format('d/m/Y') : '-' }}</td>
                 <td style="text-transform: capitalize;">{{ $item->jenis }}</td>
-                <td>{{ $item->tanggal_selesai ? \Carbon\Carbon::parse($item->tanggal_selesai)->format('d/m/Y') : '-' }}</td>
+                <td>{{ $item->deskripsi_kerusakan ?? '-' }}</td>
                 <td style="text-transform: capitalize;">{{ $item->status }}</td>
+                <td>{{ $item->tanggal_selesai ? \Carbon\Carbon::parse($item->tanggal_selesai)->format('d/m/Y') : '-' }}</td>
             </tr>
             @endforeach
         </tbody>

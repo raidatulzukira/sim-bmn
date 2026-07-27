@@ -13,6 +13,57 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+        <!-- jQuery & Select2 for Searchable Dropdowns -->
+        <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+        <style>
+            /* Custom Select2 Tailwind Styling */
+            .select2-container .select2-selection--single {
+                height: 46px !important;
+                border-radius: 0.75rem !important;
+                border: 1px solid #e2e8f0 !important;
+                display: flex;
+                align-items: center;
+                padding-left: 0.5rem;
+                background-color: #fff !important;
+            }
+            .select2-container--default .select2-selection--single .select2-selection__arrow {
+                height: 44px !important;
+                right: 10px !important;
+            }
+            .select2-container--default .select2-selection--single .select2-selection__rendered {
+                color: #334155 !important;
+                line-height: normal !important;
+            }
+            .select2-search__field {
+                border-radius: 0.5rem !important;
+                padding: 0.5rem !important;
+                outline: none !important;
+                border: 1px solid #cbd5e1 !important;
+            }
+            .select2-search__field:focus {
+                border-color: #0ea5e9 !important;
+                box-shadow: 0 0 0 1px #0ea5e9 !important;
+            }
+            .select2-dropdown {
+                border-radius: 0.75rem !important;
+                border: 1px solid #e2e8f0 !important;
+                box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1) !important;
+                overflow: hidden;
+                margin-top: 4px;
+            }
+            .select2-results__option {
+                padding: 8px 16px !important;
+                font-size: 0.875rem;
+            }
+            .select2-container--default .select2-results__option--highlighted[aria-selected] {
+                background-color: #0ea5e9 !important;
+                color: white !important;
+            }
+        </style>
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-sky-100 flex flex-col">
@@ -87,5 +138,19 @@
                 </div>
             </footer>
         </div>
+        <!-- Initialize Select2 -->
+        <script>
+            $(document).ready(function() {
+                $('select').select2({
+                    width: '100%',
+                    placeholder: function(){
+                        $(this).data('placeholder');
+                    }
+                });
+
+                // Listen for Livewire updates or DOM changes to reinitialize if needed
+                // Select2 doesn't auto-init on dynamically added elements
+            });
+        </script>
     </body>
 </html>

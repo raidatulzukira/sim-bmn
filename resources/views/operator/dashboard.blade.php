@@ -9,7 +9,7 @@
 
 @section('content')
     <div class="py-10 bg-slate-50 min-h-screen">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
+        <div class="max-w-6xl mx-auto sm:px-6 lg:px-8 space-y-8">
             
             <!-- Statistics Cards -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -187,7 +187,7 @@
                                                 </td>
                                                 <td class="px-5 py-4 whitespace-nowrap text-sm">
                                                     <a href="{{ route('operator.pemeliharaan.create', ['aset_id' => $aset->id]) }}" 
-                                                       class="inline-flex items-center gap-1 px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-sm hover:shadow shadow-blue-600/20">
+                                                       class="inline-flex items-center gap-1 px-4 py-2 bg-sky-700 text-white font-semibold rounded-lg hover:bg-sky-800 transition-colors shadow-sm hover:shadow shadow-blue-600/20">
                                                         Ajukan Servis
                                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                                                     </a>

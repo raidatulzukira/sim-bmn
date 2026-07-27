@@ -46,28 +46,54 @@
     @forelse($pemeliharaans as $index => $item)
         <div class="content-box">
             <div class="box-title">Pemeliharaan #{{ $index + 1 }} - Status: {{ strtoupper($item->status) }}</div>
-            <div class="detail-row">
-                <span class="detail-label">Tanggal Pengajuan</span>: {{ \Carbon\Carbon::parse($item->tanggal_pengajuan)->format('d F Y') }}
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Jenis Pemeliharaan</span>: <span style="text-transform: capitalize;">{{ $item->jenis }}</span>
-            </div>
-            <div class="detail-row">
+            <table style="width: 100%; font-size: 12px; border-collapse: collapse;">
+                <tr>
+                    <td style="width: 25%; padding: 3px 0;"><strong>Tanggal Pengajuan</strong></td>
+                    <td style="width: 25%; padding: 3px 0;">: {{ $item->tanggal_pengajuan ? \Carbon\Carbon::parse($item->tanggal_pengajuan)->format('d F Y') : '-' }}</td>
+                    <td style="width: 25%; padding: 3px 0;"><strong>Tanggal Selesai</strong></td>
+                    <td style="width: 25%; padding: 3px 0;">: {{ $item->tanggal_selesai ? \Carbon\Carbon::parse($item->tanggal_selesai)->format('d F Y') : '-' }}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 3px 0;"><strong>Jenis Pemeliharaan</strong></td>
+                    <td style="padding: 3px 0; text-transform: capitalize;">: {{ $item->jenis }}</td>
+                    <td style="padding: 3px 0;"><strong>Foto Bukti</strong></td>
+                    <td style="padding: 3px 0;">: {{ $item->foto ? 'Ada' : 'Tidak Ada' }}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 3px 0;"><strong>Dilaporkan Oleh</strong></td>
+                    <td style="padding: 3px 0;">: {{ $item->pelapor ? $item->pelapor->name : 'Sistem' }}</td>
+                    <td style="padding: 3px 0;"><strong>Disetujui Oleh</strong></td>
+                    <td style="padding: 3px 0;">: {{ $item->approver ? $item->approver->name : '-' }}</td>
+                </tr>
+            </table>
+
+            <div class="detail-row" style="margin-top: 10px;">
                 <span class="detail-label">Deskripsi Kerusakan</span>: <br/>
                 <div style="padding: 5px 10px; margin-top: 5px; border-left: 2px solid #ccc;">{{ $item->deskripsi_kerusakan ?? '-' }}</div>
             </div>
-            @if($item->catatan_teknisi)
+
+            @if($item->catatan_validasi)
             <div class="detail-row" style="margin-top: 10px;">
-                <span class="detail-label">Catatan Teknisi/Operator</span>: <br/>
-                <div style="padding: 5px 10px; margin-top: 5px; border-left: 2px solid #28a745;">{{ $item->catatan_teknisi }}</div>
+                <span class="detail-label">Catatan Validasi</span>: <br/>
+                <div style="padding: 5px 10px; margin-top: 5px; border-left: 2px solid #f39c12;">{{ $item->catatan_validasi }}</div>
             </div>
             @endif
+
+            @if($item->nota_teknisi)
             <div class="detail-row" style="margin-top: 10px;">
-                <span class="detail-label">Biaya Perbaikan</span>: Rp {{ number_format($item->biaya ?? 0, 0, ',', '.') }}
+                <span class="detail-label">Nota Teknisi</span>: <br/>
+                <div style="padding: 5px 10px; margin-top: 5px; border-left: 2px solid #28a745;">{{ $item->nota_teknisi }}</div>
             </div>
-            <div class="detail-row">
-                <span class="detail-label">Tanggal Selesai</span>: {{ $item->tanggal_selesai ? \Carbon\Carbon::parse($item->tanggal_selesai)->format('d F Y') : '-' }}
+            @endif
+
+            @if($item->foto)
+            <div class="detail-row" style="margin-top: 10px;">
+                <span class="detail-label">Lampiran Foto</span>: <br/>
+                <div style="margin-top: 5px;">
+                    <img src="{{ public_path('storage/' . $item->foto) }}" style="max-width: 250px; max-height: 200px; border: 1px solid #ccc; padding: 2px;" alt="Foto Bukti">
+                </div>
             </div>
+            @endif
         </div>
     @empty
         <div style="text-align: center; padding: 20px; border: 1px solid #ccc; color: #666;">

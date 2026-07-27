@@ -13,12 +13,80 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class LaporanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $asets = AsetBmn::orderBy('nama_barang')->get();
         $ruangans = Ruangan::orderBy('nama_ruangan')->get();
 
-        return view('laporan.index', compact('asets', 'ruangans'));
+        $previewData = null;
+        $jenis = $request->input('jenis_laporan');
+
+        if ($jenis) {
+            $previewData = [];
+            switch ($jenis) {
+                case 'rekap_pemeliharaan':
+                    $start = $request->input('tanggal_awal');
+                    $end = $request->input('tanggal_akhir');
+                    
+                    $query = Pemeliharaan::with(['asetBmn', 'pelapor', 'approver']);
+                    if ($start && $end) {
+                        $query->whereBetween('tanggal_pengajuan', [$start, $end]);
+                    }
+                    
+                    $previewData['pemeliharaans'] = $query->orderBy('tanggal_pengajuan', 'desc')->get();
+                    $previewData['start'] = $start;
+                    $previewData['end'] = $end;
+                    break;
+
+                case 'riwayat_pemeliharaan_aset':
+                    if ($request->filled('aset_id')) {
+                        $aset = AsetBmn::find($request->input('aset_id'));
+                        if ($aset) {
+                            $previewData['aset'] = $aset;
+                            $previewData['pemeliharaans'] = Pemeliharaan::with(['pelapor', 'approver'])
+                                                        ->where('aset_id', $aset->id)
+                                                        ->orderBy('tanggal_pengajuan', 'desc')->get();
+                        }
+                    }
+                    break;
+
+                case 'detail_pemeliharaan_aset':
+                    if ($request->filled('aset_id')) {
+                        $aset = AsetBmn::find($request->input('aset_id'));
+                        if ($aset) {
+                            $previewData['aset'] = $aset;
+                            $previewData['pemeliharaans'] = Pemeliharaan::with(['pelapor', 'approver'])
+                                                        ->where('aset_id', $aset->id)
+                                                        ->orderBy('tanggal_pengajuan', 'desc')->get();
+                        }
+                    }
+                    break;
+
+                case 'riwayat_peminjaman_aset':
+                    if ($request->filled('aset_id')) {
+                        $aset = AsetBmn::find($request->input('aset_id'));
+                        if ($aset) {
+                            $previewData['aset'] = $aset;
+                            $previewData['peminjamans'] = Peminjaman::with(['user', 'approver'])
+                                            ->where('aset_id', $aset->id)
+                                            ->orderBy('created_at', 'desc')->get();
+                        }
+                    }
+                    break;
+
+                case 'dbr':
+                    if ($request->filled('ruangan_id')) {
+                        $ruangan = Ruangan::find($request->input('ruangan_id'));
+                        if ($ruangan) {
+                            $previewData['ruangan'] = $ruangan;
+                            $previewData['asets'] = AsetBmn::where('ruangan_id', $ruangan->id)->orderBy('nama_barang')->get();
+                        }
+                    }
+                    break;
+            }
+        }
+
+        return view('laporan.index', compact('asets', 'ruangans', 'previewData', 'jenis'));
     }
 
     public function generate(Request $request)
@@ -40,7 +108,7 @@ class LaporanController extends Controller
                 $start = $request->input('tanggal_awal');
                 $end = $request->input('tanggal_akhir');
                 
-                $query = Pemeliharaan::with('asetBmn');
+                $query = Pemeliharaan::with(['asetBmn', 'pelapor', 'approver']);
                 if ($start && $end) {
                     $query->whereBetween('tanggal_pengajuan', [$start, $end]);
                 }
@@ -53,11 +121,15 @@ class LaporanController extends Controller
                 break;
 
             case 'riwayat_pemeliharaan_aset':
-                $request->validate(['aset_id' => 'required']);
-                $aset = AsetBmn::findOrFail($request->input('aset_id'));
+                $aset = AsetBmn::find($request->input('aset_id'));
+                if (!$aset) return redirect()->back()->with('error', 'Aset tidak ditemukan');
                 
-                $data['aset'] = $aset;
-                $data['pemeliharaans'] = Pemeliharaan::where('aset_id', $aset->id)->orderBy('tanggal_pengajuan', 'desc')->get();
+                $data = [
+                    'aset' => $aset,
+                    'pemeliharaans' => Pemeliharaan::with(['pelapor', 'approver'])
+                                        ->where('aset_id', $aset->id)
+                                        ->orderBy('tanggal_pengajuan', 'desc')->get()
+                ];
                 $viewName = 'laporan.pdf.riwayat_pemeliharaan_aset';
                 $filename = 'Laporan_Riwayat_Pemeliharaan_Aset_' . $aset->kode_barang;
                 break;
@@ -67,7 +139,7 @@ class LaporanController extends Controller
                 $aset = AsetBmn::findOrFail($request->input('aset_id'));
                 
                 $data['aset'] = $aset;
-                $data['pemeliharaans'] = Pemeliharaan::with(['pelaksana', 'approver'])
+                $data['pemeliharaans'] = Pemeliharaan::with(['pelapor', 'approver'])
                                             ->where('aset_id', $aset->id)
                                             ->orderBy('tanggal_pengajuan', 'desc')->get();
                 $viewName = 'laporan.pdf.detail_pemeliharaan_aset';

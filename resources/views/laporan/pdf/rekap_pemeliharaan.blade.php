@@ -30,8 +30,15 @@
                 <th>No</th>
                 <th>Aset BMN (Kode)</th>
                 <th>Jenis</th>
-                <th>Tanggal Pengajuan</th>
+                <th>Dilaporkan Oleh</th>
+                <th>Deskripsi Kerusakan</th>
+                <th>Foto</th>
                 <th>Status</th>
+                <th>Catatan Validasi</th>
+                <th>Approved By</th>
+                <th>Nota Teknisi</th>
+                <th>Tgl Pengajuan</th>
+                <th>Tgl Selesai</th>
             </tr>
         </thead>
         <tbody>
@@ -40,8 +47,15 @@
                 <td>{{ $index + 1 }}</td>
                 <td>{{ $item->asetBmn->nama_barang }} ({{ $item->asetBmn->kode_barang }})</td>
                 <td style="text-transform: capitalize;">{{ $item->jenis }}</td>
-                <td>{{ \Carbon\Carbon::parse($item->tanggal_pengajuan)->format('d M Y') }}</td>
+                <td>{{ $item->pelapor ? $item->pelapor->name : 'Sistem' }}</td>
+                <td>{{ $item->deskripsi_kerusakan ?? '-' }}</td>
+                <td>{{ $item->foto ? 'Ada' : 'Tidak' }}</td>
                 <td style="text-transform: capitalize;">{{ $item->status }}</td>
+                <td>{{ $item->catatan_validasi ?? '-' }}</td>
+                <td>{{ $item->approver ? $item->approver->name : '-' }}</td>
+                <td>{{ $item->nota_teknisi ?? '-' }}</td>
+                <td>{{ $item->tanggal_pengajuan ? \Carbon\Carbon::parse($item->tanggal_pengajuan)->format('d/m/Y') : '-' }}</td>
+                <td>{{ $item->tanggal_selesai ? \Carbon\Carbon::parse($item->tanggal_selesai)->format('d/m/Y') : '-' }}</td>
             </tr>
             @endforeach
         </tbody>
