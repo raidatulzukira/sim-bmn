@@ -1,96 +1,154 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+@extends('layouts.app')
+
+@section('header')
+    <div class="flex items-center justify-between gap-4 w-full">
+        <div class="flex items-center gap-4">
+            <a href="{{ route('pegawai.laporan_kerusakan.index') }}" class="w-10 h-10 bg-white border border-slate-200 rounded-full flex items-center justify-center text-slate-500 hover:text-sky-600 hover:border-sky-200 hover:bg-sky-50 transition-all duration-200 shadow-sm">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            </a>
+            <h2 class="font-bold text-2xl text-slate-800 leading-tight">
                 {{ __('Detail Laporan Kerusakan') }}
             </h2>
-            <a href="{{ route('pegawai.laporan_kerusakan.index') }}" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md text-sm font-semibold hover:bg-gray-300">
-                Kembali
-            </a>
         </div>
-    </x-slot>
+    </div>
+@endsection
 
-    <div class="py-12">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
-                    
-                    <div class="flex justify-between items-start mb-6 pb-6 border-b border-gray-100">
-                        <div>
-                            <div class="flex items-center space-x-2 mb-1">
-                                <span class="px-2 py-1 text-xs font-semibold rounded-md bg-pink-100 text-pink-800">
-                                    Situasional
-                                </span>
+@section('content')
+    <div class="py-10 bg-sky-50 min-h-screen">
+        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 space-y-6">
+            
+            <div class="bg-white overflow-hidden shadow-sm rounded-3xl border border-slate-100">
+                <!-- Header Banner -->
+                <div class="relative h-24 bg-gradient-to-r from-sky-600/30 to-sky-700/50">
+                    <div class="absolute inset-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px] opacity-20"></div>
+                </div>
+
+                <div class="px-8 sm:px-12 pb-12 relative -mt-12">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8 border-b border-slate-100 pb-8">
+                        <div class="flex items-end gap-5">
+                            <div class="w-20 h-20 rounded-2xl bg-white text-sky-500 flex items-center justify-center shadow-lg border-4 border-white shrink-0">
+                                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                             </div>
-                            <h3 class="text-2xl font-bold text-gray-900">{{ $laporan_kerusakan->asetBmn->nama_barang }}</h3>
-                            <p class="text-gray-500 mt-1">Kode Aset: <span class="font-mono bg-gray-100 px-1 py-0.5 rounded">{{ $laporan_kerusakan->asetBmn->kode_barang }}</span></p>
+                            <div>
+                                <div class="flex gap-2 mb-1.5">
+                                    <span class="px-2.5 py-0.5 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold font-mono border border-slate-200">{{ $laporan_kerusakan->asetBmn->kode_barang }}</span>
+                                    <span class="px-2.5 py-0.5 bg-sky-50 text-sky-600 rounded-lg text-xs font-bold border border-sky-100 capitalize">{{ $laporan_kerusakan->jenis ?? 'Kerusakan' }}</span>
+                                </div>
+                                <h3 class="text-2xl font-extrabold text-slate-900">{{ $laporan_kerusakan->asetBmn->nama_barang }}</h3>
+                            </div>
                         </div>
-                        <div class="text-right">
-                            <span class="block text-sm text-gray-500 mb-1">Status Laporan</span>
+                        <div class="mb-2">
                             @php
-                                $color = match($laporan_kerusakan->status) {
-                                    'pending' => 'bg-yellow-100 text-yellow-800',
-                                    'disetujui' => 'bg-blue-100 text-blue-800',
-                                    'proses' => 'bg-orange-100 text-orange-800',
-                                    'selesai' => 'bg-green-100 text-green-800',
-                                    'ditolak' => 'bg-red-100 text-red-800',
-                                    default => 'bg-gray-100 text-gray-800'
+                                $badge = match($laporan_kerusakan->status) {
+                                    'pending' => 'bg-amber-50 text-amber-700 border-amber-200',
+                                    'disetujui' => 'bg-sky-50 text-sky-700 border-sky-200',
+                                    'proses' => 'bg-indigo-50 text-indigo-700 border-indigo-200',
+                                    'selesai' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                                    'ditolak' => 'bg-rose-50 text-rose-700 border-rose-200',
+                                    default => 'bg-slate-50 text-slate-700 border-slate-200'
                                 };
                             @endphp
-                            <span class="px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full {{ $color }}">
-                                {{ ucfirst($laporan_kerusakan->status) }}
+                            <span class="px-4 py-1.5 inline-flex items-center gap-2 text-xs font-bold rounded-full border shadow-sm {{ $badge }} uppercase tracking-wider">
+                                <span class="w-1.5 h-1.5 rounded-full {{ $laporan_kerusakan->status == 'pending' ? 'bg-amber-500 animate-pulse' : ($laporan_kerusakan->status == 'proses' ? 'bg-indigo-500 animate-pulse' : ($laporan_kerusakan->status == 'selesai' ? 'bg-emerald-500' : 'bg-slate-500')) }}"></span>
+                                {{ $laporan_kerusakan->status }}
                             </span>
                         </div>
                     </div>
 
-                    @if($laporan_kerusakan->status === 'ditolak')
-                        <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
-                            <h4 class="text-sm font-bold text-red-800 mb-1">Alasan Penolakan:</h4>
-                            <p class="text-sm text-red-700">{{ $laporan_kerusakan->catatan_validasi }}</p>
-                            @if($laporan_kerusakan->approver)
-                                <p class="text-xs text-red-500 mt-2">Ditolak oleh: {{ $laporan_kerusakan->approver->name }}</p>
-                            @endif
-                        </div>
-                    @endif
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <!-- Left Column: Details -->
+                        <div class="lg:col-span-2 space-y-8">
+                            <!-- Informasi Laporan -->
+                            <div>
+                                <h4 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    Informasi Laporan
+                                </h4>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                        <span class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Dilaporkan Oleh</span>
+                                        <span class="block text-sm font-bold text-slate-900">{{ $laporan_kerusakan->pelapor->name ?? '-' }}</span>
+                                    </div>
+                                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                        <span class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Tanggal Pengajuan</span>
+                                        <span class="block text-sm font-bold text-slate-900">{{ $laporan_kerusakan->tanggal_pengajuan ? \Carbon\Carbon::parse($laporan_kerusakan->tanggal_pengajuan)->format('d F Y, H:i') : '-' }}</span>
+                                    </div>
+                                </div>
+                            </div>
 
-                    <div class="mb-6">
-                        <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Waktu Pengajuan</h4>
-                        <p class="text-sm text-gray-900">{{ $laporan_kerusakan->tanggal_pengajuan->format('d F Y, H:i') }}</p>
-                    </div>
+                            <!-- Deskripsi Kerusakan -->
+                            <div>
+                                <h4 class="text-md font-bold text-slate-800 mb-3 flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                    Deskripsi Kerusakan
+                                </h4>
+                                <div class="bg-sky-50/50 p-4 rounded-xl border border-sky-100 text-sm text-slate-800 leading-relaxed font-medium">
+                                    {{ $laporan_kerusakan->deskripsi_kerusakan }}
+                                </div>
+                            </div>
 
-                    <div class="mb-6">
-                        <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Deskripsi Kerusakan</h4>
-                        <div class="bg-gray-50 p-4 rounded-md border border-gray-200 text-sm text-gray-800 whitespace-pre-wrap">{{ $laporan_kerusakan->deskripsi_kerusakan }}</div>
-                    </div>
+                            <!-- Validasi & Penyelesaian -->
+                            @if($laporan_kerusakan->status !== 'pending')
+                                <div>
+                                    <h4 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                                        <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        Status & Penyelesaian
+                                    </h4>
+                                    <div class="space-y-4">
+                                        @if($laporan_kerusakan->catatan_validasi)
+                                            <div class="{{ $laporan_kerusakan->status === 'ditolak' ? 'bg-rose-50 border-rose-200' : 'bg-slate-50 border-slate-200' }} p-4 rounded-2xl border">
+                                                <div class="flex justify-between items-start mb-2">
+                                                    <span class="block text-xs font-bold {{ $laporan_kerusakan->status === 'ditolak' ? 'text-rose-500' : 'text-slate-500' }} uppercase tracking-wider">Catatan Validasi</span>
+                                                    @if($laporan_kerusakan->approver)
+                                                        <span class="block text-xs font-medium text-slate-400">Oleh: {{ $laporan_kerusakan->approver->name }}</span>
+                                                    @endif
+                                                </div>
+                                                <span class="block text-sm font-bold text-slate-900">{{ $laporan_kerusakan->catatan_validasi }}</span>
+                                            </div>
+                                        @endif
 
-                    @if($laporan_kerusakan->foto)
-                        <div class="mb-6">
-                            <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Foto Kerusakan</h4>
-                            <img src="{{ asset('storage/' . $laporan_kerusakan->foto) }}" alt="Foto Kerusakan" class="w-full max-w-md h-auto rounded-lg shadow-sm border border-gray-200">
-                        </div>
-                    @endif
-
-                    @if($laporan_kerusakan->status === 'selesai')
-                        <div class="border-t border-gray-200 pt-6 mt-6">
-                            <h4 class="text-lg font-semibold text-gray-800 mb-4">Hasil Perbaikan (Nota Teknisi)</h4>
-                            <p class="text-sm text-gray-600 mb-4">Diselesaikan pada: <strong>{{ $laporan_kerusakan->tanggal_selesai->format('d F Y, H:i') }}</strong></p>
-                            
-                            @if($laporan_kerusakan->nota_teknisi)
-                                <div class="mt-2">
-                                    <a href="{{ asset('storage/' . $laporan_kerusakan->nota_teknisi) }}" target="_blank" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">
-                                        <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                        </svg>
-                                        Lihat Nota / Bukti Perbaikan
-                                    </a>
+                                        @if($laporan_kerusakan->status === 'selesai')
+                                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100">
+                                                    <span class="block text-xs font-bold text-emerald-600 uppercase tracking-wider mb-1">Diselesaikan Pada</span>
+                                                    <span class="block text-sm font-bold text-slate-900">{{ $laporan_kerusakan->tanggal_selesai ? \Carbon\Carbon::parse($laporan_kerusakan->tanggal_selesai)->format('d F Y, H:i') : '-' }}</span>
+                                                </div>
+                                                @if($laporan_kerusakan->nota_teknisi)
+                                                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex flex-col justify-center">
+                                                        <a href="{{ asset('storage/' . $laporan_kerusakan->nota_teknisi) }}" target="_blank" class="inline-flex items-center justify-center gap-2 w-full px-4 py-2 bg-slate-800 text-white rounded-xl text-sm font-bold hover:bg-slate-700 transition-colors shadow-sm">
+                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                                            Lihat Bukti Perbaikan
+                                                        </a>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        @endif
+                                    </div>
                                 </div>
                             @endif
                         </div>
-                    @endif
+
+                        <!-- Right Column: Foto -->
+                        <div>
+                            <h4 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                Foto Bukti Kerusakan
+                            </h4>
+                            <div class="bg-white rounded-2xl border border-slate-200 p-2 shadow-sm">
+                                @if($laporan_kerusakan->foto)
+                                    <img src="{{ asset('storage/' . $laporan_kerusakan->foto) }}" alt="Foto Kerusakan" class="w-full h-auto rounded-xl object-cover hover:opacity-90 transition-opacity cursor-pointer">
+                                @else
+                                    <div class="w-full h-48 bg-slate-50 rounded-xl flex flex-col items-center justify-center text-slate-400">
+                                        <svg class="w-12 h-12 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                        <span class="text-sm font-medium">Tidak ada foto</span>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
 
                 </div>
             </div>
         </div>
     </div>
-</x-app-layout>
+@endsection

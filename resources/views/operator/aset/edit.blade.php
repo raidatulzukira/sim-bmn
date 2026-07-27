@@ -12,7 +12,7 @@
 @endsection
 
 @section('content')
-    <div class="py-10 bg-slate-50 min-h-screen">
+    <div class="py-10 bg-sky-50 min-h-screen">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm rounded-3xl border border-slate-100">
                 <div class="p-8 sm:p-12">

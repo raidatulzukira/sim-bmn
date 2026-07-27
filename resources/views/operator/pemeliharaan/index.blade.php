@@ -16,8 +16,8 @@
 @endsection
 
 @section('content')
-    <div class="py-10 bg-slate-50 min-h-screen">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="py-10 bg-sky-50 min-h-screen">
+        <div class="max-w-6xl mx-auto sm:px-6 lg:px-8 space-y-6">
             
             <!-- Alert Messages -->
             @if(session('success'))

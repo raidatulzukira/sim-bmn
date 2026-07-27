@@ -22,8 +22,9 @@ class KatalogAsetController extends Controller
             ->when($kategori, function($query, $kategori) {
                 return $query->where('jenis_bmn', $kategori);
             })
-            ->latest()
-            ->paginate(12)
+            ->orderBy('tanggal_perolehan', 'desc')
+            ->orderBy('id', 'desc')
+            ->paginate(10)
             ->withQueryString();
 
         return view('pegawai.katalog.index', compact('asets', 'search', 'kategori'));

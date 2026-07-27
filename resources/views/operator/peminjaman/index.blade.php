@@ -20,7 +20,7 @@
         }
     </style>
 
-    <div class="py-10 bg-slate-50 min-h-screen">
+    <div class="py-10 bg-sky-50 min-h-screen">
         <div class="max-w-6xl mx-auto sm:px-6 lg:px-8 space-y-6">
             
             <!-- Filter & Search -->

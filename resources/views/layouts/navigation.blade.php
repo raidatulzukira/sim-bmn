@@ -100,15 +100,21 @@
                             {{ __('Laporan') }}
                         </x-nav-link>
                     @elseif ($role === 'pegawai')
+                    <div class="hidden sm:flex sm:items-center sm:ms-6">
                         <x-nav-link :href="route('pegawai.katalog_aset.index')" :active="request()->routeIs('pegawai.katalog_aset.*')">
-                            {{ __('Katalog Aset') }}
+                            {{ __('Data Aset') }}
                         </x-nav-link>
+                        </div>
+                        <div class="hidden sm:flex sm:items-center sm:ms-6">
                         <x-nav-link :href="route('pegawai.peminjaman.index')" :active="request()->routeIs('pegawai.peminjaman.*')">
                             {{ __('Peminjaman Aset') }}
                         </x-nav-link>
+                        </div>
+                        <div class="hidden sm:flex sm:items-center sm:ms-6">
                         <x-nav-link :href="route('pegawai.laporan_kerusakan.index')" :active="request()->routeIs('pegawai.laporan_kerusakan.*')">
-                            {{ __('Laporan Kerusakan') }}
+                            {{ __('Kerusakan Aset') }}
                         </x-nav-link>
+                        </div>
                     @endif
                 </div>
             </div>
