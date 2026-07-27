@@ -57,6 +57,8 @@ class PersetujuanPemeliharaanController extends Controller
                     'status' => 'disetujui',
                     'approved_by' => auth()->id(),
                 ]);
+
+                \App\Models\AsetBmn::where('id', $lockedPemeliharaan->aset_id)->update(['status' => 'menunggu_servis']);
             });
 
             // WA Notification (Hanya untuk situasional, rutin cukup internal)
@@ -91,6 +93,8 @@ class PersetujuanPemeliharaanController extends Controller
                     'approved_by' => auth()->id(),
                     'catatan_validasi' => $request->validated('catatan_validasi'),
                 ]);
+
+                \App\Models\AsetBmn::where('id', $lockedPemeliharaan->aset_id)->update(['status' => 'tersedia']);
             });
 
             // WA Notification

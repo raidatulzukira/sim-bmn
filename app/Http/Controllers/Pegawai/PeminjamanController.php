@@ -54,6 +54,8 @@ class PeminjamanController extends Controller
             'status' => 'pending',
         ]);
 
+        \App\Models\AsetBmn::where('id', $request->aset_id)->update(['status' => 'menunggu_persetujuan']);
+
         // Mengambil nomor telepon dari Kasubag TU dan Operator
         $usersToNotify = User::whereIn('role', ['kasubag_tu', 'operator'])
             ->whereNotNull('no_wa')

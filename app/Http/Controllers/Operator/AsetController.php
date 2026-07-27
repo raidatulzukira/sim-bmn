@@ -51,11 +51,6 @@ class AsetController extends Controller
     {
         $validated = $request->validated();
 
-        if ($request->hasFile('foto')) {
-            $path = $request->file('foto')->store('aset', 'public');
-            $validated['foto'] = $path;
-        }
-
         AsetBmn::create($validated);
 
         return redirect()->route('operator.aset.index')
@@ -83,15 +78,6 @@ class AsetController extends Controller
     {
         $validated = $request->validated();
 
-        if ($request->hasFile('foto')) {
-            // Hapus foto lama jika ada
-            if ($aset->foto && Storage::disk('public')->exists($aset->foto)) {
-                Storage::disk('public')->delete($aset->foto);
-            }
-            $path = $request->file('foto')->store('aset', 'public');
-            $validated['foto'] = $path;
-        }
-
         $aset->update($validated);
 
         return redirect()->route('operator.aset.index')
@@ -103,10 +89,6 @@ class AsetController extends Controller
         if (in_array($aset->status, ['dipinjam', 'servis'])) {
             return redirect()->route('operator.aset.index')
                 ->with('error', 'Aset tidak dapat dihapus karena masih berstatus ' . $aset->status . '.');
-        }
-
-        if ($aset->foto && Storage::disk('public')->exists($aset->foto)) {
-            Storage::disk('public')->delete($aset->foto);
         }
 
         $aset->delete();

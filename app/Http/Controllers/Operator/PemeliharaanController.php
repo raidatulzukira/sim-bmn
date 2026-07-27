@@ -56,6 +56,8 @@ class PemeliharaanController extends Controller
             'tanggal_pengajuan' => now(),
         ]);
 
+        \App\Models\AsetBmn::where('id', $validated['aset_id'])->update(['status' => 'menunggu_persetujuan']);
+
         \App\Jobs\SendMaintenanceNotificationJob::dispatch($pemeliharaan->id);
 
         return redirect()->route('operator.pemeliharaan.index')

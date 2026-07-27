@@ -13,7 +13,7 @@ class AsetBmn extends Model
 
     protected $table = 'aset_bmn';
     protected $fillable = [
-        'jenis_bmn', 'kode_barang', 'nup', 'nama_barang', 'merk', 'tipe', 'nama', 'tanggal_perolehan', 'nilai_perolehan_pertama', 'foto', 'ruangan_id', 'status',
+        'jenis_bmn', 'kode_barang', 'nup', 'nama_barang', 'merk', 'tipe', 'nama', 'tanggal_perolehan', 'nilai_perolehan_pertama', 'ruangan_id', 'status',
         'interval_servis_tahun', 'tanggal_servis_terakhir'
     ];
 

@@ -54,6 +54,8 @@ class PersetujuanPeminjamanController extends Controller
                     'status' => 'disetujui',
                     'approved_by' => auth()->id(),
                 ]);
+
+                \App\Models\AsetBmn::where('id', $lockedPeminjaman->aset_id)->update(['status' => 'menunggu_serah_terima']);
             });
 
             // Refresh model instance
@@ -87,6 +89,8 @@ class PersetujuanPeminjamanController extends Controller
                     'approved_by' => auth()->id(),
                     'catatan_penolakan' => $request->validated('catatan_penolakan'),
                 ]);
+
+                \App\Models\AsetBmn::where('id', $lockedPeminjaman->aset_id)->update(['status' => 'tersedia']);
             });
 
             // Refresh model instance

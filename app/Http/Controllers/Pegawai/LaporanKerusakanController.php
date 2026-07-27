@@ -29,8 +29,8 @@ class LaporanKerusakanController extends Controller
 
     public function create()
     {
-        // Aset yang bisa dilaporkan adalah aset yang tidak sedang dalam perbaikan
-        $asets = AsetBmn::where('status', '!=', 'servis')->orderBy('nama_barang')->get();
+        // Aset yang bisa dilaporkan adalah aset yang tersedia atau dipinjam (tidak sedang menunggu persetujuan/servis)
+        $asets = AsetBmn::whereIn('status', ['tersedia', 'dipinjam'])->orderBy('nama_barang')->get();
         return view('pegawai.pemeliharaan.create', compact('asets'));
     }
 
@@ -53,6 +53,8 @@ class LaporanKerusakanController extends Controller
             'status' => 'pending',
             'tanggal_pengajuan' => now(),
         ]);
+
+        \App\Models\AsetBmn::where('id', $validated['aset_id'])->update(['status' => 'menunggu_persetujuan']);
 
         \App\Jobs\SendMaintenanceNotificationJob::dispatch($pemeliharaan->id);
 

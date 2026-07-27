@@ -106,19 +106,6 @@
                             </select>
                             <x-input-error :messages="$errors->get('status')" class="mt-2" />
                         </div>
-
-                        <div class="mb-4">
-                            <x-input-label for="foto" value="Ganti Foto Aset (Biarkan kosong jika tidak diubah)" />
-                            <input type="file" id="foto" name="foto" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" accept="image/*" />
-                            <x-input-error :messages="$errors->get('foto')" class="mt-2" />
-                            
-                            @if($aset->foto)
-                                <div class="mt-2">
-                                    <span class="text-sm text-gray-500 block mb-1">Foto saat ini:</span>
-                                    <img src="{{ asset('storage/' . $aset->foto) }}" alt="Foto Aset" class="h-24 w-auto rounded-md border border-gray-200">
-                                </div>
-                            @endif
-                        </div>
                     </div>
 
                     <div class="flex items-center justify-end mt-4">

@@ -19,18 +19,8 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200 grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="md:col-span-1 border-r border-gray-200 pr-4">
-                        @if($aset->foto)
-                            <img src="{{ asset('storage/' . $aset->foto) }}" alt="{{ $aset->nama_barang }}" class="w-full h-auto rounded-lg shadow-sm">
-                        @else
-                            <div class="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center text-gray-500">
-                                Tidak ada foto
-                            </div>
-                        @endif
-                    </div>
-                    
-                    <div class="md:col-span-2">
+                <div class="p-6 bg-white border-b border-gray-200">
+                    <div>
                         <div class="mb-4">
                             <span class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Status Aset</span>
                             <div class="mt-1">

@@ -23,46 +23,49 @@
                 </form>
             </div>
 
-            <!-- Grid Aset -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                @forelse($asets as $aset)
-                    <div class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-100 flex flex-col">
-                        <div class="h-48 bg-gray-200 relative">
-                            @if($aset->foto)
-                                <img src="{{ asset('storage/' . $aset->foto) }}" alt="{{ $aset->nama_barang }}" class="w-full h-full object-cover">
-                            @else
-                                <div class="w-full h-full flex items-center justify-center text-gray-400">
-                                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                </div>
-                            @endif
-                            <div class="absolute top-2 right-2">
-                                <span class="px-2 py-1 text-xs font-semibold rounded-full 
-                                    {{ $aset->status === 'tersedia' ? 'bg-green-100 text-green-800' : ($aset->status === 'dipinjam' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
-                                    {{ $aset->status === 'dipinjam' ? 'Sedang Dipinjam' : ucfirst($aset->status) }}
-                                </span>
-                            </div>
-                        </div>
-                        <div class="p-4 flex-1 flex flex-col">
-                            <h3 class="font-bold text-lg text-gray-900 mb-1 truncate" title="{{ $aset->nama_barang }}">{{ $aset->nama_barang }}</h3>
-                            <p class="text-sm text-gray-500 mb-2">{{ $aset->merk ?? 'Tanpa Merk' }}</p>
-                            
-                            <div class="mt-auto space-y-1 text-sm text-gray-600">
-                                <p><span class="font-medium">Kode:</span> {{ $aset->kode_barang }}</p>
-                                <p><span class="font-medium">Lokasi:</span> {{ $aset->ruangan ? $aset->ruangan->nama_ruangan : '-' }}</p>
-                            </div>
-                            
-                            <div class="mt-4 pt-3 border-t border-gray-100 text-center">
-                                <a href="{{ route('pegawai.katalog_aset.show', $aset->id) }}" class="text-indigo-600 hover:text-indigo-900 text-sm font-semibold inline-flex items-center">
-                                    Lihat Detail &rarr;
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                @empty
-                    <div class="col-span-full bg-white p-6 rounded-lg shadow-sm text-center text-gray-500">
-                        Tidak ada data katalog aset BMN yang ditemukan.
-                    </div>
-                @endforelse
+            <!-- Table -->
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kode Barang</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NUP</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Barang</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jenis BMN</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ruangan</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @forelse($asets as $index => $aset)
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ ($asets->currentPage() - 1) * $asets->perPage() + $loop->iteration }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $aset->kode_barang }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $aset->nup ?? '-' }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $aset->nama_barang }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $aset->jenis_bmn }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $aset->ruangan ? $aset->ruangan->nama_ruangan : '-' }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                            {{ $aset->status === 'tersedia' ? 'bg-green-100 text-green-800' : ($aset->status === 'dipinjam' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
+                                            {{ $aset->status === 'dipinjam' ? 'Sedang Dipinjam' : ucfirst(str_replace('_', ' ', $aset->status)) }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <a href="{{ route('pegawai.katalog_aset.show', $aset->id) }}" class="text-blue-600 hover:text-blue-900">Detail</a>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="8" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">Tidak ada data aset BMN.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <div class="mt-6">

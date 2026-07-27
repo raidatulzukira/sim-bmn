@@ -13,20 +13,8 @@
     <div class="py-12">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg flex flex-col md:flex-row">
-                <!-- Foto Aset -->
-                <div class="md:w-1/3 bg-gray-100 p-4 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-gray-200">
-                    @if($katalog_aset->foto)
-                        <img src="{{ asset('storage/' . $katalog_aset->foto) }}" alt="{{ $katalog_aset->nama_barang }}" class="w-full h-auto rounded-md shadow-sm">
-                    @else
-                        <div class="text-gray-400 text-center py-12">
-                            <svg class="mx-auto h-16 w-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                            <p>Tidak ada foto</p>
-                        </div>
-                    @endif
-                </div>
-
                 <!-- Detail Informasi -->
-                <div class="md:w-2/3 p-6">
+                <div class="w-full p-6">
                     <div class="flex justify-between items-start mb-4">
                         <div>
                             <h3 class="text-2xl font-bold text-gray-900">{{ $katalog_aset->nama_barang }}</h3>
