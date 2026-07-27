@@ -12,10 +12,11 @@ class RuanganController extends Controller
     {
         $search = $request->input('search');
         
-        $ruangans = Ruangan::when($search, function($query, $search) {
+        $ruangans = Ruangan::withCount('asetBmn')
+            ->when($search, function($query, $search) {
                 return $query->where('nama_ruangan', 'like', "%{$search}%");
             })
-            ->latest()
+            ->orderBy('id', 'desc')
             ->paginate(10)
             ->withQueryString();
 

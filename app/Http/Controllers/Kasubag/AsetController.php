@@ -17,7 +17,8 @@ class AsetController extends Controller
                 return $query->where('nama_barang', 'like', "%{$search}%")
                              ->orWhere('kode_barang', 'like', "%{$search}%");
             })
-            ->latest()
+            ->orderBy('tanggal_perolehan', 'desc')
+            ->orderBy('id', 'desc')
             ->paginate(10)
             ->withQueryString();
 

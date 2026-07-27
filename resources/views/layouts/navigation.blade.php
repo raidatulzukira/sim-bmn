@@ -84,21 +84,60 @@
                             {{ __('Laporan') }}
                         </x-nav-link>
                     @elseif ($role === 'kasubag_tu')
-                        <x-nav-link :href="route('kasubag.aset.index')" :active="request()->routeIs('kasubag.aset.*')">
-                            {{ __('Data Aset') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('kasubag.ruangan.index')" :active="request()->routeIs('kasubag.ruangan.*')">
-                            {{ __('Data Ruangan') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('kasubag.persetujuan.index')" :active="request()->routeIs('kasubag.persetujuan.*')">
-                            {{ __('Approval Peminjaman') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('kasubag.persetujuan_pemeliharaan.index')" :active="request()->routeIs('kasubag.persetujuan_pemeliharaan.*')">
-                            {{ __('Approval Pemeliharaan') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('kasubag.laporan.index')" :active="request()->routeIs('kasubag.laporan.*')">
-                            {{ __('Laporan') }}
-                        </x-nav-link>
+                        <!-- Master Data Dropdown -->
+                        <div class="hidden sm:flex sm:items-center sm:ms-6">
+                            <x-dropdown align="right" width="48">
+                                <x-slot name="trigger">
+                                    <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-slate-500 bg-transparent hover:text-blue-600 focus:outline-none transition ease-in-out duration-150 h-full mt-1">
+                                        <div>{{ __('Master Data') }}</div>
+                                        <div class="ms-1">
+                                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                            </svg>
+                                        </div>
+                                    </button>
+                                </x-slot>
+                                <x-slot name="content">
+                                    <x-dropdown-link :href="route('kasubag.aset.index')" :active="request()->routeIs('kasubag.aset.*')">
+                                        {{ __('Data Aset') }}
+                                    </x-dropdown-link>
+                                    <x-dropdown-link :href="route('kasubag.ruangan.index')" :active="request()->routeIs('kasubag.ruangan.*')">
+                                        {{ __('Data Ruangan') }}
+                                    </x-dropdown-link>
+                                </x-slot>
+                            </x-dropdown>
+                        </div>
+
+                        <!-- Persetujuan Dropdown -->
+                        <div class="hidden sm:flex sm:items-center sm:ms-6">
+                            <x-dropdown align="right" width="48">
+                                <x-slot name="trigger">
+                                    <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-slate-500 bg-transparent hover:text-blue-600 focus:outline-none transition ease-in-out duration-150 h-full mt-1">
+                                        <div>{{ __('Persetujuan') }}</div>
+                                        <div class="ms-1">
+                                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                            </svg>
+                                        </div>
+                                    </button>
+                                </x-slot>
+                                <x-slot name="content">
+                                    <x-dropdown-link :href="route('kasubag.persetujuan.index')" :active="request()->routeIs('kasubag.persetujuan.*')">
+                                        {{ __('Approval Peminjaman') }}
+                                    </x-dropdown-link>
+                                    <x-dropdown-link :href="route('kasubag.persetujuan_pemeliharaan.index')" :active="request()->routeIs('kasubag.persetujuan_pemeliharaan.*')">
+                                        {{ __('Approval Pemeliharaan') }}
+                                    </x-dropdown-link>
+                                </x-slot>
+                            </x-dropdown>
+                        </div>
+
+                        <!-- Laporan -->
+                        <div class="hidden sm:flex sm:items-center sm:ms-6">
+                            <x-nav-link :href="route('kasubag.laporan.index')" :active="request()->routeIs('kasubag.laporan.*')">
+                                {{ __('Laporan') }}
+                            </x-nav-link>
+                        </div>
                     @elseif ($role === 'pegawai')
                     <div class="hidden sm:flex sm:items-center sm:ms-6">
                         <x-nav-link :href="route('pegawai.katalog_aset.index')" :active="request()->routeIs('pegawai.katalog_aset.*')">
