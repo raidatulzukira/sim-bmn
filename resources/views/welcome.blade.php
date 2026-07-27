@@ -96,10 +96,7 @@
                         @auth
                             <a href="{{ url('/dashboard') }}" class="px-6 py-2.5 bg-blue-600 text-white font-semibold rounded-full hover:bg-blue-700 transition-all shadow-md hover:shadow-blue-600/30 hover:-translate-y-0.5">Dashboard</a>
                         @else
-                            <a href="{{ route('login') }}" class="px-5 py-2 text-blue-600 font-semibold hover:text-blue-700 transition-colors">Masuk</a>
-                            @if (Route::has('register'))
-                                <a href="{{ route('register') }}" class="px-6 py-2.5 bg-gradient-to-r from-yellow-400 to-yellow-500 text-yellow-950 font-bold rounded-full hover:from-yellow-500 hover:to-yellow-600 transition-all shadow-md hover:shadow-yellow-500/30 hover:-translate-y-0.5 hidden sm:inline-block">Daftar Akun</a>
-                            @endif
+                            <button onclick="openLoginModal()" class="px-6 py-2.5 bg-blue-600 text-white font-semibold rounded-full hover:bg-blue-700 transition-all shadow-md hover:shadow-blue-600/30 hover:-translate-y-0.5">Masuk Aplikasi</button>
                         @endauth
                     @endif
                 </div>
@@ -140,10 +137,10 @@
                                     <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                                 </a>
                             @else
-                                <a href="{{ route('login') }}" class="group px-8 py-4 bg-blue-600 text-white font-bold rounded-full hover:bg-blue-700 transition-all duration-300 shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2">
+                                <button onclick="openLoginModal()" class="group px-8 py-4 bg-blue-600 text-white font-bold rounded-full hover:bg-blue-700 transition-all duration-300 shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2">
                                     Masuk ke Sistem
                                     <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                                </a>
+                                </button>
                             @endauth
                         @endif
                         <a href="#fitur" class="px-8 py-4 bg-white text-slate-700 font-bold rounded-full hover:bg-slate-50 transition-all duration-300 shadow-md border border-slate-200 flex items-center justify-center hover:-translate-y-0.5">
@@ -256,7 +253,7 @@
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Modul 1 -->
-                <div class="p-8 rounded-3xl bg-slate-100 border border-slate-100 hover:shadow-2xl hover:shadow-blue-900/10 hover:-translate-y-2 transition-all duration-300 group animate-on-scroll delay-100 relative overflow-hidden">
+                <div class="p-8 rounded-3xl bg-sky-50 border border-slate-100 hover:shadow-2xl hover:shadow-blue-900/10 hover:-translate-y-2 transition-all duration-300 group animate-on-scroll delay-100 relative overflow-hidden">
                     <div class="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-10 transition-opacity">
                         <svg class="w-24 h-24 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                     </div>
@@ -268,7 +265,7 @@
                 </div>
                 
                 <!-- Modul 2 -->
-                <div class="p-8 rounded-3xl bg-slate-100 border border-slate-100 hover:shadow-2xl hover:shadow-blue-900/10 hover:-translate-y-2 transition-all duration-300 group animate-on-scroll delay-200 relative overflow-hidden">
+                <div class="p-8 rounded-3xl bg-sky-50 border border-slate-100 hover:shadow-2xl hover:shadow-blue-900/10 hover:-translate-y-2 transition-all duration-300 group animate-on-scroll delay-200 relative overflow-hidden">
                     <div class="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-10 transition-opacity">
                         <svg class="w-24 h-24 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                     </div>
@@ -280,7 +277,7 @@
                 </div>
                 
                 <!-- Modul 3 -->
-                <div class="p-8 rounded-3xl bg-slate-100 border border-slate-100 hover:shadow-2xl hover:shadow-blue-900/10 hover:-translate-y-2 transition-all duration-300 group animate-on-scroll delay-300 relative overflow-hidden">
+                <div class="p-8 rounded-3xl bg-sky-50 border border-slate-100 hover:shadow-2xl hover:shadow-blue-900/10 hover:-translate-y-2 transition-all duration-300 group animate-on-scroll delay-300 relative overflow-hidden">
                     <div class="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-10 transition-opacity">
                         <svg class="w-24 h-24 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
                     </div>
@@ -315,7 +312,7 @@
                     <ul class="space-y-3 text-sm">
                         <li><a href="#" class="hover:text-blue-400 transition-colors flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg> Beranda</a></li>
                         <li><a href="#fitur" class="hover:text-blue-400 transition-colors flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg> Fitur Sistem</a></li>
-                        <li><a href="{{ route('login') }}" class="hover:text-blue-400 transition-colors flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg> Masuk Aplikasi</a></li>
+                        <li><button onclick="openLoginModal()" class="hover:text-blue-400 transition-colors flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg> Masuk Aplikasi</button></li>
                     </ul>
                 </div>
                 
@@ -344,6 +341,92 @@
             </div>
         </div>
     </footer>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="fixed inset-0 z-[100] flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeLoginModal()"></div>
+        
+        <!-- Modal Content -->
+        <div class="relative w-full max-w-4xl mx-4 bg-white rounded-3xl shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300" id="loginModalContent">
+            <button onclick="closeLoginModal()" class="absolute top-4 right-4 z-10 w-10 h-10 bg-white/50 hover:bg-white text-slate-800 rounded-full flex items-center justify-center transition-colors backdrop-blur-md shadow-sm">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            
+            <div class="flex flex-col md:flex-row h-full md:h-[550px]">
+                <!-- Image Side -->
+                <div class="hidden md:flex w-1/2 relative bg-sky-50 flex-col justify-between p-12 overflow-hidden" style="clip-path: polygon(0 0, 100% 0, 85% 100%, 0 100%);">
+                    <!-- Elegant Light Image -->
+                    <img src="{{ asset('storage/images/login-bg.jpg') }}" alt="Login Background" class="absolute inset-0 w-full h-full object-cover opacity-80 mix-blend-multiply grayscale">
+                    <div class="absolute inset-0 bg-gradient-to-br from-white/60 via-sky-50/70 to-blue-100/90 backdrop-blur-[px]"></div>
+                    
+                    <div class="relative z-10">
+                        <div class="flex items-center gap-3 mb-10">
+                            <img src="{{ asset('storage/images/LOGO KEMENTERIAN EPS [Converted].png') }}" alt="Kemenperin" class="h-8 object-contain">
+                            <div class="h-6 w-px bg-slate-300"></div>
+                            <img src="{{ asset('storage/images/Logo BDI Padang horizontal (NEW).png') }}" alt="BDI Padang" class="h-7 object-contain">
+                        </div>
+                        <h2 class="text-4xl font-extrabold text-slate-800 mb-5 leading-[1.1] tracking-tight">
+                            Manajemen<br><span class="text-blue-600">Aset Digital</span>
+                        </h2>
+                        <p class="text-slate-600 text-sm leading-relaxed max-w-sm font-medium">
+                            Platform terpadu untuk efisiensi pemantauan, pemeliharaan, dan pendataan Barang Milik Negara di Balai Diklat Industri Padang.
+                        </p>
+                    </div>
+
+                    <div class="relative z-10 flex items-center gap-4">
+                        <div class="w-12 h-1.5 bg-blue-600 rounded-full"></div>
+                        <div class="w-4 h-1.5 bg-blue-300 rounded-full"></div>
+                        <div class="w-2 h-1.5 bg-blue-200 rounded-full"></div>
+                    </div>
+                </div>
+                
+                <!-- Form Side -->
+                <div class="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center bg-white relative">
+                    <!-- Background blobs for form -->
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full blur-3xl opacity-60 pointer-events-none"></div>
+                    <div class="absolute bottom-0 left-0 w-32 h-32 bg-yellow-50 rounded-full blur-3xl opacity-60 pointer-events-none"></div>
+
+                    <div class="text-center mb-8 relative z-10">
+                        <h3 class="text-2xl font-bold text-slate-800 mb-2">Selamat Datang</h3>
+                        <p class="text-slate-500 text-sm">Masuk dengan akun Anda untuk melanjutkan.</p>
+                    </div>
+                    
+                    <!-- Session Status -->
+                    <div id="loginError" class="hidden mb-4 p-3 rounded-lg bg-red-50 border border-red-100 text-red-600 text-sm text-center"></div>
+
+                    <form method="POST" action="{{ route('login') }}" class="relative z-10 space-y-5">
+                        @csrf
+                        
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-slate-700 mb-1.5">Email</label>
+                            <input id="email" type="email" name="email" required autofocus
+                                class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all bg-slate-50 focus:bg-white text-slate-800 placeholder-slate-400"
+                                placeholder="nama@email.com">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between items-center mb-1.5">
+                                <label for="password" class="block text-sm font-medium text-slate-700">Password</label>
+                            </div>
+                            <input id="password" type="password" name="password" required
+                                class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all bg-slate-50 focus:bg-white text-slate-800 placeholder-slate-400"
+                                placeholder="••••••••">
+                        </div>
+
+                        <div class="flex items-center">
+                            <input id="remember_me" type="checkbox" name="remember" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                            <label for="remember_me" class="ml-2 block text-sm text-slate-600">Ingat saya</label>
+                        </div>
+
+                        <button type="submit" class="w-full py-3.5 px-4 bg-sky-700/60 hover:bg-sky-700/80 text-white font-bold rounded-xl shadow-lg shadow-blue-600/20 hover:shadow-blue-600/40 transition-all duration-300 hover:-translate-y-0.5">
+                            Masuk
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Interactive Scripts -->
     <script>
@@ -407,7 +490,60 @@
                     navbar.classList.add('shadow-sm');
                 }
             });
+
+            // Check if URL has ?login=1 or if there are validation errors
+            const urlParams = new URLSearchParams(window.location.search);
+            const hasErrors = {{ $errors->any() ? 'true' : 'false' }};
+            
+            if (urlParams.get('login') === '1' || hasErrors) {
+                openLoginModal();
+                
+                if (hasErrors) {
+                    const errorDiv = document.getElementById('loginError');
+                    errorDiv.innerHTML = {!! json_encode($errors->first()) !!};
+                    errorDiv.classList.remove('hidden');
+                }
+            }
         });
+
+        // Modal Functions
+        function openLoginModal() {
+            const modal = document.getElementById('loginModal');
+            const content = document.getElementById('loginModalContent');
+            
+            // Unhide
+            modal.classList.remove('hidden');
+            
+            // Trigger animation
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.classList.add('opacity-100');
+                content.classList.remove('scale-95');
+                content.classList.add('scale-100');
+            }, 10);
+            
+            // Prevent body scroll
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLoginModal() {
+            const modal = document.getElementById('loginModal');
+            const content = document.getElementById('loginModalContent');
+            
+            // Trigger out animation
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+            
+            // Hide after animation finishes
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+            
+            // Restore body scroll
+            document.body.style.overflow = '';
+        }
     </script>
 </body>
 </html>
