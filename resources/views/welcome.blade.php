@@ -61,13 +61,13 @@
         /* Glassmorphism utility */
         .glass {
             background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(7px);
             -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.5);
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col overflow-x-hidden">
+<body class="bg-sky-50 text-slate-800 antialiased min-h-screen flex flex-col overflow-x-hidden">
     
     <!-- Navbar -->
     <nav class="glass shadow-sm sticky top-0 z-50 transition-all duration-300" id="navbar">

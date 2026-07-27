@@ -16,7 +16,7 @@ class DummyDataSeeder extends Seeder
     {
         // 1. Create Users
         $operator = User::factory()->create([
-            'name' => 'Operator System',
+            'name' => 'Operator',
             'email' => 'operator@bdi.id',
             'password' => Hash::make('password'),
             'role' => 'operator',

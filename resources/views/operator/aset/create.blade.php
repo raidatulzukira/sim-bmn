@@ -1,124 +1,178 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Tambah Data Aset') }}
+@extends('layouts.app')
+
+@section('header')
+    <div class="flex items-center gap-4">
+        <a href="{{ route('operator.aset.index') }}" class="w-10 h-10 bg-white border border-slate-200 rounded-full flex items-center justify-center text-slate-500 hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50 transition-all duration-200 shadow-sm">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        </a>
+        <h2 class="font-bold text-2xl text-slate-800 leading-tight">
+            {{ __('Tambah Data Aset Baru') }}
         </h2>
-    </x-slot>
+    </div>
+@endsection
 
-    <div class="py-12">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                <form action="{{ route('operator.aset.store') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="mb-4">
-                            <x-input-label for="kode_barang" value="Kode Aset *" />
-                            <x-text-input id="kode_barang" name="kode_barang" type="text" class="mt-1 block w-full" :value="old('kode_barang')" required autofocus />
-                            <x-input-error :messages="$errors->get('kode_barang')" class="mt-2" />
-                        </div>
-
-                        <div class="mb-4">
-                            <x-input-label for="nama_barang" value="Nama Aset *" />
-                            <x-text-input id="nama_barang" name="nama_barang" type="text" class="mt-1 block w-full" :value="old('nama_barang')" required />
-                            <x-input-error :messages="$errors->get('nama_barang')" class="mt-2" />
-                        </div>
-
-                        <div class="mb-4">
-                            <x-input-label for="jenis_bmn" value="Jenis BMN *" />
-                            <x-text-input id="jenis_bmn" name="jenis_bmn" type="text" class="mt-1 block w-full" :value="old('jenis_bmn')" required />
-                            <x-input-error :messages="$errors->get('jenis_bmn')" class="mt-2" />
-                        </div>
-
-                        <div class="mb-4">
-                            <x-input-label for="nup" value="NUP" />
-                            <x-text-input id="nup" name="nup" type="text" class="mt-1 block w-full" :value="old('nup')" />
-                            <x-input-error :messages="$errors->get('nup')" class="mt-2" />
-                        </div>
-
-                        <div class="mb-4">
-                            <x-input-label for="merk" value="Merk" />
-                            <x-text-input id="merk" name="merk" type="text" class="mt-1 block w-full" :value="old('merk')" />
-                            <x-input-error :messages="$errors->get('merk')" class="mt-2" />
-                        </div>
-
-                        <div class="mb-4">
-                            <x-input-label for="tipe" value="Tipe" />
-                            <x-text-input id="tipe" name="tipe" type="text" class="mt-1 block w-full" :value="old('tipe')" />
-                            <x-input-error :messages="$errors->get('tipe')" class="mt-2" />
-                        </div>
-
-                        <div class="mb-4">
-                            <x-input-label for="nama" value="Nama" />
-                            <x-text-input id="nama" name="nama" type="text" class="mt-1 block w-full" :value="old('nama')" />
-                            <x-input-error :messages="$errors->get('nama')" class="mt-2" />
-                        </div>
-
-                        <div class="mb-4">
-                            <x-input-label for="tanggal_perolehan" value="Tanggal Perolehan *" />
-                            <x-text-input id="tanggal_perolehan" name="tanggal_perolehan" type="date" class="mt-1 block w-full" :value="old('tanggal_perolehan')" required />
-                            <x-input-error :messages="$errors->get('tanggal_perolehan')" class="mt-2" />
-                        </div>
-
-                        <div class="mb-4">
-                            <x-input-label for="nilai_perolehan_pertama" value="Nilai Perolehan Pertama *" />
-                            <x-text-input id="nilai_perolehan_pertama" name="nilai_perolehan_pertama" type="number" step="0.01" min="0" class="mt-1 block w-full" :value="old('nilai_perolehan_pertama')" required />
-                            <x-input-error :messages="$errors->get('nilai_perolehan_pertama')" class="mt-2" />
-                        </div>
-
-                        <div class="mb-4">
-                            <x-input-label for="ruangan_id" value="Ruangan" />
-                            <select id="ruangan_id" name="ruangan_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
-                                <option value="">-- Boleh Kosong --</option>
-                                @foreach($ruangans as $ruangan)
-                                    <option value="{{ $ruangan->id }}" {{ old('ruangan_id') == $ruangan->id ? 'selected' : '' }}>
-                                        {{ $ruangan->nama_ruangan }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <x-input-error :messages="$errors->get('ruangan_id')" class="mt-2" />
-                        </div>
+@section('content')
+    <div class="py-10 bg-slate-50 min-h-screen">
+        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm rounded-3xl border border-slate-100">
+                <div class="p-8 sm:p-12">
+                    <div class="mb-8 border-b border-slate-100 pb-6">
+                        <h3 class="text-lg font-bold text-slate-800">Informasi Aset BMN</h3>
+                        <p class="text-sm text-slate-500 mt-1">Lengkapi data di bawah ini untuk menambahkan aset Barang Milik Negara (BMN) baru.</p>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-                        <div class="mb-4">
-                            <x-input-label for="interval_servis_tahun" value="Interval Servis Rutin (Tahun)" />
-                            <x-text-input id="interval_servis_tahun" name="interval_servis_tahun" type="number" min="1" max="20" class="mt-1 block w-full" :value="old('interval_servis_tahun')" placeholder="Opsional (misal: 1 atau 5)" />
-                            <p class="text-xs text-gray-500 mt-1">Isi jika aset ini membutuhkan pemeliharaan rutin.</p>
-                            <x-input-error :messages="$errors->get('interval_servis_tahun')" class="mt-2" />
-                        </div>
+                    <form action="{{ route('operator.aset.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+                        @csrf
                         
-                        <div class="mb-4">
-                            <x-input-label for="tanggal_servis_terakhir" value="Tanggal Servis Terakhir" />
-                            <x-text-input id="tanggal_servis_terakhir" name="tanggal_servis_terakhir" type="date" class="mt-1 block w-full" :value="old('tanggal_servis_terakhir')" />
-                            <x-input-error :messages="$errors->get('tanggal_servis_terakhir')" class="mt-2" />
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Kode Barang -->
+                            <div>
+                                <label for="kode_barang" class="block text-sm font-bold text-slate-700 mb-2">Kode Barang <span class="text-red-500">*</span></label>
+                                <input id="kode_barang" name="kode_barang" type="text" class="block w-full border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200 bg-slate-50/50 focus:bg-white px-4 py-3" value="{{ old('kode_barang') }}" required autofocus placeholder="Contoh: 3050206074" />
+                                @error('kode_barang')
+                                    <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- NUP -->
+                            <div>
+                                <label for="nup" class="block text-sm font-bold text-slate-700 mb-2">Nomor Urut Pendaftaran (NUP)</label>
+                                <input id="nup" name="nup" type="text" class="block w-full border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200 bg-slate-50/50 focus:bg-white px-4 py-3" value="{{ old('nup') }}" placeholder="Contoh: 1, 2, 3..." />
+                                @error('nup')
+                                    <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Nama Barang -->
+                            <div class="md:col-span-2">
+                                <label for="nama_barang" class="block text-sm font-bold text-slate-700 mb-2">Nama Barang <span class="text-red-500">*</span></label>
+                                <input id="nama_barang" name="nama_barang" type="text" class="block w-full border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200 bg-slate-50/50 focus:bg-white px-4 py-3" value="{{ old('nama_barang') }}" required placeholder="Masukkan nama barang" />
+                                @error('nama_barang')
+                                    <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Jenis BMN -->
+                            <div>
+                                <label for="jenis_bmn" class="block text-sm font-bold text-slate-700 mb-2">Jenis BMN <span class="text-red-500">*</span></label>
+                                <input id="jenis_bmn" name="jenis_bmn" type="text" class="block w-full border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200 bg-slate-50/50 focus:bg-white px-4 py-3" value="{{ old('jenis_bmn') }}" required placeholder="Contoh: MESIN PERALATAN TIK" />
+                                @error('jenis_bmn')
+                                    <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Merk -->
+                            <div>
+                                <label for="merk" class="block text-sm font-bold text-slate-700 mb-2">Merk <span class="text-slate-400 font-normal ml-1">(Opsional)</span></label>
+                                <input id="merk" name="merk" type="text" class="block w-full border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200 bg-slate-50/50 focus:bg-white px-4 py-3" value="{{ old('merk') }}" placeholder="Masukkan merk" />
+                                @error('merk')
+                                    <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Tipe -->
+                            <div>
+                                <label for="tipe" class="block text-sm font-bold text-slate-700 mb-2">Tipe <span class="text-slate-400 font-normal ml-1">(Opsional)</span></label>
+                                <input id="tipe" name="tipe" type="text" class="block w-full border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200 bg-slate-50/50 focus:bg-white px-4 py-3" value="{{ old('tipe') }}" placeholder="Masukkan tipe" />
+                                @error('tipe')
+                                    <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            
+                            <!-- Nama Spesifik -->
+                            <div>
+                                <label for="nama" class="block text-sm font-bold text-slate-700 mb-2">Nama Spesifik <span class="text-slate-400 font-normal ml-1">(Opsional)</span></label>
+                                <input id="nama" name="nama" type="text" class="block w-full border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200 bg-slate-50/50 focus:bg-white px-4 py-3" value="{{ old('nama') }}" placeholder="Nama spesifik/alias aset" />
+                                @error('nama')
+                                    <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Tanggal Perolehan -->
+                            <div>
+                                <label for="tanggal_perolehan" class="block text-sm font-bold text-slate-700 mb-2">Tanggal Perolehan <span class="text-red-500">*</span></label>
+                                <input id="tanggal_perolehan" name="tanggal_perolehan" type="date" class="block w-full border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200 bg-slate-50/50 focus:bg-white px-4 py-3" value="{{ old('tanggal_perolehan') }}" required />
+                                @error('tanggal_perolehan')
+                                    <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Nilai Perolehan Pertama -->
+                            <div>
+                                <label for="nilai_perolehan_pertama" class="block text-sm font-bold text-slate-700 mb-2">Nilai Perolehan Pertama (Rp) <span class="text-red-500">*</span></label>
+                                <input id="nilai_perolehan_pertama" name="nilai_perolehan_pertama" type="number" step="0.01" min="0" class="block w-full border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200 bg-slate-50/50 focus:bg-white px-4 py-3" value="{{ old('nilai_perolehan_pertama') }}" required placeholder="Contoh: 15000000" />
+                                @error('nilai_perolehan_pertama')
+                                    <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Ruangan -->
+                            <div class="md:col-span-2">
+                                <label for="ruangan_id" class="block text-sm font-bold text-slate-700 mb-2">Ruangan Penyimpanan <span class="text-slate-400 font-normal ml-1">(Opsional)</span></label>
+                                <select id="ruangan_id" name="ruangan_id" class="block w-full border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200 bg-slate-50/50 focus:bg-white px-4 py-3">
+                                    <option value="">-- Pilih Ruangan (Boleh Kosong) --</option>
+                                    @foreach($ruangans as $ruangan)
+                                        <option value="{{ $ruangan->id }}" {{ old('ruangan_id') == $ruangan->id ? 'selected' : '' }}>
+                                            {{ $ruangan->nama_ruangan }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('ruangan_id')
+                                    <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
+                                @enderror
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-                        <div class="mb-4">
-                            <x-input-label for="status" value="Status *" />
-                            <select id="status" name="status" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
-                                <option value="tersedia" {{ old('status') == 'tersedia' ? 'selected' : '' }}>Tersedia</option>
-                                <option value="dipinjam" {{ old('status') == 'dipinjam' ? 'selected' : '' }}>Dipinjam</option>
-                                <option value="servis" {{ old('status') == 'servis' ? 'selected' : '' }}>Servis</option>
-                            </select>
-                            <x-input-error :messages="$errors->get('status')" class="mt-2" />
+                        <div class="mt-8 mb-4 border-b border-slate-100 pb-2">
+                            <h4 class="text-md font-bold text-slate-800">Pemeliharaan & Status</h4>
                         </div>
 
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Interval Servis -->
+                            <div>
+                                <label for="interval_servis_tahun" class="block text-sm font-bold text-slate-700 mb-2">Interval Servis Rutin <span class="text-slate-400 font-normal ml-1">(Tahun)</span></label>
+                                <input id="interval_servis_tahun" name="interval_servis_tahun" type="number" min="1" max="20" class="block w-full border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200 bg-slate-50/50 focus:bg-white px-4 py-3" value="{{ old('interval_servis_tahun') }}" placeholder="Contoh: 1 atau 5" />
+                                <p class="text-xs text-slate-500 mt-2">Isi jika aset ini membutuhkan pemeliharaan/servis rutin secara berkala.</p>
+                                @error('interval_servis_tahun')
+                                    <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            
+                            <!-- Tanggal Servis Terakhir -->
+                            <div>
+                                <label for="tanggal_servis_terakhir" class="block text-sm font-bold text-slate-700 mb-2">Tanggal Servis Terakhir</label>
+                                <input id="tanggal_servis_terakhir" name="tanggal_servis_terakhir" type="date" class="block w-full border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200 bg-slate-50/50 focus:bg-white px-4 py-3" value="{{ old('tanggal_servis_terakhir') }}" />
+                                @error('tanggal_servis_terakhir')
+                                    <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
+                                @enderror
+                            </div>
 
-                    </div>
+                            <!-- Status -->
+                            <div class="md:col-span-2">
+                                <label for="status" class="block text-sm font-bold text-slate-700 mb-2">Status Aset <span class="text-red-500">*</span></label>
+                                <select id="status" name="status" class="block w-full border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200 bg-slate-50/50 focus:bg-white px-4 py-3" required>
+                                    <option value="tersedia" {{ old('status') == 'tersedia' ? 'selected' : '' }}>Tersedia (Siap Digunakan)</option>
+                                    <option value="dipinjam" {{ old('status') == 'dipinjam' ? 'selected' : '' }}>Dipinjam</option>
+                                    <option value="servis" {{ old('status') == 'servis' ? 'selected' : '' }}>Servis (Pemeliharaan)</option>
+                                </select>
+                                @error('status')
+                                    <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
 
-                    <div class="flex items-center justify-end mt-4">
-                        <a href="{{ route('operator.aset.index') }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150 mr-3">
-                            Batal
-                        </a>
-                        <x-primary-button>
-                            Simpan
-                        </x-primary-button>
-                    </div>
-                </form>
+                        <div class="flex items-center justify-end gap-4 mt-8 pt-6 border-t border-slate-100">
+                            <a href="{{ route('operator.aset.index') }}" class="px-6 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl text-sm font-bold hover:bg-slate-50 transition-colors duration-200">
+                                Batal
+                            </a>
+                            <button type="submit" class="px-6 py-2.5 bg-sky-700 text-white rounded-xl text-sm font-bold hover:bg-sky-800 transition-all duration-200 shadow-sm hover:shadow-md flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                Simpan Aset
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</x-app-layout>
+@endsection

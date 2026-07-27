@@ -1,38 +1,62 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Tambah Ruangan') }}
+@extends('layouts.app')
+
+@section('header')
+    <div class="flex items-center gap-4">
+        <a href="{{ route('operator.ruangan.index') }}" class="w-10 h-10 bg-white border border-slate-200 rounded-full flex items-center justify-center text-slate-500 hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50 transition-all duration-200 shadow-sm">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        </a>
+        <h2 class="font-bold text-2xl text-slate-800 leading-tight">
+            {{ __('Tambah Ruangan Baru') }}
         </h2>
-    </x-slot>
+    </div>
+@endsection
 
-    <div class="py-12">
-        <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                <form action="{{ route('operator.ruangan.store') }}" method="POST">
-                    @csrf
-                    
-                    <div class="mb-4">
-                        <x-input-label for="nama_ruangan" value="Nama Ruangan *" />
-                        <x-text-input id="nama_ruangan" name="nama_ruangan" type="text" class="mt-1 block w-full" :value="old('nama_ruangan')" required autofocus />
-                        <x-input-error :messages="$errors->get('nama_ruangan')" class="mt-2" />
+@section('content')
+    <div class="py-10 bg-slate-50 min-h-screen">
+        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm rounded-3xl border border-slate-100">
+                <div class="p-8 sm:p-12">
+                    <div class="mb-8 border-b border-slate-100 pb-6 flex items-center gap-4">
+                        <div class="h-12 w-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shadow-sm border border-blue-100">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-800">Informasi Ruangan</h3>
+                            <p class="text-sm text-slate-500 mt-1">Lengkapi data di bawah ini untuk menambahkan lokasi ruangan baru.</p>
+                        </div>
                     </div>
 
-                    <div class="mb-4">
-                        <x-input-label for="keterangan" value="Keterangan (Opsional)" />
-                        <textarea id="keterangan" name="keterangan" rows="4" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">{{ old('keterangan') }}</textarea>
-                        <x-input-error :messages="$errors->get('keterangan')" class="mt-2" />
-                    </div>
+                    <form action="{{ route('operator.ruangan.store') }}" method="POST" class="space-y-6">
+                        @csrf
+                        
+                        <div>
+                            <label for="nama_ruangan" class="block text-sm font-bold text-slate-700 mb-2">Nama Ruangan <span class="text-red-500">*</span></label>
+                            <input id="nama_ruangan" name="nama_ruangan" type="text" class="block w-full border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200 bg-slate-50/50 focus:bg-white px-4 py-3" value="{{ old('nama_ruangan') }}" required autofocus placeholder="Contoh: Lab Komputer 1" />
+                            @error('nama_ruangan')
+                                <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
+                            @enderror
+                        </div>
 
-                    <div class="flex items-center justify-end mt-4">
-                        <a href="{{ route('operator.ruangan.index') }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150 mr-3">
-                            Batal
-                        </a>
-                        <x-primary-button>
-                            Simpan
-                        </x-primary-button>
-                    </div>
-                </form>
+                        <div>
+                            <label for="keterangan" class="block text-sm font-bold text-slate-700 mb-2">Keterangan <span class="text-slate-400 font-normal ml-1">(Opsional)</span></label>
+                            <textarea id="keterangan" name="keterangan" rows="4" class="block w-full border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200 bg-slate-50/50 focus:bg-white px-4 py-3" placeholder="Tambahkan deskripsi atau lokasi spesifik ruangan...">{{ old('keterangan') }}</textarea>
+                            @error('keterangan')
+                                <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="flex items-center justify-end gap-4 mt-8 pt-6 border-t border-slate-100">
+                            <a href="{{ route('operator.ruangan.index') }}" class="px-6 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl text-sm font-bold hover:bg-slate-50 transition-colors duration-200">
+                                Batal
+                            </a>
+                            <button type="submit" class="px-6 py-2.5 bg-sky-700 text-white rounded-xl text-sm font-bold hover:bg-sky-800 transition-all duration-200 shadow-sm hover:shadow-md flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                Simpan Ruangan
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</x-app-layout>
+@endsection

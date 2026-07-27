@@ -34,7 +34,8 @@ class AsetController extends Controller
             ->when($status, function ($query, $status) {
                 return $query->where('status', $status);
             })
-            ->latest()
+            ->orderBy('tanggal_perolehan', 'desc')
+            ->orderBy('id', 'desc')
             ->paginate(10)
             ->withQueryString();
 
