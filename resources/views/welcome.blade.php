@@ -181,14 +181,14 @@
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
                                         </div>
                                         <p class="text-xs text-slate-500 font-medium mb-1">Total Aset Tercatat</p>
-                                        <p class="text-2xl font-black text-slate-800">4,521</p>
+                                        <p class="text-2xl font-black text-slate-800">{{ number_format($totalAset, 0, ',', '.') }}</p>
                                     </div>
                                     <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 group hover:border-green-300 transition-colors">
                                         <div class="w-8 h-8 rounded-lg bg-green-50 text-green-600 flex items-center justify-center mb-3">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                         </div>
-                                        <p class="text-xs text-slate-500 font-medium mb-1">Kondisi Baik</p>
-                                        <p class="text-2xl font-black text-slate-800">4,198</p>
+                                        <p class="text-xs text-slate-500 font-medium mb-1">Total Aset Tersedia</p>
+                                        <p class="text-2xl font-black text-slate-800">{{ number_format($asetBaik, 0, ',', '.') }}</p>
                                     </div>
                                 </div>
                                 
@@ -200,10 +200,10 @@
                                     <p class="text-xs font-bold text-slate-700 mb-3 mt-1">Status Pemeliharaan Bulan Ini</p>
                                     <div class="space-y-3">
                                         <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-                                            <div class="h-full bg-green-500 w-[60%]"></div>
+                                            <div class="h-full bg-green-500" style="width: {{ $persentasePemeliharaan }}%"></div>
                                         </div>
                                         <div class="flex justify-between text-[10px] text-slate-500 font-medium">
-                                            <span>Selesai (60%)</span>
+                                            <span>Selesai ({{ $persentasePemeliharaan }}%)</span>
                                             <span>Target: 100%</span>
                                         </div>
                                     </div>
@@ -223,19 +223,19 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-blue-500/50">
                 <div class="animate-on-scroll">
-                    <p class="text-4xl md:text-5xl font-black text-white mb-2 counter" data-target="4521">0</p>
+                    <p class="text-4xl md:text-5xl font-black text-white mb-2 counter" data-target="{{ $totalAset }}">0</p>
                     <p class="text-blue-200 font-medium text-sm md:text-base">Total Aset BMN</p>
                 </div>
                 <div class="animate-on-scroll delay-100">
-                    <p class="text-4xl md:text-5xl font-black text-white mb-2 counter" data-target="150">0</p>
+                    <p class="text-4xl md:text-5xl font-black text-white mb-2 counter" data-target="{{ $totalRuangan }}">0</p>
                     <p class="text-blue-200 font-medium text-sm md:text-base">Ruangan/Lokasi</p>
                 </div>
                 <div class="animate-on-scroll delay-200">
-                    <p class="text-4xl md:text-5xl font-black text-white mb-2 counter" data-target="86">0</p>
+                    <p class="text-4xl md:text-5xl font-black text-white mb-2 counter" data-target="{{ $peminjamanAktif }}">0</p>
                     <p class="text-blue-200 font-medium text-sm md:text-base">Peminjaman Aktif</p>
                 </div>
                 <div class="animate-on-scroll delay-300">
-                    <p class="text-4xl md:text-5xl font-black text-white mb-2 counter" data-target="12">0</p>
+                    <p class="text-4xl md:text-5xl font-black text-white mb-2 counter" data-target="{{ $sedangDipelihara }}">0</p>
                     <p class="text-blue-200 font-medium text-sm md:text-base">Sedang Dipelihara</p>
                 </div>
             </div>
@@ -460,16 +460,19 @@
             // 2. Animated Counter function
             function startCounters(container) {
                 const counters = container.querySelectorAll('.counter');
-                const speed = 200; // lower is slower
+                const speed = 100; // lower is slower
 
                 counters.forEach(counter => {
-                    const updateCount = () => {
-                        const target = +counter.getAttribute('data-target');
-                        const count = +counter.innerText.replace(/,/g, '');
-                        const inc = target / speed;
+                    const target = +counter.getAttribute('data-target');
+                    const inc = target / speed;
+                    let count = 0;
 
+                    const updateCount = () => {
                         if (count < target) {
-                            counter.innerText = Math.ceil(count + inc).toLocaleString('id-ID');
+                            count += inc;
+                            // Ensure we don't overshoot
+                            if (count > target) count = target;
+                            counter.innerText = Math.ceil(count).toLocaleString('id-ID');
                             setTimeout(updateCount, 15);
                         } else {
                             counter.innerText = target.toLocaleString('id-ID');

@@ -4,7 +4,31 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    $totalAset = \App\Models\AsetBmn::count();
+    $totalRuangan = \App\Models\Ruangan::count();
+    $peminjamanAktif = \App\Models\Peminjaman::whereIn('status', ['pending', 'disetujui', 'proses'])->count();
+    $sedangDipelihara = \App\Models\Pemeliharaan::whereIn('status', ['pending', 'disetujui', 'proses'])->count();
+
+    // Stats for Dashboard Preview
+    $asetBaik = \App\Models\AsetBmn::where('status', 'tersedia')->count();
+    
+    // Status Pemeliharaan Bulan Ini (exclude ditolak)
+    $pemeliharaanBulanIni = \App\Models\Pemeliharaan::whereMonth('tanggal_pengajuan', date('m'))
+        ->whereYear('tanggal_pengajuan', date('Y'))
+        ->where('status', '!=', 'ditolak')
+        ->count();
+        
+    $pemeliharaanSelesaiBulanIni = \App\Models\Pemeliharaan::whereMonth('tanggal_pengajuan', date('m'))
+        ->whereYear('tanggal_pengajuan', date('Y'))
+        ->where('status', 'selesai')
+        ->count();
+        
+    $persentasePemeliharaan = $pemeliharaanBulanIni > 0 ? round(($pemeliharaanSelesaiBulanIni / $pemeliharaanBulanIni) * 100) : 0;
+
+    return view('welcome', compact(
+        'totalAset', 'totalRuangan', 'peminjamanAktif', 'sedangDipelihara',
+        'asetBaik', 'persentasePemeliharaan'
+    ));
 });
 
 // Fallback dashboard route to redirect to correct role dashboard
