@@ -66,7 +66,10 @@
                                             {{ $rawat->jenis === 'situasional' ? $rawat->pelapor->name : 'Operator' }}
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-left text-sm text-slate-500 font-medium">{{ $rawat->tanggal_pengajuan->format('d M Y') }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-left">
+                                        <p class="text-sm text-slate-600 font-medium">{{ $rawat->tanggal_pengajuan->format('d M Y') }}</p>
+                                        <p class="text-xs text-slate-400 mt-0.5">{{ $rawat->tanggal_pengajuan->format('H:i') }} WIB</p>
+                                    </td>
                                     
                                     @if($tab === 'riwayat')
                                         <td class="px-6 py-4 whitespace-nowrap text-center">

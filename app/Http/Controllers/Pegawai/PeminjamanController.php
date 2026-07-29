@@ -37,10 +37,11 @@ class PeminjamanController extends Controller
         return view('pegawai.peminjaman.index', compact('peminjamans', 'search', 'status'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
         $asets = AsetBmn::where('status', 'tersedia')->get();
-        return view('pegawai.peminjaman.create', compact('asets'));
+        $selectedAset = $request->query('aset_id');
+        return view('pegawai.peminjaman.create', compact('asets', 'selectedAset'));
     }
 
     public function store(StorePeminjamanRequest $request)

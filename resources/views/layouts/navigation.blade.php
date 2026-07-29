@@ -10,14 +10,15 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route($dashboardRoute) }}" class="flex items-center gap-4">
-                        <div class="flex items-center gap-4 border-r border-slate-200 pr-5">
-                            <img src="{{ asset('storage/images/LOGO KEMENTERIAN EPS [Converted].png') }}" alt="Kemenperin" class="h-11 object-contain">
-                        <div class="h-8 w-px bg-slate-300"></div>
-                        <img src="{{ asset('storage/images/Logo BDI Padang horizontal (NEW).png') }}" alt="BDI Padang" class="h-10 object-contain">
+                    <a href="{{ route($dashboardRoute) }}" class="flex items-center gap-4 hover:opacity-90 transition-opacity">
+                        <div class="flex items-center gap-3 border-r border-slate-200 pr-4">
+                            <img src="{{ asset('storage/images/LOGO KEMENTERIAN EPS [Converted].png') }}" alt="Kemenperin" class="h-9 object-contain">
+                            <div class="h-6 w-px bg-slate-300"></div>
+                            <img src="{{ asset('storage/images/Logo BDI Padang horizontal (NEW).png') }}" alt="BDI Padang" class="h-8 object-contain">
                         </div>
-                        <div class="hidden sm:flex flex-col pl-1">
-                            <span class="font-extrabold text-xl text-slate-900 tracking-tight leading-none">SIM <span class="text-blue-600">BMN</span></span>
+                        <div class="hidden sm:flex flex-col">
+                            <span class="font-black text-lg text-slate-900 tracking-tight leading-none">SIM <span class="bg-clip-text text-transparent bg-gradient-to-r from-sky-500 to-blue-600">BMN</span></span>
+                            <span class="text-[10px] text-slate-500 tracking-widest uppercase font-bold">Balai Diklat Industri</span>
                         </div>
                     </a>
                 </div>

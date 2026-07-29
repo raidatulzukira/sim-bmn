@@ -32,11 +32,20 @@ class WhatsappService
             }
 
             try {
-                // Menembak API WAHA Gateway (pastikan WAHA jalan di port 3000)
-                $response = \Illuminate\Support\Facades\Http::post('http://localhost:3000/api/sendText', [
+                // Konfigurasi dari .env
+                $baseUrl = env('WAHA_BASE_URL', 'http://localhost:3000');
+                $apiKey = env('WAHA_API_KEY', '');
+                $sessionName = env('WAHA_SESSION', 'sim-bmn');
+
+                // Menembak API WAHA Gateway dengan Autentikasi
+                $response = \Illuminate\Support\Facades\Http::withHeaders([
+                    'Accept' => 'application/json',
+                    'X-Api-Key' => $apiKey,
+                    'Authorization' => 'Bearer ' . $apiKey
+                ])->post($baseUrl . '/api/sendText', [
                     'chatId' => $noWaFormatted . '@c.us',
                     'text' => $pesan,
-                    'session' => 'default' // Nama sesi WAHA Anda
+                    'session' => $sessionName
                 ]);
                 
                 if ($response->successful()) {

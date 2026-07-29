@@ -164,9 +164,9 @@
                             <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         </div>
                         <div>
-                            <p class="text-slate-800 text-xs font-black">Peminjaman Disetujui</p>
-                            <p class="text-slate-500 text-[10px] mt-0.5 font-medium">Laptop ASUS - Ruang Rapat</p>
-                            <p class="text-emerald-600 text-[10px] mt-0.5 font-bold">Baru saja</p>
+                            <p class="text-slate-800 text-xs font-black">Verifikasi Cepat</p>
+                            <p class="text-slate-500 text-[10px] mt-0.5 font-medium">Persetujuan terintegrasi</p>
+                            <p class="text-emerald-600 text-[10px] mt-0.5 font-bold">Sistematis</p>
                         </div>
                     </div>
                 </div>

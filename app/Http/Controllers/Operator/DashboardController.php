@@ -25,14 +25,14 @@ class DashboardController extends Controller
         // 4. Notifikasi/alert: daftar peminjaman yang mendekati tanggal_kembali_rencana (H-2)
         // dan belum berstatus 'dikembalikan'
         $alertPeminjaman = Peminjaman::with(['asetBmn', 'user'])
-            ->where('status', '!=', 'dikembalikan')
+            ->where('status', 'dipinjam')
             ->whereNotNull('tanggal_kembali_rencana')
             ->whereDate('tanggal_kembali_rencana', '<=', Carbon::now()->addDays(2))
             ->get();
 
-        // 5. Notifikasi/alert: daftar pemeliharaan rutin yang statusnya pending atau proses
+        // 5. Notifikasi/alert: daftar pemeliharaan rutin yang statusnya pending, disetujui, atau proses
         $alertPemeliharaan = Pemeliharaan::with(['asetBmn', 'pelapor'])
-            ->whereIn('status', ['pending', 'proses'])
+            ->whereIn('status', ['pending', 'disetujui', 'proses'])
             ->get();
 
         // 6. Notifikasi: daftar aset yang perlu servis rutin (H-30 atau terlewat)

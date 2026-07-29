@@ -63,10 +63,10 @@ class PersetujuanPeminjamanController extends Controller
             $peminjaman->load(['asetBmn', 'user']);
 
             // Kirim WA
-            $pesan = "Pengajuan peminjaman aset {$peminjaman->asetBmn->nama_aset} Anda telah DISETUJUI oleh Kasubag TU. Silakan temui Operator untuk serah terima barang.";
-            if ($peminjaman->user->no_wa) {
-                $this->waService->kirimPesan($peminjaman->user->no_wa, $pesan, $peminjaman->user_id, 'peminjaman', $peminjaman->id);
-            }
+            // $pesan = "Pengajuan peminjaman aset {$peminjaman->asetBmn->nama_aset} Anda telah DISETUJUI oleh Kasubag TU. Silakan temui Operator untuk serah terima barang.";
+            // if ($peminjaman->user->no_wa) {
+            //     $this->waService->kirimPesan($peminjaman->user->no_wa, $pesan, $peminjaman->user_id, 'peminjaman', $peminjaman->id);
+            // }
 
             return redirect()->route('kasubag.persetujuan.index')->with('success', 'Pengajuan berhasil disetujui.');
         } catch (\Exception $e) {
@@ -98,10 +98,10 @@ class PersetujuanPeminjamanController extends Controller
             $peminjaman->load(['asetBmn', 'user']);
 
             // Kirim WA
-            $pesan = "Pengajuan peminjaman aset {$peminjaman->asetBmn->nama_aset} Anda telah DITOLAK. Alasan: {$peminjaman->catatan_penolakan}";
-            if ($peminjaman->user->no_wa) {
-                $this->waService->kirimPesan($peminjaman->user->no_wa, $pesan, $peminjaman->user_id, 'peminjaman', $peminjaman->id);
-            }
+            // $pesan = "Pengajuan peminjaman aset {$peminjaman->asetBmn->nama_aset} Anda telah DITOLAK. Alasan: {$peminjaman->catatan_penolakan}";
+            // if ($peminjaman->user->no_wa) {
+            //     $this->waService->kirimPesan($peminjaman->user->no_wa, $pesan, $peminjaman->user_id, 'peminjaman', $peminjaman->id);
+            // }
 
             return redirect()->route('kasubag.persetujuan.index')->with('success', 'Pengajuan berhasil ditolak.');
         } catch (\Exception $e) {

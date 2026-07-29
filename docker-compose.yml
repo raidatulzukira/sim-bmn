@@ -1,6 +1,12 @@
 services:
   waha:
-    image: devlikeapro/waha # Sesuaikan jika kamu menggunakan versi waha-plus
+    image: devlikeapro/waha
     ports:
       - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      - WHATSAPP_DEFAULT_ENGINE=NOWEB
+    volumes:
+      - ./.waha:/app/.waha
     restart: unless-stopped

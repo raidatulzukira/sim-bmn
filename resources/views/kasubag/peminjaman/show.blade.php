@@ -51,17 +51,20 @@
                         </div>
                     </div>
 
-                    <!-- Details Grid -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                        <!-- Pegawai Info -->
-                        <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
-                            <h4 class="text-sm font-extrabold text-indigo-600 uppercase tracking-wider mb-4 flex items-center gap-2">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                                Informasi Pegawai
-                            </h4>
-                            <div class="space-y-4">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-12 h-12 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-xl">
+                    <!-- Main Content Layout -->
+                    <div class="max-w-4xl mx-auto mb-8">
+                        
+                        <!-- 4-Card Admin Grid -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 items-stretch">
+                            
+                            <!-- 1. Informasi Peminjam -->
+                            <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 h-full flex flex-col">
+                                <h4 class="text-sm font-extrabold text-indigo-600 uppercase tracking-wider mb-4 flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                    Informasi Peminjam
+                                </h4>
+                                <div class="flex items-center gap-4 mb-4">
+                                    <div class="w-12 h-12 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-xl shrink-0">
                                         {{ strtoupper(substr($peminjaman->user->name, 0, 1)) }}
                                     </div>
                                     <div>
@@ -69,76 +72,125 @@
                                         <p class="text-base font-bold text-slate-900">{{ $peminjaman->user->name }}</p>
                                     </div>
                                 </div>
-                                <div class="grid grid-cols-2 gap-4 pt-2">
+                                <div class="mt-auto grid grid-cols-2 gap-4">
                                     <div>
                                         <p class="text-xs text-slate-500 font-medium mb-1">NIP</p>
-                                        <p class="text-sm font-bold text-slate-800">{{ $peminjaman->user->nip ?? '-' }}</p>
+                                        <p class="text-sm font-bold text-slate-900">{{ $peminjaman->user->nip ?? '-' }}</p>
                                     </div>
                                     <div>
-                                        <p class="text-xs text-slate-500 font-medium mb-1">Kontak (WA)</p>
-                                        <p class="text-sm font-bold text-slate-800">{{ $peminjaman->user->no_wa ?? '-' }}</p>
+                                        <p class="text-xs text-slate-500 font-medium mb-1">Kontak WhatsApp</p>
+                                        <p class="text-sm font-bold text-slate-900">{{ $peminjaman->user->no_wa ?? '-' }}</p>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Waktu Info -->
-                        <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
-                            <h4 class="text-sm font-extrabold text-indigo-600 uppercase tracking-wider mb-4 flex items-center gap-2">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                Informasi Waktu
-                            </h4>
-                            <div class="space-y-5">
-                                <div>
-                                    <p class="text-xs text-slate-500 font-medium mb-1">Tanggal Pengajuan</p>
-                                    <p class="text-sm font-bold text-slate-900 bg-white px-3 py-2 rounded-lg border border-slate-200 inline-block">{{ $peminjaman->created_at->format('d F Y, H:i') }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-xs text-slate-500 font-medium mb-1">Rencana Pinjam - Kembali</p>
-                                    <div class="flex items-center gap-2 text-sm font-bold text-slate-900">
-                                        <span class="bg-white px-3 py-2 rounded-lg border border-slate-200">{{ $peminjaman->estimasi_waktu_pinjam->format('d F Y') }}</span>
-                                        <span class="text-slate-400">s/d</span>
-                                        <span class="bg-white px-3 py-2 rounded-lg border border-slate-200">{{ $peminjaman->tanggal_kembali_rencana->format('d F Y') }}</span>
+                            <!-- 2. Detail Waktu -->
+                            <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 h-full flex flex-col">
+                                <h4 class="text-sm font-extrabold text-indigo-600 uppercase tracking-wider mb-4 flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    Detail Waktu
+                                </h4>
+                                <div class="space-y-4">
+                                    <div>
+                                        <p class="text-xs text-slate-500 font-medium mb-1">Tanggal Pengajuan</p>
+                                        <p class="text-sm font-bold text-slate-900 bg-white px-3 py-2 rounded-lg border border-slate-200 inline-block">{{ $peminjaman->created_at->format('d F Y, H:i') }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-slate-500 font-medium mb-1">Rencana Pinjam - Kembali</p>
+                                        <p class="text-sm font-bold text-slate-900 bg-white px-3 py-2 rounded-lg border border-slate-200 inline-block">
+                                            {{ $peminjaman->estimasi_waktu_pinjam->format('d M Y') }} <span class="text-slate-400 mx-1">s/d</span> {{ $peminjaman->tanggal_kembali_rencana->format('d M Y') }}
+                                        </p>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <!-- Keperluan -->
-                    <div class="mb-8 bg-indigo-50/30 p-6 rounded-2xl border border-indigo-100">
-                        <h4 class="text-sm font-extrabold text-indigo-600 uppercase tracking-wider mb-3 flex items-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                            Keperluan Peminjaman
-                        </h4>
-                        <p class="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap font-medium">{{ $peminjaman->keperluan }}</p>
-                    </div>
-
-                    <!-- Dokumentasi -->
-                    @if($peminjaman->foto_serah_terima || $peminjaman->foto_pengembalian)
-                        <div class="mb-8">
-                            <h4 class="text-sm font-extrabold text-indigo-600 uppercase tracking-wider mb-4 flex items-center gap-2">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                Dokumentasi Aset
-                            </h4>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                @if($peminjaman->foto_serah_terima)
-                                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                        <h5 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Bukti Serah Terima</h5>
-                                        <img src="{{ asset('storage/' . $peminjaman->foto_serah_terima) }}" class="w-full h-48 object-cover rounded-lg shadow-sm border border-slate-200" alt="Bukti Serah Terima">
-                                        <p class="mt-3 text-xs font-medium text-slate-500 flex items-center gap-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Diserahkan: {{ $peminjaman->tanggal_pinjam?->format('d F Y H:i') }}</p>
+                            <!-- 3. Keputusan TU -->
+                            <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 h-full flex flex-col">
+                                <h4 class="text-sm font-extrabold text-indigo-600 uppercase tracking-wider mb-4 flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    Keputusan Anda
+                                </h4>
+                                @if($peminjaman->status === 'pending')
+                                    <div class="flex items-center gap-3 text-yellow-600 bg-white p-4 rounded-xl border border-slate-100">
+                                        <svg class="w-5 h-5 animate-spin shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                        <span class="text-sm font-bold">Menunggu persetujuan Anda.</span>
                                     </div>
-                                @endif
-                                @if($peminjaman->foto_pengembalian)
-                                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                        <h5 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Bukti Pengembalian</h5>
-                                        <img src="{{ asset('storage/' . $peminjaman->foto_pengembalian) }}" class="w-full h-48 object-cover rounded-lg shadow-sm border border-slate-200" alt="Bukti Pengembalian">
-                                        <p class="mt-3 text-xs font-medium text-slate-500 flex items-center gap-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Dikembalikan: {{ $peminjaman->tanggal_kembali_aktual?->format('d F Y H:i') }}</p>
+                                @else
+                                    <div class="space-y-4">
+                                        <div class="bg-white p-4 rounded-xl border border-slate-100 flex items-center gap-4">
+                                            <div class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-lg shrink-0">
+                                                {{ strtoupper(substr($peminjaman->approver->name ?? 'K', 0, 1)) }}
+                                            </div>
+                                            <div>
+                                                <p class="text-xs text-slate-500 font-medium mb-0.5">Diputuskan Oleh</p>
+                                                <p class="text-sm font-bold text-slate-900">{{ $peminjaman->approver->name ?? 'Anda (Kasubag TU)' }}</p>
+                                            </div>
+                                        </div>
+                                        @if($peminjaman->status === 'ditolak')
+                                            <div class="bg-red-50 border-l-4 border-red-500 p-3 rounded-r-lg max-w-full">
+                                                <p class="text-xs text-red-500 font-bold mb-1">Alasan Penolakan</p>
+                                                <p class="text-sm font-medium text-red-700">{{ $peminjaman->catatan_penolakan }}</p>
+                                            </div>
+                                        @endif
                                     </div>
                                 @endif
                             </div>
+
+                            <!-- 4. Keperluan Peminjaman -->
+                            <div class="bg-indigo-50/30 p-6 rounded-2xl border border-indigo-100 h-full flex flex-col">
+                                <h4 class="text-sm font-extrabold text-indigo-600 uppercase tracking-wider mb-4 flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                    Keperluan Peminjaman
+                                </h4>
+                                <div class="bg-white/50 p-4 rounded-xl border border-indigo-50 grow">
+                                    <p class="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap font-medium">{{ $peminjaman->keperluan }}</p>
+                                </div>
+                            </div>
                         </div>
-                    @endif
+
+                        <!-- 2-Column Documentation Grid -->
+                        @if($peminjaman->foto_serah_terima || $peminjaman->foto_pengembalian)
+                            <div class="pt-2">
+                                <h4 class="text-sm font-extrabold text-slate-800 uppercase tracking-wider mb-5 flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    Dokumentasi Fisik
+                                </h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+                                    
+                                    @if($peminjaman->foto_serah_terima)
+                                        <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200">
+                                            <h5 class="text-sm font-extrabold text-emerald-600 uppercase tracking-wider mb-4 flex items-center gap-2 justify-center">
+                                                <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
+                                                Bukti Serah Terima
+                                            </h5>
+                                            <div class="bg-white p-3 rounded-xl border border-slate-100 mb-3 text-center">
+                                                <img src="{{ asset('storage/' . $peminjaman->foto_serah_terima) }}" alt="Foto Serah Terima" class="w-full max-w-[200px] h-auto mx-auto rounded-lg shadow-sm">
+                                            </div>
+                                            <div class="bg-emerald-50 text-emerald-700 p-3 rounded-xl text-center text-xs font-bold border border-emerald-100">
+                                                Diserahkan: {{ $peminjaman->tanggal_pinjam->format('d M Y, H:i') }}
+                                            </div>
+                                        </div>
+                                    @endif
+
+                                    @if($peminjaman->foto_pengembalian)
+                                        <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200">
+                                            <h5 class="text-sm font-extrabold text-blue-600 uppercase tracking-wider mb-4 flex items-center gap-2 justify-center">
+                                                <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
+                                                Bukti Pengembalian
+                                            </h5>
+                                            <div class="bg-white p-3 rounded-xl border border-slate-100 mb-3 text-center">
+                                                <img src="{{ asset('storage/' . $peminjaman->foto_pengembalian) }}" alt="Foto Pengembalian" class="w-full max-w-[200px] h-auto mx-auto rounded-lg shadow-sm">
+                                            </div>
+                                            <div class="bg-blue-50 text-blue-700 p-3 rounded-xl text-center text-xs font-bold border border-blue-100">
+                                                Dikembalikan: {{ $peminjaman->tanggal_kembali_aktual->format('d M Y, H:i') }}
+                                            </div>
+                                        </div>
+                                    @endif
+
+                                </div>
+                            </div>
+                        @endif
+                    </div>
 
                     <!-- Action Area -->
                     @if($peminjaman->status === 'pending')
@@ -197,27 +249,7 @@
                                 </div>
                             </div>
                         </div>
-                    @else
-                        <!-- Note/Status Block -->
-                        @if($peminjaman->status === 'ditolak')
-                            <div class="bg-red-50 border-l-4 border-red-500 p-5 mt-8 rounded-r-xl">
-                                <h4 class="text-sm font-extrabold text-red-800 mb-2 flex items-center gap-2">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                    Catatan Penolakan Anda:
-                                </h4>
-                                <p class="text-sm text-red-700 font-medium">{{ $peminjaman->catatan_penolakan }}</p>
-                            </div>
-                        @else
-                            <div class="bg-emerald-50 border-l-4 border-emerald-500 p-5 mt-8 rounded-r-xl">
-                                <h4 class="text-sm font-extrabold text-emerald-800 mb-1 flex items-center gap-2">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                    Disetujui
-                                </h4>
-                                <p class="text-sm text-emerald-700 font-medium ml-7">
-                                    Pengajuan ini disetujui pada <span class="font-bold">{{ $peminjaman->updated_at->format('d F Y H:i') }}</span>.
-                                </p>
-                            </div>
-                        @endif
+
                     @endif
 
                 </div>

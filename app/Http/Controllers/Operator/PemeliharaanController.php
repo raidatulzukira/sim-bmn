@@ -134,10 +134,10 @@ class PemeliharaanController extends Controller
 
             // WA Notification jika itu situasional
             $pemeliharaan->refresh();
-            if ($pemeliharaan->jenis === 'situasional' && $pemeliharaan->pelapor && $pemeliharaan->pelapor->no_wa) {
-                $pesan = "Kabar baik! Perbaikan aset {$pemeliharaan->asetBmn->nama_aset} yang Anda laporkan telah SELESAI. Aset kini sudah dapat digunakan kembali.";
-                $this->waService->kirimPesan($pemeliharaan->pelapor->no_wa, $pesan, $pemeliharaan->dilaporkan_oleh, 'pemeliharaan', $pemeliharaan->id);
-            }
+            // if ($pemeliharaan->jenis === 'situasional' && $pemeliharaan->pelapor && $pemeliharaan->pelapor->no_wa) {
+            //     $pesan = "Kabar baik! Perbaikan aset {$pemeliharaan->asetBmn->nama_aset} yang Anda laporkan telah SELESAI. Aset kini sudah dapat digunakan kembali.";
+            //     $this->waService->kirimPesan($pemeliharaan->pelapor->no_wa, $pesan, $pemeliharaan->dilaporkan_oleh, 'pemeliharaan', $pemeliharaan->id);
+            // }
 
             return redirect()->route('operator.pemeliharaan.show', $pemeliharaan->id)
                 ->with('success', 'Pemeliharaan berhasil diselesaikan. Status aset telah kembali menjadi "Tersedia".');

@@ -61,10 +61,10 @@ class PeminjamanController extends Controller
 
             // WA Notification
             $peminjaman->refresh();
-            $pesan = "Aset {$peminjaman->asetBmn->nama_aset} telah diserahkan kepada Anda. Harap kembalikan pada {$peminjaman->tanggal_kembali_rencana->format('d M Y')}.";
-            if ($peminjaman->user->no_wa) {
-                $this->waService->kirimPesan($peminjaman->user->no_wa, $pesan, $peminjaman->user_id, 'peminjaman', $peminjaman->id);
-            }
+            // $pesan = "Aset {$peminjaman->asetBmn->nama_aset} telah diserahkan kepada Anda. Harap kembalikan pada {$peminjaman->tanggal_kembali_rencana->format('d M Y')}.";
+            // if ($peminjaman->user->no_wa) {
+            //     $this->waService->kirimPesan($peminjaman->user->no_wa, $pesan, $peminjaman->user_id, 'peminjaman', $peminjaman->id);
+            // }
 
             return redirect()->route('operator.peminjaman.show', $peminjaman->id)->with('success', 'Proses serah terima berhasil dicatat.');
         } catch (\Exception $e) {
@@ -99,11 +99,11 @@ class PeminjamanController extends Controller
             });
 
             // WA Notification
-            $peminjaman->refresh();
-            $pesan = "Pengembalian aset {$peminjaman->asetBmn->nama_barang} telah kami konfirmasi beserta dokumentasinya. Terima kasih!";
-            if ($peminjaman->user->no_wa) {
-                $this->waService->kirimPesan($peminjaman->user->no_wa, $pesan, $peminjaman->user_id, 'peminjaman', $peminjaman->id);
-            }
+            // $peminjaman->refresh();
+            // $pesan = "Pengembalian aset {$peminjaman->asetBmn->nama_barang} telah kami konfirmasi beserta dokumentasinya. Terima kasih!";
+            // if ($peminjaman->user->no_wa) {
+            //     $this->waService->kirimPesan($peminjaman->user->no_wa, $pesan, $peminjaman->user_id, 'peminjaman', $peminjaman->id);
+            // }
 
             return redirect()->route('operator.peminjaman.show', $peminjaman->id)->with('success', 'Peminjaman berhasil dikonfirmasi selesai beserta dokumentasi fotonya.');
         } catch (\Exception $e) {
