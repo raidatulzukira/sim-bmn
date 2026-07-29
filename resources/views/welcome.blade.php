@@ -3,550 +3,127 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SIM BMN - Balai Diklat Industri Padang</title>
+    <title>SIM BMN - Sistem Informasi Manajemen Barang Milik Negara | Balai Diklat Industri Padang</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800&display=swap" rel="stylesheet" />
-
-    <!-- Scripts / Styles -->
-    @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @else
-        <!-- Fallback Tailwind CSS if Vite isn't running properly -->
-        <script src="https://cdn.tailwindcss.com"></script>
-    @endif
+    <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700,800,900" rel="stylesheet" />
     
+    <!-- Scripts & Styles -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        /* ===== BASE & TOKENS ===== */
+        :root { 
+            --glass-bg: rgba(255, 255, 255, 0.75); 
+            --glass-border: rgba(255, 255, 255, 0.6); 
+            --theme-light: #f8fafc;
+            --theme-dark: #0f172a;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: var(--theme-light); }
         
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-
-        /* Animation Classes */
-        .animate-on-scroll {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .animate-on-scroll.is-visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .delay-100 { transition-delay: 100ms; }
-        .delay-200 { transition-delay: 200ms; }
-        .delay-300 { transition-delay: 300ms; }
-        .delay-400 { transition-delay: 400ms; }
-
-        /* Blob Animation for Hero */
-        @keyframes blob {
-            0% { transform: translate(0px, 0px) scale(1); }
-            33% { transform: translate(30px, -50px) scale(1.1); }
-            66% { transform: translate(-20px, 20px) scale(0.9); }
-            100% { transform: translate(0px, 0px) scale(1); }
-        }
-        .animate-blob {
-            animation: blob 7s infinite;
-        }
-        .animation-delay-2000 {
-            animation-delay: 2s;
-        }
-        .animation-delay-4000 {
-            animation-delay: 4s;
-        }
+        /* ===== UTILITIES ===== */
+        .grad-blue { background: linear-gradient(135deg, #0284c7, #2563eb, #0ea5e9); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
-        /* Glassmorphism utility */
-        .glass {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(7px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-        }
+        /* ===== COMPONENTS ===== */
+        .glass-card { background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--glass-border); box-shadow: 0 8px 32px rgba(15, 23, 42, 0.05); }
+        
+        /* ===== NAVBAR ===== */
+        .navbar-glass { background: transparent; border-bottom: 1px solid transparent; }
+        .navbar-scrolled { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(15, 23, 42, 0.05); box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.08); }
+        
+        /* ===== BUTTONS ===== */
+        .btn-glow { position: relative; background: linear-gradient(135deg, #0284c7, #0ea5e9); transition: all 0.3s ease; border: 1px solid rgba(255,255,255,0.2); }
+        .btn-glow::before { content: ''; position: absolute; inset: -2px; background: linear-gradient(135deg, #38bdf8, #7dd3fc); filter: blur(12px); opacity: 0; transition: opacity 0.3s ease; z-index: -1; border-radius: inherit; }
+        .btn-glow:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.4); }
+        .btn-glow:hover::before { opacity: 0.8; }
+        
+        /* ===== ANIMATIONS ===== */
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal-left { opacity: 0; transform: translateX(-40px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal-right { opacity: 0; transform: translateX(40px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal.visible, .reveal-left.visible, .reveal-right.visible { opacity: 1; transform: translate(0); }
+        
+        /* Delay Classes */
+        .d-100 { transition-delay: 100ms; } .d-200 { transition-delay: 200ms; } .d-300 { transition-delay: 300ms; } .d-400 { transition-delay: 400ms; }
+        
+        /* ===== PARTICLES ===== */
+        @keyframes float { 0% { transform: translateY(0) scale(1); opacity: 0; } 50% { opacity: 0.6; } 100% { transform: translateY(-100px) scale(1.5); opacity: 0; } }
+        .particle { position: absolute; border-radius: 50%; pointer-events: none; animation: float linear infinite; }
+        
+        /* ===== HERO MESH ===== */
+        @keyframes blob-bounce { 0%, 100% { transform: translate(0, 0) scale(1); } 25% { transform: translate(20px, -30px) scale(1.1); } 50% { transform: translate(-20px, 20px) scale(0.9); } 75% { transform: translate(30px, 30px) scale(1.05); } }
+        .mesh-blob { animation: blob-bounce 15s infinite cubic-bezier(0.4, 0, 0.2, 1); }
+        .mesh-blob-2 { animation: blob-bounce 18s infinite cubic-bezier(0.4, 0, 0.2, 1) reverse; animation-delay: -5s; }
+        .mesh-blob-3 { animation: blob-bounce 20s infinite cubic-bezier(0.4, 0, 0.2, 1); animation-delay: -10s; }
+        
+        /* ===== CARDS ===== */
+        .feature-card { transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .feature-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08); }
+        .feature-card:hover .card-icon { transform: scale(1.1) rotate(5deg); }
+        .card-icon { transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        
+        /* ===== STAT GLOW ===== */
+        @keyframes count-glow { 0%,100% { text-shadow: 0 0 10px rgba(14, 165, 233, 0.2); } 50% { text-shadow: 0 0 25px rgba(14, 165, 233, 0.5); } }
+        .stat-number { animation: count-glow 3s ease-in-out infinite; }
+        
+        /* ===== SHIMMER ===== */
+        @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+        .shimmer-line { position: relative; overflow: hidden; }
+        .shimmer-line::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); animation: shimmer 2.5s infinite; }
+        
+        /* ===== DOT GRID ===== */
+        .dot-grid { background-image: radial-gradient(circle, rgba(15,23,42,0.04) 1px, transparent 1px); background-size: 28px 28px; }
+        
+        /* ===== PING RING ===== */
+        @keyframes ping-ring { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(2.2); opacity: 0; } }
+        .ping-ring { animation: ping-ring 2s ease-out infinite; }
+        
+        /* ===== FLOAT CARD ===== */
+        @keyframes float-card { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        .float-card { animation: float-card 5s ease-in-out infinite; }
+        .float-card-2 { animation: float-card 6s ease-in-out 1.5s infinite; }
+        
+        /* ===== PROGRESS BAR ===== */
+        @keyframes progress-fill { from { width: 0%; } to { width: var(--target-width); } }
+        .progress-animated { animation: progress-fill 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; animation-play-state: paused; }
+        .progress-animated.running { animation-play-state: running; }
+        
+        /* ===== BADGE PULSE ===== */
+        @keyframes pulse-badge { 0%,100% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.3); } 50% { box-shadow: 0 0 0 8px rgba(14, 165, 233, 0); } }
+        .badge-pulse { animation: pulse-badge 2s infinite; }
+        
+        input:focus { outline: none; }
     </style>
 </head>
-<body class="bg-sky-50 text-slate-800 antialiased min-h-screen flex flex-col overflow-x-hidden">
-    
-    <!-- Navbar -->
-    <nav class="glass shadow-sm sticky top-0 z-50 transition-all duration-300" id="navbar">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-[80px] items-center">
-                <div class="flex items-center gap-4">
-                    <!-- Logos -->
-                    <div class="flex items-center gap-4 border-r border-slate-200 pr-5">
-                        <img src="{{ asset('storage/images/LOGO KEMENTERIAN EPS [Converted].png') }}" alt="Kemenperin" class="h-11 object-contain">
-                        <div class="h-8 w-px bg-slate-300"></div>
-                        <img src="{{ asset('storage/images/Logo BDI Padang horizontal (NEW).png') }}" alt="BDI Padang" class="h-10 object-contain">
-                    </div>
-                    <div class="hidden sm:flex flex-col pl-1">
-                        <span class="font-extrabold text-xl text-slate-900 tracking-tight leading-none">SIM <span class="text-blue-600">BMN</span></span>
-                    </div>
-                </div>
-                
-                <div class="hidden md:flex space-x-8">
-                    <a href="#" class="text-slate-600 hover:text-blue-600 font-medium transition-colors">Beranda</a>
-                    <a href="#fitur" class="text-slate-600 hover:text-blue-600 font-medium transition-colors">Fitur Sistem</a>
-                    <a href="#statistik" class="text-slate-600 hover:text-blue-600 font-medium transition-colors">Statistik</a>
-                </div>
-                
-                <div class="flex items-center gap-3">
-                    @if (Route::has('login'))
-                        @auth
-                            <a href="{{ url('/dashboard') }}" class="px-6 py-2.5 bg-blue-600 text-white font-semibold rounded-full hover:bg-blue-700 transition-all shadow-md hover:shadow-blue-600/30 hover:-translate-y-0.5">Dashboard</a>
-                        @else
-                            <button onclick="openLoginModal()" class="px-6 py-2.5 bg-blue-600 text-white font-semibold rounded-full hover:bg-blue-700 transition-all shadow-md hover:shadow-blue-600/30 hover:-translate-y-0.5">Masuk Aplikasi</button>
-                        @endauth
-                    @endif
-                </div>
-            </div>
-        </div>
-    </nav>
+<body class="bg-slate-50 text-slate-900 antialiased overflow-x-hidden">
 
-    <!-- Hero Section -->
-    <main class="relative pt-12 pb-20 lg:pt-20 lg:pb-28 overflow-hidden">
-        <!-- Animated Blobs Background -->
-        <div class="absolute top-0 -left-4 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-2xl opacity-70 animate-blob z-0 pointer-events-none"></div>
-        <div class="absolute top-0 -right-4 w-72 h-72 bg-yellow-200 rounded-full mix-blend-multiply filter blur-2xl opacity-70 animate-blob animation-delay-2000 z-0 pointer-events-none"></div>
-        <div class="absolute -bottom-8 left-20 w-72 h-72 bg-green-200 rounded-full mix-blend-multiply filter blur-2xl opacity-70 animate-blob animation-delay-4000 z-0 pointer-events-none"></div>
+    <!-- ======================== NAVBAR ======================== -->
+    @include('landing.navbar')
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                
-                <!-- Text Content -->
-                <div class="text-center lg:text-left animate-on-scroll">
-                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 text-blue-700 font-semibold text-sm mb-6 border border-blue-100 shadow-sm">
-                        <span class="relative flex h-2.5 w-2.5">
-                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                          <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-600"></span>
-                        </span>
-                        Sistem Informasi Manajemen Aset
-                    </div>
-                    <h1 class="text-4xl sm:text-5xl lg:text-[3.5rem] font-extrabold text-slate-900 leading-[1.15] mb-6 tracking-tight">
-                        Transformasi Digital Pengelolaan <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-blue-500">Barang Milik Negara</span>
-                    </h1>
-                    <p class="text-lg text-slate-600 mb-10 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium">
-                        Platform resmi Balai Diklat Industri Padang untuk memonitor, mencatat, dan mengelola seluruh aset negara secara akurat, terstruktur, dan real-time.
-                    </p>
-                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                        @if (Route::has('login'))
-                            @auth
-                                <a href="{{ url('/dashboard') }}" class="group px-8 py-4 bg-blue-600 text-white font-bold rounded-full hover:bg-blue-700 transition-all duration-300 shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2">
-                                    Akses Dashboard
-                                    <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                                </a>
-                            @else
-                                <button onclick="openLoginModal()" class="group px-8 py-4 bg-blue-600 text-white font-bold rounded-full hover:bg-blue-700 transition-all duration-300 shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2">
-                                    Masuk ke Sistem
-                                    <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                                </button>
-                            @endauth
-                        @endif
-                        <a href="#fitur" class="px-8 py-4 bg-white text-slate-700 font-bold rounded-full hover:bg-slate-50 transition-all duration-300 shadow-md border border-slate-200 flex items-center justify-center hover:-translate-y-0.5">
-                            Lihat Modul
-                        </a>
-                    </div>
-                </div>
+    <!-- ======================== HERO SECTION ======================== -->
+    @include('landing.hero')
 
-                <!-- Dashboard Preview Animation -->
-                <div class="relative hidden lg:block animate-on-scroll delay-200">
-                    <div class="glass border border-white/80 shadow-2xl rounded-3xl p-2 transform hover:scale-[1.01] transition-transform duration-500">
-                        <div class="bg-white rounded-[1.25rem] overflow-hidden border border-slate-100">
-                            <!-- Fake Browser Header -->
-                            <div class="bg-slate-50 px-4 py-3 border-b border-slate-100 flex items-center gap-2">
-                                <div class="w-3 h-3 rounded-full bg-red-400"></div>
-                                <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
-                                <div class="w-3 h-3 rounded-full bg-green-400"></div>
-                                <div class="mx-auto bg-white border border-slate-200 rounded-md text-[10px] px-3 py-1 text-slate-400 font-medium font-mono flex items-center gap-1">
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                                    sim-bmn.bdipadang.id
-                                </div>
-                            </div>
-                            
-                            <!-- Fake Dashboard Content -->
-                            <div class="p-6 bg-slate-50/50">
-                                <div class="flex justify-between items-end mb-6">
-                                    <div>
-                                        <h3 class="font-bold text-slate-800 text-lg">Dashboard</h3>
-                                        <p class="text-xs text-slate-500">Ringkasan aset Balai Diklat Industri Padang</p>
-                                    </div>
-                                    <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xs border border-blue-200">OP</div>
-                                </div>
-                                
-                                <div class="grid grid-cols-2 gap-4 mb-4">
-                                    <!-- Animated card -->
-                                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 group hover:border-blue-300 transition-colors">
-                                        <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center mb-3">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
-                                        </div>
-                                        <p class="text-xs text-slate-500 font-medium mb-1">Total Aset Tercatat</p>
-                                        <p class="text-2xl font-black text-slate-800">{{ number_format($totalAset, 0, ',', '.') }}</p>
-                                    </div>
-                                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 group hover:border-green-300 transition-colors">
-                                        <div class="w-8 h-8 rounded-lg bg-green-50 text-green-600 flex items-center justify-center mb-3">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                        </div>
-                                        <p class="text-xs text-slate-500 font-medium mb-1">Total Aset Tersedia</p>
-                                        <p class="text-2xl font-black text-slate-800">{{ number_format($asetBaik, 0, ',', '.') }}</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="bg-white rounded-xl p-4 border border-slate-100 shadow-sm relative overflow-hidden">
-                                    <!-- Progress bar animation -->
-                                    <div class="absolute top-0 left-0 w-full h-1 bg-slate-100">
-                                        <div class="h-full bg-blue-500 animate-[pulse_3s_ease-in-out_infinite]" style="width: 75%"></div>
-                                    </div>
-                                    <p class="text-xs font-bold text-slate-700 mb-3 mt-1">Status Pemeliharaan Bulan Ini</p>
-                                    <div class="space-y-3">
-                                        <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-                                            <div class="h-full bg-green-500" style="width: {{ $persentasePemeliharaan }}%"></div>
-                                        </div>
-                                        <div class="flex justify-between text-[10px] text-slate-500 font-medium">
-                                            <span>Selesai ({{ $persentasePemeliharaan }}%)</span>
-                                            <span>Target: 100%</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-            </div>
-        </div>
-    </main>
+    <!-- ======================== STATISTIK SECTION ======================== -->
+    @include('landing.statistik')
 
-    <!-- Statistik Section (Animated Counters) -->
-    <section id="statistik" class="py-16 bg-blue-600 relative overflow-hidden">
-        <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 24px 24px;"></div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-blue-500/50">
-                <div class="animate-on-scroll">
-                    <p class="text-4xl md:text-5xl font-black text-white mb-2 counter" data-target="{{ $totalAset }}">0</p>
-                    <p class="text-blue-200 font-medium text-sm md:text-base">Total Aset BMN</p>
-                </div>
-                <div class="animate-on-scroll delay-100">
-                    <p class="text-4xl md:text-5xl font-black text-white mb-2 counter" data-target="{{ $totalRuangan }}">0</p>
-                    <p class="text-blue-200 font-medium text-sm md:text-base">Ruangan/Lokasi</p>
-                </div>
-                <div class="animate-on-scroll delay-200">
-                    <p class="text-4xl md:text-5xl font-black text-white mb-2 counter" data-target="{{ $peminjamanAktif }}">0</p>
-                    <p class="text-blue-200 font-medium text-sm md:text-base">Peminjaman Aktif</p>
-                </div>
-                <div class="animate-on-scroll delay-300">
-                    <p class="text-4xl md:text-5xl font-black text-white mb-2 counter" data-target="{{ $sedangDipelihara }}">0</p>
-                    <p class="text-blue-200 font-medium text-sm md:text-base">Sedang Dipelihara</p>
-                </div>
-            </div>
-        </div>
-    </section>
+    <!-- ======================== FITUR SECTION ======================== -->
+    @include('landing.fitur')
 
-    <!-- Fitur Utama Section -->
-    <section id="fitur" class="py-24 bg-white relative">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-3xl mx-auto mb-16 animate-on-scroll">
-                <span class="text-blue-600 font-bold tracking-wider uppercase text-sm mb-2 block">Modul Sistem</span>
-                <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-6">Fungsi Utama SIM BMN</h2>
-                <p class="text-slate-600 text-lg">Mendukung siklus penuh pengelolaan aset mulai dari pencatatan, peminjaman, pemeliharaan, hingga pelaporan sesuai standar.</p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Modul 1 -->
-                <div class="p-8 rounded-3xl bg-sky-50 border border-slate-100 hover:shadow-2xl hover:shadow-blue-900/10 hover:-translate-y-2 transition-all duration-300 group animate-on-scroll delay-100 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-10 transition-opacity">
-                        <svg class="w-24 h-24 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
-                    </div>
-                    <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-900 mb-3">Pencatatan Aset</h3>
-                    <p class="text-slate-600 leading-relaxed mb-4">Input data aset dengan formulir lengkap (merk, kondisi, nilai, lokasi). Dilengkapi fitur QR Code untuk pelabelan fisik.</p>
-                </div>
-                
-                <!-- Modul 2 -->
-                <div class="p-8 rounded-3xl bg-sky-50 border border-slate-100 hover:shadow-2xl hover:shadow-blue-900/10 hover:-translate-y-2 transition-all duration-300 group animate-on-scroll delay-200 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-10 transition-opacity">
-                        <svg class="w-24 h-24 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                    </div>
-                    <div class="w-16 h-16 bg-green-100 text-green-600 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-green-600 group-hover:text-white transition-colors duration-300">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-900 mb-3">Sirkulasi Peminjaman</h3>
-                    <p class="text-slate-600 leading-relaxed mb-4">Pegawai dapat mengajukan peminjaman barang inventaris. Operator dapat menyetujui dan memantau status pengembalian.</p>
-                </div>
-                
-                <!-- Modul 3 -->
-                <div class="p-8 rounded-3xl bg-sky-50 border border-slate-100 hover:shadow-2xl hover:shadow-blue-900/10 hover:-translate-y-2 transition-all duration-300 group animate-on-scroll delay-300 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-10 transition-opacity">
-                        <svg class="w-24 h-24 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
-                    </div>
-                    <div class="w-16 h-16 bg-yellow-100 text-yellow-600 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-yellow-500 group-hover:text-white transition-colors duration-300">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-900 mb-3">Pemeliharaan Terjadwal</h3>
-                    <p class="text-slate-600 leading-relaxed mb-4">Catat riwayat perbaikan, jadwalkan perawatan rutin, dan laporkan kerusakan barang dengan bukti foto.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+    <!-- ======================== ALUR SISTEM ======================== -->
+    @include('landing.alur')
 
-    <!-- Footer -->
-    <footer class="bg-slate-900 text-slate-300 pt-16 pb-8 border-t border-slate-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-10 mb-12">
-                <div class="md:col-span-5">
-                    <div class="flex items-center gap-4 mb-6 bg-white/5 p-4 rounded-2xl border border-white/10 w-max">
-                        <!-- Logos in Footer -->
-                        <img src="{{ asset('storage/images/LOGO KEMENTERIAN White.png') }}" alt="Kemenperin" class="h-10 object-contain opacity-90">
-                        <div class="w-px h-10 bg-slate-700"></div>
-                        <img src="{{ asset('storage/images/Logo BDI Padang horizontal (NEW).png') }}" alt="BDI Padang" class="h-10 object-contain filter brightness-0 invert opacity-90">
-                    </div>
-                    <p class="text-slate-400 text-sm leading-relaxed mb-6 pr-4">
-                        Sistem Informasi Manajemen Barang Milik Negara (SIM BMN) dikembangkan untuk memberikan solusi digital terpadu dalam pencatatan, pemeliharaan, dan pelaporan aset negara di lingkungan Balai Diklat Industri Padang.
-                    </p>
-                </div>
-                
-                <div class="md:col-span-3 md:col-start-7">
-                    <h4 class="text-white font-bold mb-5 tracking-wide">Tautan Cepat</h4>
-                    <ul class="space-y-3 text-sm">
-                        <li><a href="#" class="hover:text-blue-400 transition-colors flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg> Beranda</a></li>
-                        <li><a href="#fitur" class="hover:text-blue-400 transition-colors flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg> Fitur Sistem</a></li>
-                        <li><button onclick="openLoginModal()" class="hover:text-blue-400 transition-colors flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg> Masuk Aplikasi</button></li>
-                    </ul>
-                </div>
-                
-                <div class="md:col-span-3">
-                    <h4 class="text-white font-bold mb-5 tracking-wide">Hubungi Kami</h4>
-                    <ul class="space-y-4 text-sm text-slate-400">
-                        <li class="flex items-start gap-3">
-                            <svg class="w-5 h-5 text-blue-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                            <span>Balai Diklat Industri Padang<br/>Jl. Bungo Pasang, Tabing, Koto Tangah, Kota Padang, Sumatera Barat 25171</span>
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <svg class="w-5 h-5 text-blue-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                            <a href="mailto:bdipadang@kemenperin.go.id" class="hover:text-white transition-colors">bdipadang@kemenperin.go.id</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4">
-                <div class="text-slate-500 text-sm">
-                    &copy; {{ date('Y') }} Kementerian Perindustrian - Balai Diklat Industri Padang.
-                </div>
-                <div class="text-slate-600 text-sm bg-slate-800/50 px-3 py-1 rounded-full font-mono">
-                    SIM BMN v1.0.0
-                </div>
-            </div>
-        </div>
-    </footer>
+    <!-- ======================== CTA SECTION ======================== -->
+    @include('landing.cta')
 
-    <!-- Login Modal -->
-    <div id="loginModal" class="fixed inset-0 z-[100] flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
-        <!-- Backdrop -->
-        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeLoginModal()"></div>
-        
-        <!-- Modal Content -->
-        <div class="relative w-full max-w-4xl mx-4 bg-white rounded-3xl shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300" id="loginModalContent">
-            <button onclick="closeLoginModal()" class="absolute top-4 right-4 z-10 w-10 h-10 bg-white/50 hover:bg-white text-slate-800 rounded-full flex items-center justify-center transition-colors backdrop-blur-md shadow-sm">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-            
-            <div class="flex flex-col md:flex-row h-full md:h-[550px]">
-                <!-- Image Side -->
-                <div class="hidden md:flex w-1/2 relative bg-sky-50 flex-col justify-between p-12 overflow-hidden" style="clip-path: polygon(0 0, 100% 0, 85% 100%, 0 100%);">
-                    <!-- Elegant Light Image -->
-                    <img src="{{ asset('storage/images/login-bg.jpg') }}" alt="Login Background" class="absolute inset-0 w-full h-full object-cover opacity-80 mix-blend-multiply grayscale">
-                    <div class="absolute inset-0 bg-gradient-to-br from-white/60 via-sky-50/70 to-blue-100/90 backdrop-blur-[px]"></div>
-                    
-                    <div class="relative z-10">
-                        <div class="flex items-center gap-3 mb-10">
-                            <img src="{{ asset('storage/images/LOGO KEMENTERIAN EPS [Converted].png') }}" alt="Kemenperin" class="h-8 object-contain">
-                            <div class="h-6 w-px bg-slate-300"></div>
-                            <img src="{{ asset('storage/images/Logo BDI Padang horizontal (NEW).png') }}" alt="BDI Padang" class="h-7 object-contain">
-                        </div>
-                        <h2 class="text-4xl font-extrabold text-slate-800 mb-5 leading-[1.1] tracking-tight">
-                            Manajemen<br><span class="text-blue-600">Aset Digital</span>
-                        </h2>
-                        <p class="text-slate-600 text-sm leading-relaxed max-w-sm font-medium">
-                            Platform terpadu untuk efisiensi pemantauan, pemeliharaan, dan pendataan Barang Milik Negara di Balai Diklat Industri Padang.
-                        </p>
-                    </div>
+    <!-- ======================== FOOTER ======================== -->
+    @include('landing.footer')
 
-                    <div class="relative z-10 flex items-center gap-4">
-                        <div class="w-12 h-1.5 bg-blue-600 rounded-full"></div>
-                        <div class="w-4 h-1.5 bg-blue-300 rounded-full"></div>
-                        <div class="w-2 h-1.5 bg-blue-200 rounded-full"></div>
-                    </div>
-                </div>
-                
-                <!-- Form Side -->
-                <div class="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center bg-white relative">
-                    <!-- Background blobs for form -->
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full blur-3xl opacity-60 pointer-events-none"></div>
-                    <div class="absolute bottom-0 left-0 w-32 h-32 bg-yellow-50 rounded-full blur-3xl opacity-60 pointer-events-none"></div>
+    <!-- ======================== LOGIN MODAL ======================== -->
+    @include('landing.login-modal')
 
-                    <div class="text-center mb-8 relative z-10">
-                        <h3 class="text-2xl font-bold text-slate-800 mb-2">Selamat Datang</h3>
-                        <p class="text-slate-500 text-sm">Masuk dengan akun Anda untuk melanjutkan.</p>
-                    </div>
-                    
-                    <!-- Session Status -->
-                    <div id="loginError" class="hidden mb-4 p-3 rounded-lg bg-red-50 border border-red-100 text-red-600 text-sm text-center"></div>
+    <!-- ======================== SCRIPTS ======================== -->
+    @include('landing.scripts')
 
-                    <form method="POST" action="{{ route('login') }}" class="relative z-10 space-y-5">
-                        @csrf
-                        
-                        <div>
-                            <label for="email" class="block text-sm font-medium text-slate-700 mb-1.5">Email</label>
-                            <input id="email" type="email" name="email" required autofocus
-                                class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all bg-slate-50 focus:bg-white text-slate-800 placeholder-slate-400"
-                                placeholder="nama@email.com">
-                        </div>
-
-                        <div>
-                            <div class="flex justify-between items-center mb-1.5">
-                                <label for="password" class="block text-sm font-medium text-slate-700">Password</label>
-                            </div>
-                            <input id="password" type="password" name="password" required
-                                class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all bg-slate-50 focus:bg-white text-slate-800 placeholder-slate-400"
-                                placeholder="••••••••">
-                        </div>
-
-                        <div class="flex items-center">
-                            <input id="remember_me" type="checkbox" name="remember" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
-                            <label for="remember_me" class="ml-2 block text-sm text-slate-600">Ingat saya</label>
-                        </div>
-
-                        <button type="submit" class="w-full py-3.5 px-4 bg-sky-700/60 hover:bg-sky-700/80 text-white font-bold rounded-xl shadow-lg shadow-blue-600/20 hover:shadow-blue-600/40 transition-all duration-300 hover:-translate-y-0.5">
-                            Masuk
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Interactive Scripts -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // 1. Intersection Observer for Scroll Animations
-            const observerOptions = {
-                root: null,
-                rootMargin: '0px',
-                threshold: 0.1
-            };
-
-            const observer = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('is-visible');
-                        
-                        // If it's a counter, start counting
-                        if(entry.target.querySelector('.counter')) {
-                            startCounters(entry.target);
-                        }
-                        
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, observerOptions);
-
-            document.querySelectorAll('.animate-on-scroll').forEach((el) => {
-                observer.observe(el);
-            });
-
-            // 2. Animated Counter function
-            function startCounters(container) {
-                const counters = container.querySelectorAll('.counter');
-                const speed = 100; // lower is slower
-
-                counters.forEach(counter => {
-                    const target = +counter.getAttribute('data-target');
-                    const inc = target / speed;
-                    let count = 0;
-
-                    const updateCount = () => {
-                        if (count < target) {
-                            count += inc;
-                            // Ensure we don't overshoot
-                            if (count > target) count = target;
-                            counter.innerText = Math.ceil(count).toLocaleString('id-ID');
-                            setTimeout(updateCount, 15);
-                        } else {
-                            counter.innerText = target.toLocaleString('id-ID');
-                        }
-                    };
-                    updateCount();
-                });
-            }
-
-            // 3. Navbar scroll effect
-            const navbar = document.getElementById('navbar');
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 20) {
-                    navbar.classList.add('shadow-md');
-                    navbar.classList.remove('shadow-sm');
-                } else {
-                    navbar.classList.remove('shadow-md');
-                    navbar.classList.add('shadow-sm');
-                }
-            });
-
-            // Check if URL has ?login=1 or if there are validation errors
-            const urlParams = new URLSearchParams(window.location.search);
-            const hasErrors = {{ $errors->any() ? 'true' : 'false' }};
-            
-            if (urlParams.get('login') === '1' || hasErrors) {
-                openLoginModal();
-                
-                if (hasErrors) {
-                    const errorDiv = document.getElementById('loginError');
-                    errorDiv.innerHTML = {!! json_encode($errors->first()) !!};
-                    errorDiv.classList.remove('hidden');
-                }
-            }
-        });
-
-        // Modal Functions
-        function openLoginModal() {
-            const modal = document.getElementById('loginModal');
-            const content = document.getElementById('loginModalContent');
-            
-            // Unhide
-            modal.classList.remove('hidden');
-            
-            // Trigger animation
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                modal.classList.add('opacity-100');
-                content.classList.remove('scale-95');
-                content.classList.add('scale-100');
-            }, 10);
-            
-            // Prevent body scroll
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeLoginModal() {
-            const modal = document.getElementById('loginModal');
-            const content = document.getElementById('loginModalContent');
-            
-            // Trigger out animation
-            modal.classList.remove('opacity-100');
-            modal.classList.add('opacity-0');
-            content.classList.remove('scale-100');
-            content.classList.add('scale-95');
-            
-            // Hide after animation finishes
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 300);
-            
-            // Restore body scroll
-            document.body.style.overflow = '';
-        }
-    </script>
 </body>
 </html>
