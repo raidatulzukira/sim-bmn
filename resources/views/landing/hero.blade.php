@@ -13,7 +13,7 @@
     <div class="particle w-1 h-1 bg-slate-400/50 top-[40%] right-[8%]" style="animation-duration:3.5s;animation-delay:0.8s;"></div>
     <div class="particle w-2 h-2 bg-sky-500/40 top-[60%] right-[20%]" style="animation-duration:7s;animation-delay:2.5s;"></div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 relative z-10 w-full">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-20 lg:py-20 relative z-10 w-full">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 
             <!-- Left Text -->
@@ -25,7 +25,7 @@
                     </span>
                     Sistem Resmi Aktif &bull; Balai Diklat Industri Padang
                 </div>
-                <h1 class="text-8xl sm:text-5xl lg:text-[3.5rem] font-black text-slate-900 leading-[1.1] mb-6 tracking-tight">
+                <h1 class="text-8xl sm:text-5xl lg:text-[3.4rem] font-black text-slate-900 leading-[1.1] mb-6 tracking-tight">
                     Transformasi Digital<br>Pengelolaan<br>
                     <span class="grad-blue">Barang Milik Negara</span>
                 </h1>
