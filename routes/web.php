@@ -51,6 +51,7 @@ Route::middleware(['auth', 'verified', 'role:operator'])->prefix('operator')->na
     
     Route::get('aset/import', [\App\Http\Controllers\Operator\AsetController::class, 'importForm'])->name('aset.import_form');
     Route::post('aset/import', [\App\Http\Controllers\Operator\AsetController::class, 'import'])->name('aset.import');
+    Route::get('aset/rekap', [\App\Http\Controllers\Operator\AsetController::class, 'rekap'])->name('aset.rekap');
     Route::resource('aset', \App\Http\Controllers\Operator\AsetController::class);
     Route::resource('ruangan', \App\Http\Controllers\Operator\RuanganController::class)->except(['show']);
 
@@ -79,6 +80,7 @@ Route::middleware(['auth', 'verified', 'role:operator'])->prefix('operator')->na
 Route::middleware(['auth', 'verified', 'role:kasubag_tu'])->prefix('kasubag')->name('kasubag.')->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\Kasubag\DashboardController::class, 'index'])->name('dashboard');
 
+    Route::get('aset/rekap', [\App\Http\Controllers\Kasubag\AsetController::class, 'rekap'])->name('aset.rekap');
     Route::resource('aset', \App\Http\Controllers\Kasubag\AsetController::class)->only(['index', 'show']);
     Route::resource('ruangan', \App\Http\Controllers\Kasubag\RuanganController::class)->only(['index']);
 

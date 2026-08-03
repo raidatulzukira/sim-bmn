@@ -39,44 +39,95 @@ class PeminjamanController extends Controller
 
     public function create(Request $request)
     {
-        $asets = AsetBmn::where('status', 'tersedia')->get();
         $selectedAset = $request->query('aset_id');
-        return view('pegawai.peminjaman.create', compact('asets', 'selectedAset'));
+        $templateAset = null;
+        $maxStok = 0;
+
+        if ($selectedAset) {
+            $templateAset = AsetBmn::find($selectedAset);
+            if ($templateAset) {
+                $maxStok = AsetBmn::where('kode_barang', $templateAset->kode_barang)
+                                  ->where('nama_barang', $templateAset->nama_barang)
+                                  ->where('merk', $templateAset->merk)
+                                  ->where('tipe', $templateAset->tipe)
+                                  ->where('nama', $templateAset->nama)
+                                  ->where('status', 'tersedia')
+                                  ->count();
+            }
+        }
+
+        // Jika tidak ada parameter aset_id atau barangnya tidak valid/habis, redirect kembali ke katalog
+        if (!$templateAset || $maxStok === 0) {
+            return redirect()->route('pegawai.katalog_aset.index')->with('error', 'Aset tidak ditemukan atau stok tidak tersedia.');
+        }
+
+        return view('pegawai.peminjaman.create', compact('templateAset', 'maxStok'));
     }
 
-    public function store(StorePeminjamanRequest $request)
+    public function store(Request $request)
     {
-        $peminjaman = Peminjaman::create([
-            'aset_id' => $request->aset_id,
-            'user_id' => auth()->id(),
-            'keperluan' => $request->keperluan,
-            'estimasi_waktu_pinjam' => $request->estimasi_waktu_pinjam,
-            'tanggal_kembali_rencana' => $request->tanggal_kembali_rencana,
-            'status' => 'pending',
+        $request->validate([
+            'template_aset_id' => 'required|exists:aset_bmn,id',
+            'jumlah' => 'required|integer|min:1',
+            'keperluan' => 'required|string',
+            'estimasi_waktu_pinjam' => 'required|date',
+            'tanggal_kembali_rencana' => 'required|date|after_or_equal:estimasi_waktu_pinjam',
         ]);
 
-        \App\Models\AsetBmn::where('id', $request->aset_id)->update(['status' => 'menunggu_persetujuan']);
+        $templateAset = AsetBmn::findOrFail($request->template_aset_id);
+        
+        // Cari aset yang available sesuai template (kode, nama, merk, tipe)
+        $availableAsets = AsetBmn::where('kode_barang', $templateAset->kode_barang)
+            ->where('nama_barang', $templateAset->nama_barang)
+            ->where('merk', $templateAset->merk)
+            ->where('tipe', $templateAset->tipe)
+            ->where('nama', $templateAset->nama)
+            ->where('status', 'tersedia')
+            ->limit($request->jumlah)
+            ->get();
 
-        // Mengambil nomor telepon dari Kasubag TU dan Operator
+        if ($availableAsets->count() < $request->jumlah) {
+            return redirect()->back()->with('error', 'Gagal meminjam: Stok aset tidak mencukupi (Tersedia: ' . $availableAsets->count() . ').');
+        }
+
+        $peminjamanIds = [];
+
+        foreach ($availableAsets as $aset) {
+            $peminjaman = Peminjaman::create([
+                'aset_id' => $aset->id,
+                'user_id' => auth()->id(),
+                'keperluan' => $request->keperluan,
+                'estimasi_waktu_pinjam' => $request->estimasi_waktu_pinjam,
+                'tanggal_kembali_rencana' => $request->tanggal_kembali_rencana,
+                'status' => 'pending',
+            ]);
+
+            // Update status aset agar tidak bisa dipinjam orang lain
+            $aset->update(['status' => 'menunggu_persetujuan']);
+            $peminjamanIds[] = $peminjaman->id;
+        }
+
+        // Mengirim notifikasi WhatsApp (kirim 1 kali saja untuk mengabari ada peminjaman masuk)
         $usersToNotify = User::whereIn('role', ['kasubag_tu', 'operator'])
             ->whereNotNull('no_wa')
             ->where('no_wa', '!=', '')
             ->get();
 
         $namaPegawai = auth()->user()->name;
-        $namaAset = AsetBmn::where('id', $request->aset_id)->first()->nama_barang;
-        $pesan = "Halo, terdapat pengajuan peminjaman aset baru dari pegawai {$namaPegawai}. Aset yang dipinjam adalah {$namaAset}. Mohon untuk segera diproses.";
+        $namaAset = $templateAset->nama_barang . ' (' . $request->jumlah . ' buah)';
+        $pesan = "Halo, terdapat pengajuan peminjaman massal baru dari pegawai {$namaPegawai}. Aset yang dipinjam adalah {$namaAset}. Mohon untuk segera diproses di sistem SIM BMN.";
 
         $waService = app(\App\Services\WhatsappService::class);
 
         foreach ($usersToNotify as $user) {
             if ($user->no_wa) {
-                $waService->kirimPesan($user->no_wa, $pesan, $user->id, 'peminjaman', $peminjaman->id);
+                // Untuk link notifikasi, kita bisa mengarah ke peminjaman pertama dari batch tersebut
+                $waService->kirimPesan($user->no_wa, $pesan, $user->id, 'peminjaman', $peminjamanIds[0] ?? null);
             }
         }
 
         return redirect()->route('pegawai.peminjaman.index')
-            ->with('success', 'Pengajuan peminjaman aset berhasil dikirim dan sedang menunggu persetujuan.');
+            ->with('success', 'Pengajuan peminjaman ' . $request->jumlah . ' aset berhasil dikirim dan sedang menunggu persetujuan.');
     }
 
     public function show(Peminjaman $peminjaman)
