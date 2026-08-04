@@ -40,12 +40,33 @@ class UserController extends Controller
     public function store(StoreUserRequest $request)
     {
         $validated = $request->validated();
-        $validated['password'] = Hash::make($validated['password']);
+        
+        $passwordRaw = $validated['password'];
+        $validated['password'] = Hash::make($passwordRaw);
+        
+        // Akun aktif secara status, tapi belum diverifikasi emailnya (email_verified_at = null bawaan database)
 
-        User::create($validated);
+        try {
+            \Illuminate\Support\Facades\DB::transaction(function () use ($validated, $passwordRaw) {
+                $user = User::create($validated);
 
-        return redirect()->route('operator.pengguna.index')
-            ->with('success', 'Pengguna berhasil ditambahkan.');
+                // Buat signed URL yang berlaku 48 jam untuk aktivasi
+                $activationUrl = \Illuminate\Support\Facades\URL::temporarySignedRoute(
+                    'activation.verify',
+                    now()->addHours(48),
+                    ['user' => $user->id]
+                );
+
+                \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\AccountActivationMail($user, $passwordRaw, $activationUrl));
+            });
+            
+            return redirect()->route('operator.pengguna.index')
+                ->with('success', 'Pengguna berhasil ditambahkan. Email aktivasi telah dikirim ke pengguna.');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Gagal membuat pengguna. Pastikan email yang dimasukkan aktif dan konfigurasi email benar. Pesan error: ' . $e->getMessage());
+        }
     }
 
     public function edit(User $pengguna)

@@ -32,6 +32,19 @@ Route::get('/', function () {
     ));
 });
 
+Route::get('/activation/{user}', function (\App\Models\User $user, \Illuminate\Http\Request $request) {
+    if (! $request->hasValidSignature()) {
+        abort(401, 'Tautan tidak valid atau sudah kedaluwarsa.');
+    }
+
+    $user->update([
+        'email_verified_at' => now(),
+        'is_active' => true,
+    ]);
+
+    return redirect()->route('login')->with('status', 'Akun berhasil diaktifkan. Silakan login.');
+})->name('activation.verify');
+
 // Fallback dashboard route to redirect to correct role dashboard
 Route::get('/dashboard', function () {
     $role = auth()->user()->role;
