@@ -17,7 +17,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 
             <!-- Left Text -->
-            <div class="text-center lg:text-left reveal-left">
+            <div class="text-center lg:text-left reveal-left ml-2">
                 <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-sky-100 border border-sky-200 text-sky-700 text-xs font-bold tracking-wider uppercase mb-8 badge-pulse">
                     <span class="relative flex h-2 w-2">
                         <span class="ping-ring absolute inline-flex h-full w-full rounded-full bg-sky-500"></span>
@@ -77,7 +77,8 @@
             </div>
 
             <!-- Right: Dashboard Mockup -->
-            <div class="hidden lg:block relative reveal-right d-200">
+            <!-- <div class="hidden lg:block relative reveal-right d-200 max-w-[500px] mx-auto"> -->
+            <div class="hidden lg:block relative reveal-right d-200 w-full max-w-[520px] ml-auto xl:mr-4">
                 <div class="float-card glass-card rounded-3xl p-1 shadow-2xl shadow-sky-900/10 border border-white/60">
                     <!-- Browser Header -->
                     <div class="bg-slate-100/80 rounded-t-[1.5rem] px-5 py-3 flex items-center gap-2 border-b border-slate-200/50">
@@ -105,7 +106,7 @@
                             </div>
                         </div>
                         <!-- Stat Grid -->
-                        <div class="grid grid-cols-3 gap-3 mb-4">
+                        <div class="grid grid-cols-3 gap-2 mb-4">
                             <div class="bg-sky-50 border border-sky-100 p-3 rounded-xl shadow-sm">
                                 <p class="text-[10px] text-sky-600 font-bold mb-1">Total Aset</p>
                                 <p class="text-xl font-black text-slate-800">{{ number_format($totalAset ?? 1830, 0, ',', '.') }}</p>
@@ -124,7 +125,7 @@
                             </div>
                             <div class="bg-amber-50 border border-amber-100 p-3 rounded-xl shadow-sm">
                                 <p class="text-[10px] text-amber-600 font-bold mb-1">Dipinjam</p>
-                                <p class="text-xl font-black text-slate-800">{{ number_format($peminjamanAktif ?? 2, 0, ',', '.') }}</p>
+                                <p class="text-xl font-black text-slate-800">{{ number_format($asetDipinjam ?? 0, 0, ',', '.') }}</p>
                                 <div class="flex items-center gap-1 mt-1">
                                     <div class="w-2 h-2 rounded-full bg-amber-500"></div>
                                     <span class="text-[9px] text-amber-600 font-semibold">Aktif</span>

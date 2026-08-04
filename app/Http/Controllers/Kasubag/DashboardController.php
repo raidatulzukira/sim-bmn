@@ -11,8 +11,8 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $jumlahPeminjamanPending = Peminjaman::where('status', 'pending')->count();
-        $jumlahPemeliharaanPending = Pemeliharaan::where('status', 'pending')->count();
+        $jumlahPeminjamanPending = Peminjaman::where('status', 'pending')->distinct('batch_id')->count('batch_id');
+        $jumlahPemeliharaanPending = Pemeliharaan::where('status', 'pending')->distinct('batch_id')->count('batch_id');
         $jumlahPending = $jumlahPeminjamanPending + $jumlahPemeliharaanPending;
 
         return view('kasubag.dashboard', compact('jumlahPending', 'jumlahPeminjamanPending', 'jumlahPemeliharaanPending'));

@@ -54,7 +54,9 @@
                                             {{ $pinjam->user->name }}
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-left text-sm text-slate-600 font-medium">{{ $pinjam->asetBmn->nama_barang }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-left text-sm text-slate-600 font-medium">
+                                        {{ $pinjam->asetBmn->nama_barang }} <span class="text-xs text-sky-600 bg-sky-50 px-2 py-0.5 rounded-full ml-1">({{ $pinjam->total_barang }} Unit)</span>
+                                    </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-left text-sm text-slate-500 font-medium">{{ $pinjam->created_at->format('d M Y H:i') }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-left">
                                         @php

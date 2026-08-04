@@ -26,7 +26,7 @@
                                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
                             </div>
                             <div>
-                                <h3 class="text-3xl font-bold text-slate-900 mb-1">{{ $peminjaman->asetBmn->nama_barang }}</h3>
+                                <h3 class="text-3xl font-bold text-slate-900 mb-1">{{ $peminjaman->asetBmn->nama_barang }} <span class="text-lg font-bold text-sky-600 bg-sky-50 px-3 py-1 rounded-full align-middle ml-2">({{ isset($batch) ? $batch->count() : 1 }} Unit)</span></h3>
                                 <div class="flex items-center gap-3">
                                     <span class="font-mono text-sm font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded-md">{{ $peminjaman->asetBmn->kode_barang }}</span>
                                     <span class="text-sm font-medium text-slate-400">Aset BMN</span>
@@ -99,6 +99,11 @@
                                         <p class="text-xs text-slate-500 font-medium mb-1">Rencana Pinjam - Kembali</p>
                                         <p class="text-sm font-bold text-slate-900 bg-white px-3 py-2 rounded-lg border border-slate-200 inline-block">
                                             {{ $peminjaman->estimasi_waktu_pinjam->format('d M Y') }} <span class="text-slate-400 mx-1">s/d</span> {{ $peminjaman->tanggal_kembali_rencana->format('d M Y') }}
+                                            @if($peminjaman->keterangan_terlambat)
+                                                <span class="inline-flex items-center ml-2 px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-700 uppercase tracking-wider align-middle">
+                                                    Terlambat {{ $peminjaman->keterangan_terlambat }} Hari
+                                                </span>
+                                            @endif
                                         </p>
                                     </div>
                                 </div>
@@ -147,6 +152,26 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Daftar Aset -->
+                        @if(isset($batch) && $batch->count() > 0)
+                            <div class="mt-8">
+                                <h4 class="text-md font-bold text-slate-800 mb-3 flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                    Daftar NUP Aset yang Dipinjam
+                                </h4>
+                                <div class="bg-white p-4 rounded-xl border border-slate-200 max-h-60 overflow-y-auto">
+                                    <ul class="space-y-2">
+                                        @foreach($batch as $item)
+                                            <li class="flex items-center justify-between text-sm">
+                                                <span class="font-mono text-slate-600 font-bold bg-slate-50 px-2 py-1 rounded border border-slate-100">{{ $item->asetBmn->nup }}</span>
+                                                <span class="text-slate-500">{{ $item->asetBmn->ruangan ? $item->asetBmn->ruangan->nama_ruangan : 'Gudang' }}</span>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </div>
+                        @endif
 
                         <!-- 2-Column Documentation Grid -->
                         @if($peminjaman->foto_serah_terima || $peminjaman->foto_pengembalian)
@@ -247,30 +272,10 @@
                                 </form>
                             </div>
 
-                            <form action="{{ route('operator.peminjaman.dikembalikan', $peminjaman->id) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
-                                @csrf
-                                <div>
-                                    <label for="foto_pengembalian" class="block text-sm font-bold text-slate-700 mb-2">Unggah Bukti Foto Barang Dikembalikan <span class="text-red-500">*</span></label>
-                                    <div class="mt-1 w-full relative">
-                                        <input type="file" id="foto_pengembalian" name="foto_pengembalian" class="block w-full text-sm text-slate-500
-                                            file:mr-4 file:py-3 file:px-6
-                                            file:rounded-xl file:border-0
-                                            file:text-sm file:font-bold
-                                            file:bg-emerald-600 file:text-white
-                                            hover:file:bg-emerald-700 file:transition-colors file:cursor-pointer
-                                            border border-slate-200 rounded-xl bg-white cursor-pointer" accept="image/*" required />
-                                    </div>
-                                    @error('foto_pengembalian')
-                                        <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
-                                    @enderror
-                                    <p class="text-sm text-slate-500 mt-2 bg-white/50 px-3 py-2 rounded-lg border border-slate-100"><span class="font-bold text-slate-700">Catatan:</span> Pastikan foto terlihat jelas, menampilkan fisik barang yang telah dikembalikan ke ruangan Operator.</p>
-                                </div>
-
-                                <button type="submit" onclick="return confirm('Apakah Anda yakin barang ini telah diterima kembali secara fisik beserta fotonya?');" class="w-full sm:w-auto px-8 py-3.5 bg-emerald-600 text-white rounded-xl text-sm font-bold hover:bg-emerald-700 transition-all duration-300 shadow-sm hover:shadow-md flex items-center justify-center gap-2">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                    Konfirmasi Barang Dikembalikan
-                                </button>
-                            </form>
+                            <button type="button" onclick="openReturnModal()" class="w-full sm:w-auto px-8 py-3.5 bg-emerald-600 text-white rounded-xl text-sm font-bold hover:bg-emerald-700 transition-all duration-300 shadow-sm hover:shadow-md flex items-center justify-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                Proses Pengembalian
+                            </button>
                         </div>
                     @endif
 
@@ -278,4 +283,118 @@
             </div>
         </div>
     </div>
+
+    <!-- Return Modal -->
+    <div id="returnModal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeReturnModal()"></div>
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+            <div class="relative bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-2xl sm:w-full border border-slate-100 flex flex-col max-h-[90vh]">
+                <div class="bg-emerald-50/50 px-6 py-5 border-b border-emerald-100 flex items-center justify-between shrink-0">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <h3 class="text-lg font-black text-slate-800">Proses Pengembalian Aset</h3>
+                    </div>
+                    <button type="button" onclick="closeReturnModal()" class="text-slate-400 hover:text-slate-500 bg-white p-2 rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+                
+                <form action="{{ route('operator.peminjaman.dikembalikan', $peminjaman->id) }}" method="POST" enctype="multipart/form-data" class="p-6 overflow-y-auto">
+                    @csrf
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
+                            <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Total Dipinjam</p>
+                            <p class="text-3xl font-black text-slate-800" id="totalBarangDisplay">{{ $batch->count() }}</p>
+                            <p class="text-[10px] text-slate-500 font-medium mt-1">Unit</p>
+                        </div>
+                        <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100 text-center">
+                            <p class="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-1">Kondisi Baik</p>
+                            <p class="text-3xl font-black text-emerald-700" id="kondisiBaikDisplay">{{ $batch->count() }}</p>
+                            <p class="text-[10px] text-emerald-600 font-medium mt-1">Unit kembali ke gudang</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-5">
+                        <div class="bg-rose-50/50 p-5 rounded-2xl border border-rose-100">
+                            <label for="jumlah_rusak" class="block text-sm font-bold text-rose-800 mb-2">Jumlah Rusak / Hilang (Opsional)</label>
+                            <input type="number" id="jumlah_rusak" name="jumlah_rusak" min="0" max="{{ $batch->count() }}" value="0" oninput="updateKondisiBaik()" class="block w-full rounded-xl border-rose-200 focus:border-rose-500 focus:ring-rose-500 sm:text-sm bg-white" placeholder="0">
+                            <p class="text-xs text-rose-600 mt-2 font-medium">Jika ada barang yang rusak atau hilang, isi jumlahnya di sini. Sistem otomatis membuatkan laporan kerusakan.</p>
+                        </div>
+
+                        <div id="kerusakanFields" class="space-y-5 hidden bg-rose-50 p-5 rounded-2xl border border-rose-100">
+                            <div>
+                                <label for="deskripsi_kerusakan" class="block text-sm font-bold text-rose-800 mb-2">Deskripsi Kerusakan <span class="text-red-500">*</span></label>
+                                <textarea id="deskripsi_kerusakan" name="deskripsi_kerusakan" rows="3" class="block w-full rounded-xl border-rose-200 focus:border-rose-500 focus:ring-rose-500 sm:text-sm bg-white" placeholder="Jelaskan bagian mana yang rusak/patah/hilang..."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                            <label for="foto_pengembalian" class="block text-sm font-bold text-slate-700 mb-2">Unggah Bukti Foto Pengembalian <span class="text-red-500">*</span></label>
+                            <div class="mt-1 w-full relative">
+                                <input type="file" id="foto_pengembalian" name="foto_pengembalian" class="block w-full text-sm text-slate-500
+                                    file:mr-4 file:py-3 file:px-6
+                                    file:rounded-xl file:border-0
+                                    file:text-sm file:font-bold
+                                    file:bg-emerald-600 file:text-white
+                                    hover:file:bg-emerald-700 file:transition-colors file:cursor-pointer
+                                    border border-slate-200 rounded-xl bg-white cursor-pointer" accept="image/*" required />
+                            </div>
+                            <p class="text-xs text-slate-500 mt-2 font-medium">Pastikan foto terlihat jelas, menampilkan fisik barang yang dikembalikan. Apabila ada barang rusak, pastikan bagian rusaknya ikut terfoto.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8 flex justify-end gap-3">
+                        <button type="button" onclick="closeReturnModal()" class="px-6 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl text-sm font-bold hover:bg-slate-50 transition-colors">
+                            Batal
+                        </button>
+                        <button type="submit" onclick="return confirm('Apakah Anda yakin data jumlah barang rusak dan foto sudah benar?');" class="px-8 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-bold hover:bg-emerald-700 transition-colors shadow-sm">
+                            Selesaikan Pengembalian
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const totalBarang = {{ $batch->count() }};
+        
+        function openReturnModal() {
+            document.getElementById('returnModal').classList.remove('hidden');
+        }
+        
+        function closeReturnModal() {
+            document.getElementById('returnModal').classList.add('hidden');
+        }
+        
+        function updateKondisiBaik() {
+            const input = document.getElementById('jumlah_rusak');
+            let rusak = parseInt(input.value) || 0;
+            
+            if(rusak > totalBarang) {
+                rusak = totalBarang;
+                input.value = rusak;
+            } else if(rusak < 0) {
+                rusak = 0;
+                input.value = 0;
+            }
+            
+            const baik = totalBarang - rusak;
+            document.getElementById('kondisiBaikDisplay').innerText = baik;
+            
+            const fields = document.getElementById('kerusakanFields');
+            const textarea = document.getElementById('deskripsi_kerusakan');
+            
+            if(rusak > 0) {
+                fields.classList.remove('hidden');
+                textarea.required = true;
+            } else {
+                fields.classList.add('hidden');
+                textarea.required = false;
+            }
+        }
+    </script>
 @endsection

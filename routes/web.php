@@ -6,11 +6,12 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     $totalAset = \App\Models\AsetBmn::count();
     $totalRuangan = \App\Models\Ruangan::count();
-    $peminjamanAktif = \App\Models\Peminjaman::whereIn('status', ['pending', 'disetujui', 'proses'])->count();
+    $peminjamanAktif = \App\Models\Peminjaman::whereIn('status', ['pending', 'disetujui', 'dipinjam'])->distinct('batch_id')->count('batch_id');
     $sedangDipelihara = \App\Models\Pemeliharaan::whereIn('status', ['pending', 'disetujui', 'proses'])->count();
 
     // Stats for Dashboard Preview
     $asetBaik = \App\Models\AsetBmn::where('status', 'tersedia')->count();
+    $asetDipinjam = \App\Models\AsetBmn::where('status', 'dipinjam')->count();
     
     // Status Pemeliharaan Bulan Ini (exclude ditolak)
     $pemeliharaanBulanIni = \App\Models\Pemeliharaan::whereMonth('tanggal_pengajuan', date('m'))
@@ -27,7 +28,7 @@ Route::get('/', function () {
 
     return view('welcome', compact(
         'totalAset', 'totalRuangan', 'peminjamanAktif', 'sedangDipelihara',
-        'asetBaik', 'persentasePemeliharaan'
+        'asetBaik', 'asetDipinjam', 'persentasePemeliharaan'
     ));
 });
 

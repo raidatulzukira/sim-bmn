@@ -24,19 +24,31 @@ class DashboardController extends Controller
 
         // 4. Notifikasi/alert: daftar peminjaman yang mendekati tanggal_kembali_rencana (H-2)
         // dan belum berstatus 'dikembalikan'
-        $alertPeminjaman = Peminjaman::with(['asetBmn', 'user'])
+        $batchQuery = Peminjaman::select(\Illuminate\Support\Facades\DB::raw('MAX(id) as max_id'))
             ->where('status', 'dipinjam')
             ->whereNotNull('tanggal_kembali_rencana')
             ->whereDate('tanggal_kembali_rencana', '<=', Carbon::now()->addDays(2))
+            ->groupBy('batch_id');
+
+        $alertPeminjaman = Peminjaman::with(['asetBmn', 'user'])
+            ->whereIn('id', $batchQuery)
+            ->addSelect(['*', 'total_barang' => Peminjaman::selectRaw('COUNT(*)')->from('peminjaman as p_sub')->whereColumn('p_sub.batch_id', 'peminjaman.batch_id')
+            ])
             ->get();
 
         // 5. Notifikasi/alert: daftar pemeliharaan rutin yang statusnya pending, disetujui, atau proses
-        $alertPemeliharaan = Pemeliharaan::with(['asetBmn', 'pelapor'])
+        $batchPemeliharaanQuery = Pemeliharaan::select(\Illuminate\Support\Facades\DB::raw('MAX(id) as max_id'))
             ->whereIn('status', ['pending', 'disetujui', 'proses'])
+            ->groupBy('batch_id');
+
+        $alertPemeliharaan = Pemeliharaan::with(['asetBmn', 'pelapor'])
+            ->whereIn('id', $batchPemeliharaanQuery)
+            ->addSelect(['*', 'total_barang' => Pemeliharaan::selectRaw('COUNT(*)')->from('pemeliharaan as p_sub')->whereColumn('p_sub.batch_id', 'pemeliharaan.batch_id')])
+            ->latest()
             ->get();
 
         // 6. Notifikasi: daftar aset yang perlu servis rutin (H-30 atau terlewat)
-        $asetMembutuhkanServis = AsetBmn::whereNotNull('interval_servis_tahun')
+        $asetMembutuhkanServisRaw = AsetBmn::whereNotNull('interval_servis_tahun')
             ->whereNotNull('tanggal_servis_terakhir')
             ->where('status', 'tersedia')
             ->whereDoesntHave('pemeliharaan', function ($query) {
@@ -47,6 +59,17 @@ class DashboardController extends Controller
             ->filter(function($aset) {
                 return $aset->is_servis_warning;
             });
+            
+        // Kelompokkan berdasarkan kode_barang
+        $asetMembutuhkanServis = $asetMembutuhkanServisRaw->groupBy('kode_barang')->map(function ($items) {
+            $first = $items->first();
+            return (object) [
+                'kode_barang' => $first->kode_barang,
+                'nama_barang' => $first->nama_barang,
+                'total_unit' => $items->count(),
+                'contoh_aset' => $first, // Untuk kebutuhan link atau ID referensi
+            ];
+        })->values();
 
         return view('operator.dashboard', compact(
             'totalAset',

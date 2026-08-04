@@ -19,46 +19,57 @@ class PersetujuanPemeliharaanController extends Controller
     {
         $tab = $request->input('tab', 'pending'); // default tab
 
-        if ($tab === 'pending') {
-            $pemeliharaans = Pemeliharaan::with(['asetBmn', 'pelapor'])
-                ->where('status', 'pending')
-                ->latest('tanggal_pengajuan')
-                ->paginate(10)
-                ->withQueryString();
-        } else {
-            $pemeliharaans = Pemeliharaan::with(['asetBmn', 'pelapor'])
-                ->where('status', '!=', 'pending')
-                ->latest('updated_at')
-                ->paginate(10)
-                ->withQueryString();
-        }
+        $batchQuery = Pemeliharaan::select(\Illuminate\Support\Facades\DB::raw('MAX(id) as max_id'))
+            ->when($tab === 'pending', function ($query) {
+                return $query->where('status', 'pending');
+            }, function ($query) {
+                return $query->where('status', '!=', 'pending');
+            })
+            ->groupBy('batch_id');
+
+        $pemeliharaans = Pemeliharaan::with(['asetBmn', 'pelapor'])
+            ->whereIn('id', $batchQuery)
+            ->addSelect(['*', 'total_barang' => Pemeliharaan::selectRaw('COUNT(*)')->from('pemeliharaan as p_sub')->whereColumn('p_sub.batch_id', 'pemeliharaan.batch_id')
+            ])
+            ->when($tab === 'pending', function ($q) {
+                return $q->latest('tanggal_pengajuan');
+            }, function ($q) {
+                return $q->latest('updated_at');
+            })
+            ->paginate(10)
+            ->withQueryString();
 
         return view('kasubag.pemeliharaan.index', compact('pemeliharaans', 'tab'));
     }
 
     public function show(Pemeliharaan $pemeliharaan)
     {
+        $batch = Pemeliharaan::with(['asetBmn', 'pelapor'])
+            ->where('batch_id', $pemeliharaan->batch_id)
+            ->get();
+            
         $pemeliharaan->load(['asetBmn', 'pelapor', 'approver']);
-        return view('kasubag.pemeliharaan.show', compact('pemeliharaan'));
+        return view('kasubag.pemeliharaan.show', compact('pemeliharaan', 'batch'));
     }
 
     public function approve(Request $request, Pemeliharaan $pemeliharaan)
     {
         try {
             DB::transaction(function () use ($pemeliharaan) {
-                // Lock row
-                $lockedPemeliharaan = Pemeliharaan::where('id', $pemeliharaan->id)->lockForUpdate()->first();
+                $lockedBatch = Pemeliharaan::where('batch_id', $pemeliharaan->batch_id)->lockForUpdate()->get();
 
-                if ($lockedPemeliharaan->status !== 'pending') {
-                    throw new \Exception('Pengajuan ini sudah diproses sebelumnya.');
+                foreach ($lockedBatch as $item) {
+                    if ($item->status !== 'pending') {
+                        throw new \Exception('Salah satu pengajuan ini sudah diproses sebelumnya.');
+                    }
+
+                    $item->update([
+                        'status' => 'disetujui',
+                        'approved_by' => auth()->id(),
+                    ]);
+
+                    \App\Models\AsetBmn::where('id', $item->aset_id)->update(['status' => 'menunggu_servis']);
                 }
-
-                $lockedPemeliharaan->update([
-                    'status' => 'disetujui',
-                    'approved_by' => auth()->id(),
-                ]);
-
-                \App\Models\AsetBmn::where('id', $lockedPemeliharaan->aset_id)->update(['status' => 'menunggu_servis']);
             });
 
             // WA Notification (Hanya untuk situasional, rutin cukup internal)
@@ -81,20 +92,21 @@ class PersetujuanPemeliharaanController extends Controller
     {
         try {
             DB::transaction(function () use ($request, $pemeliharaan) {
-                // Lock row
-                $lockedPemeliharaan = Pemeliharaan::where('id', $pemeliharaan->id)->lockForUpdate()->first();
+                $lockedBatch = Pemeliharaan::where('batch_id', $pemeliharaan->batch_id)->lockForUpdate()->get();
 
-                if ($lockedPemeliharaan->status !== 'pending') {
-                    throw new \Exception('Pengajuan ini sudah diproses sebelumnya.');
+                foreach ($lockedBatch as $item) {
+                    if ($item->status !== 'pending') {
+                        throw new \Exception('Salah satu pengajuan ini sudah diproses sebelumnya.');
+                    }
+
+                    $item->update([
+                        'status' => 'ditolak',
+                        'approved_by' => auth()->id(),
+                        'catatan_validasi' => $request->validated('catatan_validasi'),
+                    ]);
+
+                    \App\Models\AsetBmn::where('id', $item->aset_id)->update(['status' => 'tersedia']);
                 }
-
-                $lockedPemeliharaan->update([
-                    'status' => 'ditolak',
-                    'approved_by' => auth()->id(),
-                    'catatan_validasi' => $request->validated('catatan_validasi'),
-                ]);
-
-                \App\Models\AsetBmn::where('id', $lockedPemeliharaan->aset_id)->update(['status' => 'tersedia']);
             });
 
             // WA Notification

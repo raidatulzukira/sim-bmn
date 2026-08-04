@@ -50,8 +50,8 @@
                             @forelse($pemeliharaans as $rawat)
                                 <tr class="hover:bg-indigo-50/50 transition-colors duration-200 group">
                                     <td class="px-6 py-4 whitespace-nowrap text-left">
-                                        <p class="text-sm font-bold text-slate-900">{{ $rawat->asetBmn->nama_barang }}</p>
-                                        <p class="text-xs font-mono font-medium text-slate-500 mt-1">{{ $rawat->asetBmn->kode_barang }}</p>
+                                        <p class="text-sm font-bold text-slate-900">{{ $rawat->asetBmn ? $rawat->asetBmn->nama_barang : 'Belum Diidentifikasi' }}</p>
+                                        <p class="text-xs text-slate-500 mt-0.5">Kode: {{ $rawat->asetBmn ? $rawat->asetBmn->kode_barang : '-' }}</p>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-center">
                                         <span class="px-3 py-1 inline-flex text-xs font-bold rounded-full border {{ $rawat->jenis === 'rutin' ? 'bg-slate-100 border-slate-200 text-slate-700' : 'bg-pink-50 border-pink-200 text-pink-700' }}">

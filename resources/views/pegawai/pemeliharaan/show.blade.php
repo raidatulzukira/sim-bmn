@@ -31,10 +31,14 @@
                             </div>
                             <div>
                                 <div class="flex gap-2 mb-1.5">
-                                    <span class="px-2.5 py-0.5 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold font-mono border border-slate-200">{{ $laporan_kerusakan->asetBmn->kode_barang }}</span>
+                                    <span class="px-2.5 py-0.5 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold font-mono border border-slate-200">
+                                        {{ $laporan_kerusakan->asetBmn ? $laporan_kerusakan->asetBmn->kode_barang : 'N/A' }}
+                                    </span>
                                     <span class="px-2.5 py-0.5 bg-sky-50 text-sky-600 rounded-lg text-xs font-bold border border-sky-100 capitalize">{{ $laporan_kerusakan->jenis ?? 'Kerusakan' }}</span>
                                 </div>
-                                <h3 class="text-2xl font-extrabold text-slate-900">{{ $laporan_kerusakan->asetBmn->nama_barang }}</h3>
+                                <h3 class="text-2xl font-extrabold text-slate-900">
+                                    {{ $laporan_kerusakan->asetBmn ? $laporan_kerusakan->asetBmn->nama_barang : 'Sedang diidentifikasi oleh Operator' }}
+                                </h3>
                             </div>
                         </div>
                         <div class="mb-2">
@@ -76,14 +80,48 @@
                                 </div>
                             </div>
 
-                            <!-- Deskripsi Kerusakan -->
+                            <!-- DAFTAR ASET DALAM BATCH INI -->
                             <div>
-                                <h4 class="text-md font-bold text-slate-800 mb-3 flex items-center gap-2">
-                                    <svg class="w-5 h-5 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                                    Deskripsi Kerusakan
+                                <h4 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                                    Daftar Aset yang Dilaporkan ({{ count($batch) }} Unit)
                                 </h4>
-                                <div class="bg-sky-50/50 p-4 rounded-xl border border-sky-100 text-sm text-slate-800 leading-relaxed font-medium">
-                                    {{ $laporan_kerusakan->deskripsi_kerusakan }}
+                                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                    <div class="space-y-3">
+                                        @php
+                                            $groupedBatch = $batch->groupBy(function($item) {
+                                                return $item->asetBmn ? $item->asetBmn->kode_barang : 'unknown';
+                                            });
+                                        @endphp
+                                        @foreach($groupedBatch as $kode => $items)
+                                            <div class="bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
+                                                <div class="flex justify-between items-start mb-3">
+                                                    <div class="flex gap-3">
+                                                        <div class="w-8 h-8 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                                                        </div>
+                                                        <div>
+                                                            <p class="text-sm font-bold text-slate-800">{{ $items->first()->asetBmn ? $items->first()->asetBmn->nama_barang : 'Aset Belum Diidentifikasi' }}</p>
+                                                            <p class="text-xs text-slate-500 mt-0.5 font-medium">Kode: <span class="font-mono">{{ $kode }}</span></p>
+                                                        </div>
+                                                    </div>
+                                                    <span class="px-2.5 py-1 bg-indigo-50 text-indigo-700 text-[10px] font-bold rounded-lg border border-indigo-100">
+                                                        {{ $items->count() }} Unit
+                                                    </span>
+                                                </div>
+                                                <div class="pl-11 border-t border-slate-50 pt-3">
+                                                    <p class="text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">Nomor Urut Pendaftaran (NUP)</p>
+                                                    <div class="flex flex-wrap gap-2">
+                                                        @foreach($items as $item)
+                                                            <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-mono font-bold bg-slate-50 text-slate-700 border border-slate-200">
+                                                                {{ $item->asetBmn ? $item->asetBmn->nup : '?' }}
+                                                            </span>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
                                 </div>
                             </div>
 
@@ -128,8 +166,12 @@
                             @endif
                         </div>
 
-                        <!-- Right Column: Foto -->
-                        <div>
+
+
+                        <!-- Right Column (Foto & Daftar Aset) -->
+                        <div class="space-y-6">
+                            <!-- Foto Bukti Kerusakan -->
+                            <div>
                             <h4 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
                                 <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                 Foto Bukti Kerusakan
@@ -144,6 +186,18 @@
                                     </div>
                                 @endif
                             </div>
+                        </div>
+
+                        <!-- Deskripsi Kerusakan -->
+                        <div>
+                            <h4 class="text-md font-bold text-slate-800 mb-3 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                Deskripsi Kerusakan
+                            </h4>
+                            <div class="bg-sky-50/50 p-4 rounded-xl border border-sky-100 text-sm text-slate-800 leading-relaxed font-medium">
+                                {{ $laporan_kerusakan->deskripsi_kerusakan }}
+                            </div>
+                        </div>
                         </div>
                     </div>
 

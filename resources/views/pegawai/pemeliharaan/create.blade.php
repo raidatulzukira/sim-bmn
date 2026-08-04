@@ -32,35 +32,9 @@
                         </div>
                     </div>
                 
-                    @if($asets->count() == 0)
-                        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-6 flex flex-col items-center justify-center text-center">
-                            <div class="w-16 h-16 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center mb-4">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            </div>
-                            <h4 class="text-lg font-bold text-amber-800 mb-2">Semua Aset Tersedia atau Sedang Diservis</h4>
-                            <p class="text-amber-700 max-w-md">Tidak ada aset BMN yang dapat dilaporkan kerusakannya saat ini (semua aset dalam kondisi baik atau sedang dalam proses perbaikan).</p>
-                        </div>
-                    @else
-                        <form action="{{ route('pegawai.laporan_kerusakan.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
-                            @csrf
+                    <form action="{{ route('pegawai.laporan_kerusakan.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+                        @csrf
                             
-                            <!-- Pilih Aset -->
-                            <div>
-                                <label for="aset_id" class="block text-sm font-bold text-slate-700 mb-2">Pilih Aset yang Rusak <span class="text-sky-500">*</span></label>
-                                <div class="relative">
-                                    <select id="aset_id" name="aset_id" class="block w-full pl-4 pr-10 py-3 text-base border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 sm:text-sm rounded-xl transition-colors bg-slate-50 hover:bg-white" required autofocus>
-                                        <option value="">-- Pilih Aset --</option>
-                                        @foreach($asets as $aset)
-                                            <option value="{{ $aset->id }}" {{ old('aset_id') == $aset->id ? 'selected' : '' }}>
-                                                {{ $aset->kode_barang }} - {{ $aset->nama_barang }} ({{ $aset->jenis_bmn }})
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <x-input-error :messages="$errors->get('aset_id')" class="mt-2" />
-                                <p class="text-xs text-slate-500 mt-2 flex items-center gap-1"><svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Hanya aset yang tidak sedang diservis yang akan muncul di daftar ini.</p>
-                            </div>
-
                             <!-- Deskripsi -->
                             <div>
                                 <label for="deskripsi_kerusakan" class="block text-sm font-bold text-slate-700 mb-2">Deskripsi Kerusakan / Kendala <span class="text-sky-500">*</span></label>
@@ -97,7 +71,6 @@
                                 </button>
                             </div>
                         </form>
-                    @endif
                 </div>
             </div>
         </div>

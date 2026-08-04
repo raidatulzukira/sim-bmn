@@ -13,9 +13,9 @@
                 <p class="text-sm text-slate-500 font-medium">Pantau status pengajuan pinjaman aset Anda di sini.</p>
             </div>
         </div>
-        <a href="{{ route('pegawai.peminjaman.create') }}" class="group relative inline-flex items-center gap-2 px-6 py-3 bg-sky-600 text-white font-bold rounded-xl shadow-lg shadow-sky-200 hover:bg-sky-700 hover:shadow-sky-300 transition-all duration-300 transform hover:-translate-y-0.5 overflow-hidden">
-            <svg class="w-5 h-5 relative z-10 group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-            <span class="relative z-10">Ajukan Peminjaman</span>
+        <a href="{{ route('pegawai.katalog_aset.index') }}" class="group relative inline-flex items-center gap-2 px-6 py-3 bg-sky-600 text-white font-bold rounded-xl shadow-lg shadow-sky-200 hover:bg-sky-700 hover:shadow-sky-300 transition-all duration-300 transform hover:-translate-y-0.5 overflow-hidden">
+            <svg class="w-5 h-5 relative z-10 group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <span class="relative z-10">Cari Aset untuk Dipinjam</span>
         </a>
     </div>
 @endsection
@@ -85,18 +85,16 @@
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
                                             </div>
                                             <div>
-                                                <div class="text-sm font-bold text-slate-900 group-hover:text-sky-600 transition-colors">{{ $pinjam->asetBmn->nama_barang }}</div>
+                                                <div class="text-sm font-bold text-slate-900 group-hover:text-sky-600 transition-colors">{{ $pinjam->asetBmn->nama_barang }} ({{ $pinjam->total_barang }} unit)</div>
                                                 <div class="text-xs text-slate-500 mt-0.5 font-mono">{{ $pinjam->asetBmn->kode_barang }}</div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm font-bold text-slate-700">{{ $pinjam->estimasi_waktu_pinjam->format('d M Y') }}</div>
-                                        <div class="text-xs text-slate-500 mt-0.5">{{ $pinjam->estimasi_waktu_pinjam->format('H:i') }} WIB</div>
+                                    <td class="px-6 py-4 whitespace-nowrap text-left">
+                                        <div class="text-sm font-bold text-slate-900">{{ $pinjam->estimasi_waktu_pinjam->format('d M Y') }}</div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm font-bold text-slate-700">{{ $pinjam->tanggal_kembali_rencana->format('d M Y') }}</div>
-                                        <div class="text-xs text-slate-500 mt-0.5">{{ $pinjam->tanggal_kembali_rencana->format('H:i') }} WIB</div>
+                                    <td class="px-6 py-4 whitespace-nowrap text-left">
+                                        <div class="text-sm font-bold text-slate-900">{{ $pinjam->tanggal_kembali_rencana->format('d M Y') }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         @php

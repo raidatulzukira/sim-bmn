@@ -30,9 +30,15 @@
                                         Servis {{ ucfirst($pemeliharaan->jenis) }}
                                     </span>
                                 </div>
-                                <h3 class="text-3xl font-bold text-slate-900 mb-1">{{ $pemeliharaan->asetBmn->nama_barang }}</h3>
-                                <div class="flex items-center gap-3">
-                                    <span class="font-mono text-sm font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded-md">{{ $pemeliharaan->asetBmn->kode_barang }}</span>
+                                <h3 class="text-3xl font-bold text-slate-900 mb-1">{{ $pemeliharaan->asetBmn ? $pemeliharaan->asetBmn->nama_barang : 'Aset Belum Diidentifikasi' }}</h3>
+                                <div class="flex items-center gap-3 mt-2">
+                                    @if($batch->count() > 1)
+                                        <span class="inline-flex items-center justify-center px-3 py-1 text-sm font-bold text-sky-700 bg-sky-100 rounded-full border border-sky-200">
+                                            Total: {{ $batch->count() }} Unit
+                                        </span>
+                                    @else
+                                        <span class="font-mono text-sm font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded-md">{{ $pemeliharaan->asetBmn ? $pemeliharaan->asetBmn->kode_barang : 'N/A' }}</span>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -90,6 +96,15 @@
                                     </div>
                                 </div>
                             @endif
+
+                            <!-- Catatan / Deskripsi Kerusakan -->
+                            <div class="bg-sky-50/30 p-5 rounded-2xl border border-sky-100 w-full h-fit">
+                                <h4 class="text-sm font-extrabold text-sky-600 uppercase tracking-wider mb-3 flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                    Catatan / Deskripsi Kerusakan
+                                </h4>
+                                <p class="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap font-medium">{{ $pemeliharaan->deskripsi_kerusakan ?? 'Tidak ada catatan.' }}</p>
+                            </div>
                         </div>
                         @endif
 
@@ -98,7 +113,7 @@
                             
                             <div class="{{ $hasFoto ? 'flex flex-col gap-6' : 'grid grid-cols-1 md:grid-cols-2 gap-6 w-full' }}">
                                 <!-- Informasi Pengajuan -->
-                                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 w-full h-fit">
+                                <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100 w-full h-fit">
                                     <h4 class="text-sm font-extrabold text-sky-600 uppercase tracking-wider mb-4 flex items-center gap-2">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                         Informasi Pengajuan
@@ -106,22 +121,22 @@
                                     <div class="space-y-4">
                                         <div class="flex items-center gap-4">
                                             <div class="w-12 h-12 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center font-bold text-xl">
-                                                {{ strtoupper(substr($pemeliharaan->jenis === 'situasional' ? $pemeliharaan->pelapor->name : 'Op', 0, 1)) }}
+                                                {{ strtoupper(substr($pemeliharaan->jenis === 'situasional' && $pemeliharaan->pelapor ? $pemeliharaan->pelapor->name : 'Op', 0, 1)) }}
                                             </div>
                                             <div>
                                                 <p class="text-xs text-slate-500 font-medium">Pelapor / Pengaju</p>
-                                                <p class="text-base font-bold text-slate-900">{{ $pemeliharaan->jenis === 'situasional' ? $pemeliharaan->pelapor->name : 'Operator (Sistem Rutin)' }}</p>
+                                                <p class="text-base font-bold text-slate-900">{{ $pemeliharaan->jenis === 'situasional' && $pemeliharaan->pelapor ? $pemeliharaan->pelapor->name : 'Operator (Sistem Rutin)' }}</p>
                                             </div>
                                         </div>
-                                        <div class="pt-2 flex flex-wrap gap-4">
+                                        <div class="pt-2 grid grid-cols-2 gap-4">
                                             <div>
                                                 <p class="text-xs text-slate-500 font-medium mb-1">Tanggal Pengajuan</p>
-                                                <p class="text-sm font-bold text-slate-900 bg-white px-3 py-2 rounded-lg border border-slate-200 inline-block">{{ $pemeliharaan->tanggal_pengajuan->format('d F Y, H:i') }}</p>
+                                                <p class="text-xs font-bold text-slate-900 bg-white px-3 py-2 rounded-lg border border-slate-200 block whitespace-nowrap">{{ $pemeliharaan->tanggal_pengajuan->format('d F Y, H:i') }}</p>
                                             </div>
                                             @if($pemeliharaan->tanggal_selesai)
                                             <div>
                                                 <p class="text-xs text-slate-500 font-medium mb-1">Tanggal Selesai Perbaikan</p>
-                                                <p class="text-sm font-bold text-emerald-700 bg-emerald-50 px-3 py-2 rounded-lg border border-emerald-200 inline-block">{{ $pemeliharaan->tanggal_selesai->format('d F Y, H:i') }}</p>
+                                                <p class="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-2 rounded-lg border border-emerald-200 block whitespace-nowrap">{{ $pemeliharaan->tanggal_selesai->format('d F Y, H:i') }}</p>
                                             </div>
                                             @endif
                                         </div>
@@ -129,7 +144,7 @@
                                 </div>
 
                                 <!-- Keputusan TU -->
-                                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 w-full h-fit">
+                                <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100 w-full h-fit">
                                     <h4 class="text-sm font-extrabold text-sky-600 uppercase tracking-wider mb-4 flex items-center gap-2">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                         Keputusan TU
@@ -141,7 +156,7 @@
                                         </div>
                                     @else
                                         <div class="space-y-4">
-                                            <div class="bg-white p-4 rounded-xl border border-slate-100 flex items-center gap-4">
+                                            <div class="bg-white p-3 rounded-xl border border-slate-100 flex items-center gap-4">
                                                 <div class="w-10 h-10 rounded-full bg-sky-100 text-sky-700 flex items-center justify-center font-bold text-lg">
                                                     {{ strtoupper(substr($pemeliharaan->approver->name ?? 'X', 0, 1)) }}
                                                 </div>
@@ -158,6 +173,49 @@
                                             @endif
                                         </div>
                                     @endif
+                                </div>
+                            </div>
+                            
+                            <!-- DAFTAR ASET DALAM BATCH INI -->
+                            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100 w-full h-fit {{ $hasFoto ? '' : 'md:col-span-2' }}">
+                                <h4 class="text-sm font-extrabold text-sky-600 uppercase tracking-wider mb-4 flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                                    Daftar Aset yang Diservis
+                                </h4>
+                                <div class="space-y-3">
+                                    @php
+                                        $groupedBatch = $batch->groupBy(function($item) {
+                                            return $item->asetBmn ? $item->asetBmn->kode_barang : 'unknown';
+                                        });
+                                    @endphp
+                                    @foreach($groupedBatch as $kode => $items)
+                                        <div class="bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
+                                            <div class="flex justify-between items-start mb-3">
+                                                <div class="flex gap-3">
+                                                    <div class="w-8 h-8 rounded-full bg-sky-50 text-sky-600 flex items-center justify-center shrink-0">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-sm font-bold text-slate-800">{{ $items->first()->asetBmn ? $items->first()->asetBmn->nama_barang : 'Aset Belum Diidentifikasi' }}</p>
+                                                        <p class="text-xs text-slate-500 mt-0.5 font-medium">Kode: <span class="font-mono">{{ $kode }}</span></p>
+                                                    </div>
+                                                </div>
+                                                <span class="px-2.5 py-1 bg-sky-50 text-sky-700 text-[10px] font-bold rounded-lg border border-sky-100">
+                                                    {{ $items->count() }} Unit
+                                                </span>
+                                            </div>
+                                            <div class="pl-11 border-t border-slate-50 pt-3">
+                                                <p class="text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">Nomor Urut Pendaftaran (NUP)</p>
+                                                <div class="flex flex-wrap gap-2">
+                                                    @foreach($items as $item)
+                                                        <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-mono font-bold bg-slate-50 text-slate-700 border border-slate-200">
+                                                            {{ $item->asetBmn ? $item->asetBmn->nup : '?' }}
+                                                        </span>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
                                 </div>
                             </div>
 
@@ -181,6 +239,7 @@
                             @endif
 
                             <!-- Catatan / Deskripsi Kerusakan -->
+                            @if(!$hasFoto)
                             <div class="bg-sky-50/30 p-5 rounded-2xl border border-sky-100 w-full h-fit">
                                 <h4 class="text-sm font-extrabold text-sky-600 uppercase tracking-wider mb-3 flex items-center gap-2">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
@@ -188,6 +247,7 @@
                                 </h4>
                                 <p class="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap font-medium">{{ $pemeliharaan->deskripsi_kerusakan ?? 'Tidak ada catatan.' }}</p>
                             </div>
+                            @endif
                             
                         </div>
                     </div>
@@ -206,11 +266,34 @@
                                 <strong class="text-sky-700 block mt-1">Status aset BMN ini akan otomatis diubah menjadi "Servis" di sistem master data.</strong>
                             </p>
                             
-                            <form action="{{ route('operator.pemeliharaan.proses', $pemeliharaan->id) }}" method="POST">
+                            <form action="{{ route('operator.pemeliharaan.proses', $pemeliharaan->id) }}" method="POST" class="space-y-4">
                                 @csrf
+                                
+                                @if(is_null($pemeliharaan->aset_id) && isset($asets))
+                                    <div class="bg-white p-5 rounded-2xl border border-slate-200">
+                                        <label for="aset_id" class="block text-sm font-bold text-slate-700 mb-2">Identifikasi Aset yang Rusak <span class="text-red-500">*</span></label>
+                                        <p class="text-xs text-slate-500 mb-3">Laporan ini dibuat tanpa memilih aset. Silakan pilih aset BMN yang sesuai dengan deskripsi pelapor.</p>
+                                        <select id="aset_id" name="aset_id" class="block w-full text-base border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 sm:text-sm rounded-xl transition-colors bg-slate-50 hover:bg-white" required>
+                                            <option value="">-- Pilih Aset BMN --</option>
+                                            @foreach($asets as $aset)
+                                                <option value="{{ $aset->id }}">
+                                                    {{ $aset->kode_barang }} - {{ $aset->nama_barang }} (NUP: {{ $aset->nup }}) - {{ ucfirst($aset->status) }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('aset_id')
+                                            <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                @endif
+
                                 <button type="submit" onclick="return confirm('Mulai proses servis aset ini?');" class="w-full sm:w-auto px-8 py-3.5 bg-sky-700 text-white rounded-xl text-sm font-bold hover:bg-sky-800 transition-all duration-300 shadow-sm hover:shadow-md flex items-center justify-center gap-2">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                                    Tandai Mulai Diproses (Servis)
+                                    @if($batch->count() > 1)
+                                        Tandai {{ $batch->count() }} Aset Mulai Diproses
+                                    @else
+                                        Tandai Mulai Diproses (Servis)
+                                    @endif
                                 </button>
                             </form>
                         </div>
@@ -236,8 +319,8 @@
                                             file:mr-4 file:py-3 file:px-6
                                             file:rounded-xl file:border-0
                                             file:text-sm file:font-bold
-                                            file:bg-indigo-600 file:text-white
-                                            hover:file:bg-indigo-700 file:transition-colors file:cursor-pointer
+                                            file:bg-sky-500 file:text-white
+                                            hover:file:bg-sky-600 file:transition-colors file:cursor-pointer
                                             border border-slate-200 rounded-xl bg-white cursor-pointer" accept=".jpg,.jpeg,.png,.pdf" required />
                                     </div>
                                     @error('nota_teknisi')
@@ -246,9 +329,13 @@
                                     <p class="text-sm text-indigo-600 mt-2 font-medium">Format yang diizinkan: JPG, PNG, PDF. Maksimal 5MB.</p>
                                 </div>
 
-                                <button type="submit" onclick="return confirm('Anda yakin proses perbaikan aset ini telah selesai sepenuhnya?');" class="w-full sm:w-auto px-8 py-3.5 bg-green-600 text-white rounded-xl text-sm font-bold hover:bg-green-700 transition-all duration-300 shadow-sm hover:shadow-md flex items-center justify-center gap-2">
+                                <button type="submit" onclick="return confirm('Anda yakin proses perbaikan aset ini telah selesai sepenuhnya?');" class="w-full sm:w-auto px-8 py-3.5 bg-sky-600 text-white rounded-xl text-sm font-bold hover:bg-sky-700 transition-all duration-300 shadow-sm hover:shadow-md flex items-center justify-center gap-2">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                    Selesaikan Perbaikan
+                                    @if($batch->count() > 1)
+                                        Selesaikan Perbaikan ({{ $batch->count() }} Aset)
+                                    @else
+                                        Selesaikan Perbaikan
+                                    @endif
                                 </button>
                             </form>
                         </div>

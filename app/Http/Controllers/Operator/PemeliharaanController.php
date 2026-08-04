@@ -22,13 +22,20 @@ class PemeliharaanController extends Controller
         $status = $request->input('status');
         $jenis = $request->input('jenis');
 
-        $pemeliharaans = Pemeliharaan::with(['asetBmn', 'pelapor'])
+        // Gunakan batching logic
+        $batchQuery = Pemeliharaan::select(\Illuminate\Support\Facades\DB::raw('MAX(id) as max_id'))
             ->when($status, function ($query, $status) {
                 return $query->where('status', $status);
             })
             ->when($jenis, function ($query, $jenis) {
                 return $query->where('jenis', $jenis);
             })
+            ->groupBy('batch_id');
+
+        $pemeliharaans = Pemeliharaan::with(['asetBmn', 'pelapor'])
+            ->whereIn('id', $batchQuery)
+            ->addSelect(['*', 'total_barang' => Pemeliharaan::selectRaw('COUNT(*)')->from('pemeliharaan as p_sub')->whereColumn('p_sub.batch_id', 'pemeliharaan.batch_id')
+            ])
             ->latest()
             ->paginate(10)
             ->withQueryString();
@@ -36,29 +43,64 @@ class PemeliharaanController extends Controller
         return view('operator.pemeliharaan.index', compact('pemeliharaans', 'status', 'jenis'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
-        // Operator hanya bisa mengajukan servis rutin untuk aset yang 'tersedia'
-        $asets = AsetBmn::where('status', 'tersedia')->orderBy('nama_barang')->get();
-        return view('operator.pemeliharaan.create', compact('asets'));
+        $kodeBarang = $request->input('kode_barang');
+        $filter = $request->input('filter');
+        
+        $query = AsetBmn::where('status', 'tersedia');
+        if ($kodeBarang) {
+            $query->where('kode_barang', $kodeBarang);
+        }
+
+        if ($filter === 'rutin') {
+            $query->whereNotNull('interval_servis_tahun')
+                  ->whereNotNull('tanggal_servis_terakhir')
+                  ->whereDoesntHave('pemeliharaan', function ($q) {
+                      $q->where('jenis', 'rutin')
+                        ->whereIn('status', ['pending', 'disetujui', 'proses']);
+                  });
+            
+            $asets = $query->orderBy('nama_barang')->get()->filter(function($aset) {
+                return $aset->is_servis_warning;
+            })->values();
+        } else {
+            $asets = $query->orderBy('nama_barang')->get();
+        }
+        
+        return view('operator.pemeliharaan.create', compact('asets', 'kodeBarang'));
     }
 
     public function store(StoreServisRutinRequest $request)
     {
         $validated = $request->validated();
         
-        $pemeliharaan = Pemeliharaan::create([
-            'aset_id' => $validated['aset_id'],
-            'jenis' => 'rutin',
-            'dilaporkan_oleh' => auth()->id(),
-            'deskripsi_kerusakan' => $validated['deskripsi_kerusakan'],
-            'status' => 'pending',
-            'tanggal_pengajuan' => now(),
-        ]);
+        $batchId = (string) \Illuminate\Support\Str::uuid();
+        $firstPemeliharaanId = null;
 
-        \App\Models\AsetBmn::where('id', $validated['aset_id'])->update(['status' => 'menunggu_persetujuan']);
+        DB::transaction(function () use ($validated, $batchId, &$firstPemeliharaanId) {
+            foreach ($validated['aset_ids'] as $aset_id) {
+                $pemeliharaan = Pemeliharaan::create([
+                    'batch_id' => $batchId,
+                    'aset_id' => $aset_id,
+                    'jenis' => 'rutin',
+                    'dilaporkan_oleh' => auth()->id(),
+                    'deskripsi_kerusakan' => $validated['deskripsi_kerusakan'],
+                    'status' => 'pending',
+                    'tanggal_pengajuan' => now(),
+                ]);
 
-        \App\Jobs\SendMaintenanceNotificationJob::dispatch($pemeliharaan->id);
+                if (!$firstPemeliharaanId) {
+                    $firstPemeliharaanId = $pemeliharaan->id;
+                }
+
+                AsetBmn::where('id', $aset_id)->update(['status' => 'menunggu_persetujuan']);
+            }
+        });
+
+        if ($firstPemeliharaanId) {
+            \App\Jobs\SendMaintenanceNotificationJob::dispatch($firstPemeliharaanId);
+        }
 
         return redirect()->route('operator.pemeliharaan.index')
             ->with('success', 'Pengajuan servis rutin berhasil dikirim dan menunggu persetujuan Kasubag TU.');
@@ -66,35 +108,61 @@ class PemeliharaanController extends Controller
 
     public function show(Pemeliharaan $pemeliharaan)
     {
+        $batch = Pemeliharaan::with(['asetBmn', 'pelapor', 'approver'])
+            ->where('batch_id', $pemeliharaan->batch_id)
+            ->get();
+            
         $pemeliharaan->load(['asetBmn', 'pelapor', 'approver']);
-        return view('operator.pemeliharaan.show', compact('pemeliharaan'));
+        
+        $asets = null;
+        if ($pemeliharaan->status === 'disetujui' && is_null($pemeliharaan->aset_id)) {
+            $asets = AsetBmn::whereIn('status', ['tersedia', 'dipinjam'])->orderBy('nama_barang')->get();
+        }
+        return view('operator.pemeliharaan.show', compact('pemeliharaan', 'batch', 'asets'));
     }
 
     public function proses(Request $request, Pemeliharaan $pemeliharaan)
     {
         try {
-            DB::transaction(function () use ($pemeliharaan) {
-                $lockedPemeliharaan = Pemeliharaan::where('id', $pemeliharaan->id)->lockForUpdate()->first();
+            DB::transaction(function () use ($request, $pemeliharaan) {
+                // If the report was made by Pegawai (aset_id null), they only submitted 1 record.
+                // We lock the specific record. If it's a batch from operator, we lock all.
+                $lockedBatch = Pemeliharaan::where('batch_id', $pemeliharaan->batch_id)->lockForUpdate()->get();
 
-                if ($lockedPemeliharaan->status !== 'disetujui') {
-                    throw new \Exception('Hanya pengajuan berstatus disetujui yang dapat mulai diproses.');
+                // Validation for Pegawai's single report
+                if (is_null($pemeliharaan->aset_id)) {
+                    $request->validate([
+                        'aset_id' => 'required|exists:aset_bmn,id',
+                    ], [
+                        'aset_id.required' => 'Anda harus memilih aset BMN yang akan diservis.'
+                    ]);
                 }
 
-                // Cek status aset, pastikan belum dalam perbaikan lain (opsional tambahan keamanan)
-                $aset = AsetBmn::where('id', $lockedPemeliharaan->aset_id)->lockForUpdate()->first();
-                if ($aset->status === 'servis') {
-                    throw new \Exception('Aset ini sudah dalam status servis.');
+                foreach ($lockedBatch as $item) {
+                    if ($item->status !== 'disetujui') {
+                        throw new \Exception('Hanya pengajuan berstatus disetujui yang dapat mulai diproses.');
+                    }
+
+                    $aset_id = $item->aset_id;
+
+                    if (is_null($aset_id)) {
+                        $aset_id = $request->aset_id;
+                    }
+
+                    $aset = AsetBmn::where('id', $aset_id)->lockForUpdate()->first();
+                    if ($aset->status === 'servis') {
+                        throw new \Exception("Aset {$aset->nama_barang} sudah dalam status servis.");
+                    }
+
+                    $item->update([
+                        'status' => 'proses',
+                        'aset_id' => $aset_id
+                    ]);
+
+                    $aset->update([
+                        'status' => 'servis'
+                    ]);
                 }
-
-                // Ubah status pemeliharaan menjadi proses
-                $lockedPemeliharaan->update([
-                    'status' => 'proses'
-                ]);
-
-                // Ubah status aset menjadi servis
-                $aset->update([
-                    'status' => 'servis'
-                ]);
             });
 
             return redirect()->route('operator.pemeliharaan.show', $pemeliharaan->id)
@@ -108,36 +176,29 @@ class PemeliharaanController extends Controller
     {
         try {
             DB::transaction(function () use ($request, $pemeliharaan) {
-                $lockedPemeliharaan = Pemeliharaan::where('id', $pemeliharaan->id)->lockForUpdate()->first();
+                $lockedBatch = Pemeliharaan::where('batch_id', $pemeliharaan->batch_id)->lockForUpdate()->get();
 
-                if ($lockedPemeliharaan->status !== 'proses') {
-                    throw new \Exception('Status pemeliharaan harus "proses" sebelum dapat diselesaikan.');
-                }
-
-                // Upload Nota
                 $path = $request->file('nota_teknisi')->store('nota_servis', 'public');
 
-                $lockedPemeliharaan->update([
-                    'status' => 'selesai',
-                    'tanggal_selesai' => now(),
-                    'nota_teknisi' => $path
-                ]);
+                foreach ($lockedBatch as $item) {
+                    if ($item->status !== 'proses') {
+                        throw new \Exception('Status pemeliharaan harus "proses" sebelum dapat diselesaikan.');
+                    }
 
-                $updateData = ['status' => 'tersedia'];
-                if ($lockedPemeliharaan->jenis === 'rutin') {
-                    $updateData['tanggal_servis_terakhir'] = now();
+                    $item->update([
+                        'status' => 'selesai',
+                        'tanggal_selesai' => now(),
+                        'nota_teknisi' => $path
+                    ]);
+
+                    $updateData = ['status' => 'tersedia'];
+                    if ($item->jenis === 'rutin') {
+                        $updateData['tanggal_servis_terakhir'] = now();
+                    }
+
+                    AsetBmn::where('id', $item->aset_id)->update($updateData);
                 }
-
-                // Ubah kembali status aset menjadi tersedia dan perbarui tanggal jika rutin
-                AsetBmn::where('id', $lockedPemeliharaan->aset_id)->update($updateData);
             });
-
-            // WA Notification jika itu situasional
-            $pemeliharaan->refresh();
-            // if ($pemeliharaan->jenis === 'situasional' && $pemeliharaan->pelapor && $pemeliharaan->pelapor->no_wa) {
-            //     $pesan = "Kabar baik! Perbaikan aset {$pemeliharaan->asetBmn->nama_aset} yang Anda laporkan telah SELESAI. Aset kini sudah dapat digunakan kembali.";
-            //     $this->waService->kirimPesan($pemeliharaan->pelapor->no_wa, $pesan, $pemeliharaan->dilaporkan_oleh, 'pemeliharaan', $pemeliharaan->id);
-            // }
 
             return redirect()->route('operator.pemeliharaan.show', $pemeliharaan->id)
                 ->with('success', 'Pemeliharaan berhasil diselesaikan. Status aset telah kembali menjadi "Tersedia".');

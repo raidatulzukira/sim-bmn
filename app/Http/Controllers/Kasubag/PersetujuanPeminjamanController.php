@@ -20,7 +20,11 @@ class PersetujuanPeminjamanController extends Controller
     {
         $tab = $request->input('tab', 'pending');
 
-        $query = Peminjaman::with(['user', 'asetBmn']);
+        $batchQuery = Peminjaman::select(DB::raw('MAX(id) as max_id'))
+            ->groupBy('batch_id');
+
+        $query = Peminjaman::with(['user', 'asetBmn'])
+            ->whereIn('id', $batchQuery);
 
         if ($tab === 'pending') {
             $query->where('status', 'pending');
@@ -28,34 +32,40 @@ class PersetujuanPeminjamanController extends Controller
             $query->whereIn('status', ['disetujui', 'ditolak', 'dipinjam', 'dikembalikan']);
         }
 
-        $peminjamans = $query->latest()->paginate(10)->withQueryString();
+        $peminjamans = $query->addSelect(['*', 'total_barang' => Peminjaman::selectRaw('COUNT(*)')->from('peminjaman as p_sub')->whereColumn('p_sub.batch_id', 'peminjaman.batch_id')
+            ])
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
 
         return view('kasubag.peminjaman.index', compact('peminjamans', 'tab'));
     }
 
     public function show(Peminjaman $peminjaman)
     {
+        $batch = Peminjaman::with(['user', 'asetBmn', 'approver'])->where('batch_id', $peminjaman->batch_id)->get();
         $peminjaman->load(['user', 'asetBmn', 'approver']);
-        return view('kasubag.peminjaman.show', compact('peminjaman'));
+        return view('kasubag.peminjaman.show', compact('peminjaman', 'batch'));
     }
 
     public function approve(ApprovePeminjamanRequest $request, Peminjaman $peminjaman)
     {
         try {
             DB::transaction(function () use ($peminjaman) {
-                // Lock for update to prevent double submission
-                $lockedPeminjaman = Peminjaman::where('id', $peminjaman->id)->lockForUpdate()->first();
+                // Lock for update all peminjaman in this batch
+                $batchPeminjaman = Peminjaman::where('batch_id', $peminjaman->batch_id)->lockForUpdate()->get();
 
-                if ($lockedPeminjaman->status !== 'pending') {
+                if ($batchPeminjaman->first()->status !== 'pending') {
                     throw new \Exception('Pengajuan ini sudah diproses sebelumnya.');
                 }
 
-                $lockedPeminjaman->update([
-                    'status' => 'disetujui',
-                    'approved_by' => auth()->id(),
-                ]);
-
-                \App\Models\AsetBmn::where('id', $lockedPeminjaman->aset_id)->update(['status' => 'menunggu_serah_terima']);
+                foreach ($batchPeminjaman as $item) {
+                    $item->update([
+                        'status' => 'disetujui',
+                        'approved_by' => auth()->id(),
+                    ]);
+                    \App\Models\AsetBmn::where('id', $item->aset_id)->update(['status' => 'menunggu_serah_terima']);
+                }
             });
 
             // Refresh model instance
@@ -78,19 +88,20 @@ class PersetujuanPeminjamanController extends Controller
     {
         try {
             DB::transaction(function () use ($request, $peminjaman) {
-                $lockedPeminjaman = Peminjaman::where('id', $peminjaman->id)->lockForUpdate()->first();
+                $batchPeminjaman = Peminjaman::where('batch_id', $peminjaman->batch_id)->lockForUpdate()->get();
 
-                if ($lockedPeminjaman->status !== 'pending') {
+                if ($batchPeminjaman->first()->status !== 'pending') {
                     throw new \Exception('Pengajuan ini sudah diproses sebelumnya.');
                 }
 
-                $lockedPeminjaman->update([
-                    'status' => 'ditolak',
-                    'approved_by' => auth()->id(),
-                    'catatan_penolakan' => $request->validated('catatan_penolakan'),
-                ]);
-
-                \App\Models\AsetBmn::where('id', $lockedPeminjaman->aset_id)->update(['status' => 'tersedia']);
+                foreach ($batchPeminjaman as $item) {
+                    $item->update([
+                        'status' => 'ditolak',
+                        'approved_by' => auth()->id(),
+                        'catatan_penolakan' => $request->validated('catatan_penolakan'),
+                    ]);
+                    \App\Models\AsetBmn::where('id', $item->aset_id)->update(['status' => 'tersedia']);
+                }
             });
 
             // Refresh model instance

@@ -34,10 +34,19 @@ class SendMaintenanceNotificationJob implements ShouldQueue
             return;
         }
 
+        // Hitung total unit dalam batch yang sama
+        $totalUnit = Pemeliharaan::where('batch_id', $pemeliharaan->batch_id)->count();
+
         $kasubags = User::where('role', 'kasubag_tu')->get();
         $namaAset = $pemeliharaan->asetBmn->nama_barang ?? 'Tidak diketahui';
-
-        $pesan = "Halo Bapak/Ibu Kasubag TU, terdapat pengajuan pemeliharaan/servis baru untuk aset {$namaAset}. Mohon untuk segera divalidasi melalui sistem.";
+        
+        $pesan = "Halo Bapak/Ibu Kasubag TU, terdapat pengajuan pemeliharaan/servis baru untuk ";
+        if ($totalUnit > 1) {
+            $pesan .= "{$totalUnit} unit aset {$namaAset}. ";
+        } else {
+            $pesan .= "aset {$namaAset}. ";
+        }
+        $pesan .= "Mohon untuk segera divalidasi melalui sistem.";
 
         $waService = new \App\Services\WhatsappService();
 

@@ -71,8 +71,20 @@
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                                             </div>
                                             <div>
-                                                <div class="text-sm font-bold text-slate-900 group-hover:text-sky-600 transition-colors">{{ $laporan->asetBmn->nama_barang }}</div>
-                                                <div class="text-xs text-slate-500 mt-0.5">{{ $laporan->asetBmn->kode_barang }}</div>
+                                                <div class="text-sm font-bold text-slate-900 group-hover:text-sky-600 transition-colors">
+                                                    {{ $laporan->asetBmn ? $laporan->asetBmn->nama_barang : 'Belum diidentifikasi' }}
+                                                    @if($laporan->total_barang > 1)
+                                                        <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-sky-100 text-sky-800">
+                                                            {{ $laporan->total_barang }} Unit
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                                <div class="text-xs text-slate-500 mt-0.5">
+                                                    NUP: <span class="font-medium text-slate-700">{{ $laporan->asetBmn ? $laporan->asetBmn->nup : '-' }}</span>
+                                                    @if($laporan->total_barang > 1)
+                                                        <span class="text-slate-400 italic">... (dan lainnya)</span>
+                                                    @endif
+                                                </div>
                                             </div>
                                         </div>
                                     </td>

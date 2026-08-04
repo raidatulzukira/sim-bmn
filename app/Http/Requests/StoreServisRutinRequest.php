@@ -15,7 +15,8 @@ class StoreServisRutinRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'aset_id' => [
+            'aset_ids' => ['required', 'array', 'min:1'],
+            'aset_ids.*' => [
                 'required', 
                 // Operator can only service assets that are NOT in 'servis' and NOT 'dipinjam'
                 Rule::exists('aset_bmn', 'id')->where('status', 'tersedia')
@@ -27,7 +28,8 @@ class StoreServisRutinRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'aset_id.exists' => 'Aset tidak tersedia untuk diservis (mungkin sedang dipinjam atau sudah diservis).',
+            'aset_ids.required' => 'Anda harus memilih minimal 1 aset.',
+            'aset_ids.*.exists' => 'Salah satu aset tidak tersedia untuk diservis (mungkin sedang dipinjam atau sudah diservis).',
         ];
     }
 }

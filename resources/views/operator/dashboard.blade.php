@@ -300,7 +300,9 @@
                                                         <span class="text-sm font-semibold text-slate-700">{{ $pinjam->user->name }}</span>
                                                     </div>
                                                 </td>
-                                                <td class="px-4 py-3.5 whitespace-nowrap text-sm text-slate-600 font-medium">{{ $pinjam->asetBmn->nama_barang }}</td>
+                                                <td class="px-4 py-3.5 whitespace-nowrap text-sm text-slate-600 font-medium">
+                                                    {{ $pinjam->asetBmn->nama_barang }} <span class="text-xs text-sky-600 bg-sky-50 px-2 py-0.5 rounded-full ml-1">({{ $pinjam->total_barang }} Unit)</span>
+                                                </td>
                                                 <td class="px-4 py-3.5 whitespace-nowrap">
                                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-rose-100 text-rose-700 font-bold rounded-full text-xs border border-rose-200">
                                                         <span class="w-1.5 h-1.5 rounded-full bg-rose-500 urgent-dot inline-block"></span>
@@ -358,7 +360,12 @@
                                     <tbody class="bg-white divide-y divide-slate-100">
                                         @foreach($alertPemeliharaan as $rawat)
                                             <tr class="alert-table-row">
-                                                <td class="px-4 py-3.5 whitespace-nowrap text-sm font-semibold text-slate-700">{{ $rawat->asetBmn->nama_barang }}</td>
+                                                <td class="px-4 py-3.5 whitespace-nowrap text-sm font-semibold text-slate-700">
+                                                    {{ $rawat->asetBmn ? $rawat->asetBmn->nama_barang : 'Aset Belum Diidentifikasi' }}
+                                                    @if(isset($rawat->total_barang) && $rawat->total_barang > 1)
+                                                        <span class="ml-1.5 px-2 py-0.5 bg-sky-100 text-sky-700 text-[10px] rounded-md border border-sky-200">{{ $rawat->total_barang }} Unit</span>
+                                                    @endif
+                                                </td>
                                                 <td class="px-4 py-3.5 whitespace-nowrap text-sm text-slate-600 capitalize font-medium">{{ $rawat->jenis }}</td>
                                                 <td class="px-4 py-3.5 whitespace-nowrap">
                                                     @if($rawat->status == 'pending')
@@ -436,19 +443,20 @@
                                                 </div>
                                                 <div>
                                                     <div class="text-sm font-bold text-slate-800">{{ $aset->nama_barang }}</div>
-                                                    <div class="text-xs text-slate-400 font-mono">{{ $aset->kode_barang }}</div>
+                                                    <div class="text-xs font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded inline-block mt-1">{{ $aset->total_unit }} Unit</div>
+                                                    <div class="text-[10px] text-slate-400 font-mono mt-1">Kode: {{ $aset->kode_barang }}</div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="px-5 py-4 whitespace-nowrap text-sm text-slate-600 font-medium">{{ $aset->tanggal_servis_terakhir->format('d M Y') }}</td>
+                                        <td class="px-5 py-4 whitespace-nowrap text-sm text-slate-600 font-medium">{{ $aset->contoh_aset->tanggal_servis_terakhir->format('d M Y') }}</td>
                                         <td class="px-5 py-4 whitespace-nowrap">
                                             <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-rose-100 text-rose-700 font-bold rounded-full text-xs border border-rose-200">
                                                 <span class="w-1.5 h-1.5 rounded-full bg-rose-500 urgent-dot inline-block"></span>
-                                                {{ $aset->jadwal_servis_berikutnya->format('d M Y') }}
+                                                {{ $aset->contoh_aset->jadwal_servis_berikutnya->format('d M Y') }}
                                             </span>
                                         </td>
                                         <td class="px-5 py-4 whitespace-nowrap">
-                                            <a href="{{ route('operator.pemeliharaan.create', ['aset_id' => $aset->id]) }}"
+                                            <a href="{{ route('operator.pemeliharaan.create', ['kode_barang' => $aset->kode_barang, 'filter' => 'rutin']) }}"
                                                class="inline-flex items-center gap-1.5 px-4 py-2 text-white text-sm font-bold rounded-xl transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
                                                style="background:linear-gradient(135deg,#0ea5e9,#2563eb); box-shadow:0 4px 12px -4px rgba(14,165,233,0.5);">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>

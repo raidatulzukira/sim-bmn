@@ -12,7 +12,10 @@ class Peminjaman extends Model
 
     protected $table = 'peminjaman';
     protected $fillable = [
-        'aset_id', 'user_id', 'keperluan', 'estimasi_waktu_pinjam',
+        'batch_id',
+        'aset_id',
+        'user_id',
+        'keperluan', 'estimasi_waktu_pinjam',
         'tanggal_pinjam', 'tanggal_kembali_rencana', 'tanggal_kembali_aktual',
         'status', 'catatan_penolakan', 'foto_serah_terima', 'foto_pengembalian', 'approved_by'
     ];
@@ -40,5 +43,28 @@ class Peminjaman extends Model
     public function approver(): BelongsTo
     {
         return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    public function getKeteranganTerlambatAttribute()
+    {
+        if (!$this->tanggal_kembali_rencana) return null;
+
+        $rencana = $this->tanggal_kembali_rencana->copy()->startOfDay();
+
+        if ($this->status === 'dikembalikan' && $this->tanggal_kembali_aktual) {
+            $aktual = $this->tanggal_kembali_aktual->copy()->startOfDay();
+            $terlambatHari = $rencana->diffInDays($aktual, false);
+            if ($terlambatHari > 0) {
+                return (int) $terlambatHari;
+            }
+        } elseif ($this->status === 'dipinjam') {
+            $sekarang = now()->startOfDay();
+            $terlambatHari = $rencana->diffInDays($sekarang, false);
+            if ($terlambatHari > 0) {
+                return (int) $terlambatHari;
+            }
+        }
+
+        return null;
     }
 }

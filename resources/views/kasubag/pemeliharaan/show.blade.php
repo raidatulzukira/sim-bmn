@@ -32,10 +32,16 @@
                                     {{ ucfirst($pemeliharaan->jenis) }}
                                 </span>
                             </div>
-                            <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-2">{{ $pemeliharaan->asetBmn->nama_barang }}</h3>
-                            <div class="flex items-center gap-2">
-                                <span class="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-sm font-mono font-bold">{{ $pemeliharaan->asetBmn->kode_barang }}</span>
-                                <span class="text-slate-500 text-sm">Kode Aset</span>
+                            <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-2">{{ $pemeliharaan->asetBmn ? $pemeliharaan->asetBmn->nama_barang : 'Aset Belum Diidentifikasi' }}</h3>
+                            <div class="flex items-center gap-2 mt-2">
+                                @if($batch->count() > 1)
+                                    <span class="inline-flex items-center justify-center px-3 py-1 text-sm font-bold text-sky-700 bg-sky-100 rounded-full border border-sky-200">
+                                        Total: {{ $batch->count() }} Unit
+                                    </span>
+                                @else
+                                    <span class="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-sm font-mono font-bold">{{ $pemeliharaan->asetBmn ? $pemeliharaan->asetBmn->kode_barang : 'N/A' }}</span>
+                                    <span class="text-slate-500 text-sm">Kode Aset</span>
+                                @endif
                             </div>
                         </div>
                         <div class="text-left md:text-right">
@@ -92,6 +98,15 @@
                                     </div>
                                 </div>
                             @endif
+
+                            <!-- Catatan / Deskripsi Kerusakan -->
+                            <div class="bg-indigo-50/30 p-5 rounded-2xl border border-indigo-100 w-full h-fit">
+                                <h4 class="text-sm font-extrabold text-indigo-600 uppercase tracking-wider mb-3 flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                    Catatan / Deskripsi Kerusakan
+                                </h4>
+                                <p class="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap font-medium">{{ $pemeliharaan->deskripsi_kerusakan ?? 'Tidak ada catatan.' }}</p>
+                            </div>
                         </div>
                         @endif
 
@@ -100,7 +115,7 @@
                             
                             <div class="{{ $hasFoto ? 'flex flex-col gap-6' : 'grid grid-cols-1 md:grid-cols-2 gap-6 w-full' }}">
                                 <!-- Informasi Pengajuan -->
-                                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 w-full h-fit">
+                                <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100 w-full h-fit">
                                     <h4 class="text-sm font-extrabold text-indigo-600 uppercase tracking-wider mb-4 flex items-center gap-2">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                         Informasi Pengajuan
@@ -115,7 +130,7 @@
                                                 <p class="text-base font-bold text-slate-900">{{ $pemeliharaan->jenis === 'situasional' ? $pemeliharaan->pelapor->name : 'Operator (Sistem Rutin)' }}</p>
                                             </div>
                                         </div>
-                                        <div class="pt-2 flex flex-wrap gap-4">
+                                        <!-- <div class="pt-2 flex flex-wrap gap-4">
                                             <div>
                                                 <p class="text-xs text-slate-500 font-medium mb-1">Tanggal Pengajuan</p>
                                                 <p class="text-sm font-bold text-slate-900 bg-white px-3 py-2 rounded-lg border border-slate-200 inline-block">{{ $pemeliharaan->tanggal_pengajuan->format('d F Y, H:i') }}</p>
@@ -126,12 +141,28 @@
                                                 <p class="text-sm font-bold text-emerald-700 bg-emerald-50 px-3 py-2 rounded-lg border border-emerald-200 inline-block">{{ $pemeliharaan->tanggal_selesai->format('d F Y, H:i') }}</p>
                                             </div>
                                             @endif
+                                        </div> -->
+
+                                        <div class="pt-2 grid grid-cols-2 gap-4">
+                                            <div>
+                                                <p class="text-xs text-slate-500 font-medium mb-1">Tanggal Pengajuan</p>
+                                                <p class="text-xs font-bold text-slate-900 bg-white px-3 py-2 rounded-lg border border-slate-200 block">{{ $pemeliharaan->tanggal_pengajuan->format('d F Y, H:i') }}</p>
+                                            </div>
+                                            
+                                            @if($pemeliharaan->tanggal_selesai)
+                                                <div>
+                                                    <p class="text-xs text-slate-500 font-medium mb-1">Tanggal Selesai Perbaikan</p>
+                                                    <p class="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-2 rounded-lg border border-emerald-200 block">{{ $pemeliharaan->tanggal_selesai->format('d F Y, H:i') }}</p>
+                                                </div>
+                                            @endif
                                         </div>
+
+
                                     </div>
                                 </div>
 
                                 <!-- Keputusan TU -->
-                                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 w-full h-fit">
+                                <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100 w-full h-fit">
                                     <h4 class="text-sm font-extrabold text-indigo-600 uppercase tracking-wider mb-4 flex items-center gap-2">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                         Keputusan TU
@@ -143,7 +174,7 @@
                                         </div>
                                     @else
                                         <div class="space-y-4">
-                                            <div class="bg-white p-4 rounded-xl border border-slate-100 flex items-center gap-4">
+                                            <div class="bg-white p-3 rounded-xl border border-slate-100 flex items-center gap-4">
                                                 <div class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-lg">
                                                     {{ strtoupper(substr($pemeliharaan->approver->name ?? 'X', 0, 1)) }}
                                                 </div>
@@ -160,6 +191,49 @@
                                             @endif
                                         </div>
                                     @endif
+                                </div>
+                            </div>
+
+                            <!-- DAFTAR ASET DALAM BATCH INI -->
+                            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100 w-full h-fit {{ $hasFoto ? '' : 'md:col-span-2' }}">
+                                <h4 class="text-sm font-extrabold text-indigo-600 uppercase tracking-wider mb-4 flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                                    Daftar Aset yang Diservis
+                                </h4>
+                                <div class="space-y-3">
+                                    @php
+                                        $groupedBatch = $batch->groupBy(function($item) {
+                                            return $item->asetBmn ? $item->asetBmn->kode_barang : 'unknown';
+                                        });
+                                    @endphp
+                                    @foreach($groupedBatch as $kode => $items)
+                                        <div class="bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
+                                            <div class="flex justify-between items-start mb-3">
+                                                <div class="flex gap-3">
+                                                    <div class="w-8 h-8 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-sm font-bold text-slate-800">{{ $items->first()->asetBmn ? $items->first()->asetBmn->nama_barang : 'Aset Belum Diidentifikasi' }}</p>
+                                                        <p class="text-xs text-slate-500 mt-0.5 font-medium">Kode: <span class="font-mono">{{ $kode }}</span></p>
+                                                    </div>
+                                                </div>
+                                                <span class="px-2.5 py-1 bg-indigo-50 text-indigo-700 text-[10px] font-bold rounded-lg border border-indigo-100">
+                                                    {{ $items->count() }} Unit
+                                                </span>
+                                            </div>
+                                            <div class="pl-11 border-t border-slate-50 pt-3">
+                                                <p class="text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">Nomor Urut Pendaftaran (NUP)</p>
+                                                <div class="flex flex-wrap gap-2">
+                                                    @foreach($items as $item)
+                                                        <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-mono font-bold bg-slate-50 text-slate-700 border border-slate-200">
+                                                            {{ $item->asetBmn ? $item->asetBmn->nup : '?' }}
+                                                        </span>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
                                 </div>
                             </div>
 
@@ -183,6 +257,7 @@
                             @endif
 
                             <!-- Catatan / Deskripsi Kerusakan -->
+                            @if(!$hasFoto)
                             <div class="bg-indigo-50/30 p-5 rounded-2xl border border-indigo-100 w-full h-fit">
                                 <h4 class="text-sm font-extrabold text-indigo-600 uppercase tracking-wider mb-3 flex items-center gap-2">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
@@ -190,6 +265,7 @@
                                 </h4>
                                 <p class="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap font-medium">{{ $pemeliharaan->deskripsi_kerusakan ?? 'Tidak ada catatan.' }}</p>
                             </div>
+                            @endif
                             
                         </div>
                     </div>

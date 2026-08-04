@@ -15,11 +15,13 @@ class DashboardController extends Controller
 
         $jumlahPending = Peminjaman::where('user_id', $userId)
             ->where('status', 'pending')
-            ->count();
+            ->distinct('batch_id')
+            ->count('batch_id');
 
         $jumlahDipinjam = Peminjaman::where('user_id', $userId)
             ->where('status', 'dipinjam')
-            ->count();
+            ->distinct('batch_id')
+            ->count('batch_id');
 
         $jumlahLaporanDiproses = Pemeliharaan::where('dilaporkan_oleh', $userId)
             ->whereIn('status', ['pending', 'disetujui', 'proses'])

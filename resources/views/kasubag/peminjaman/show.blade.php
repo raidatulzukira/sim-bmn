@@ -27,11 +27,11 @@
                     <!-- Header Info -->
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 pb-8 border-b border-slate-100 gap-4">
                         <div>
-                            <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-2">{{ $peminjaman->asetBmn->nama_barang }}</h3>
-                            <div class="flex items-center gap-2">
-                                <span class="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-sm font-mono font-bold">{{ $peminjaman->asetBmn->kode_barang }}</span>
-                                <span class="text-slate-500 text-sm">Kode Aset</span>
+                            <div class="flex gap-2 mb-1.5">
+                                <span class="px-2.5 py-0.5 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold font-mono border border-slate-200">{{ $peminjaman->asetBmn->kode_barang }}</span>
+                                <span class="px-2.5 py-0.5 bg-sky-100 text-sky-700 rounded-lg text-xs font-bold border border-sky-200">{{ isset($batch) ? $batch->count() : 1 }} Unit</span>
                             </div>
+                            <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-2">{{ $peminjaman->asetBmn->nama_barang }}</h3>
                         </div>
                         <div class="text-left md:text-right">
                             <span class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Status Pengajuan</span>
@@ -99,6 +99,11 @@
                                         <p class="text-xs text-slate-500 font-medium mb-1">Rencana Pinjam - Kembali</p>
                                         <p class="text-sm font-bold text-slate-900 bg-white px-3 py-2 rounded-lg border border-slate-200 inline-block">
                                             {{ $peminjaman->estimasi_waktu_pinjam->format('d M Y') }} <span class="text-slate-400 mx-1">s/d</span> {{ $peminjaman->tanggal_kembali_rencana->format('d M Y') }}
+                                            @if($peminjaman->keterangan_terlambat)
+                                                <span class="inline-flex items-center ml-2 px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-700 uppercase tracking-wider align-middle">
+                                                    Terlambat {{ $peminjaman->keterangan_terlambat }} Hari
+                                                </span>
+                                            @endif
                                         </p>
                                     </div>
                                 </div>
@@ -147,6 +152,26 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Daftar Aset -->
+                        @if(isset($batch) && $batch->count() > 0)
+                            <div class="mt-8">
+                                <h4 class="text-md font-bold text-slate-800 mb-3 flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                    Daftar NUP Aset yang Dipinjam
+                                </h4>
+                                <div class="bg-white p-4 rounded-xl border border-slate-200 max-h-60 overflow-y-auto">
+                                    <ul class="space-y-2">
+                                        @foreach($batch as $item)
+                                            <li class="flex items-center justify-between text-sm">
+                                                <span class="font-mono text-slate-600 font-bold bg-slate-50 px-2 py-1 rounded border border-slate-100">{{ $item->asetBmn->nup }}</span>
+                                                <span class="text-slate-500">{{ $item->asetBmn->ruangan ? $item->asetBmn->ruangan->nama_ruangan : 'Gudang' }}</span>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </div>
+                        @endif
 
                         <!-- 2-Column Documentation Grid -->
                         @if($peminjaman->foto_serah_terima || $peminjaman->foto_pengembalian)

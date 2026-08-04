@@ -11,6 +11,8 @@ use App\Services\WhatsAppNotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class PeminjamanController extends Controller
 {
@@ -19,8 +21,12 @@ class PeminjamanController extends Controller
         $search = $request->input('search');
         $status = $request->input('status');
 
-        $peminjamans = Peminjaman::with('asetBmn')
+        $batchQuery = Peminjaman::select(DB::raw('MAX(id) as max_id'))
             ->where('user_id', auth()->id())
+            ->groupBy('batch_id');
+
+        $peminjamans = Peminjaman::with('asetBmn')
+            ->whereIn('id', $batchQuery)
             ->when($search, function($query, $search) {
                 return $query->whereHas('asetBmn', function($q) use ($search) {
                     $q->where('nama_barang', 'like', "%{$search}%")
@@ -30,6 +36,8 @@ class PeminjamanController extends Controller
             ->when($status, function($query, $status) {
                 return $query->where('status', $status);
             })
+            ->addSelect(['*', 'total_barang' => Peminjaman::selectRaw('COUNT(*)')->from('peminjaman as p_sub')->whereColumn('p_sub.batch_id', 'peminjaman.batch_id')
+            ])
             ->latest()
             ->paginate(10)
             ->withQueryString();
@@ -76,7 +84,7 @@ class PeminjamanController extends Controller
 
         $templateAset = AsetBmn::findOrFail($request->template_aset_id);
         
-        // Cari aset yang available sesuai template (kode, nama, merk, tipe)
+        // Cari aset yang available sesuai template (kode, nama, merk, tipe, nama alias)
         $availableAsets = AsetBmn::where('kode_barang', $templateAset->kode_barang)
             ->where('nama_barang', $templateAset->nama_barang)
             ->where('merk', $templateAset->merk)
@@ -91,9 +99,11 @@ class PeminjamanController extends Controller
         }
 
         $peminjamanIds = [];
+        $batchId = (string) Str::uuid();
 
         foreach ($availableAsets as $aset) {
             $peminjaman = Peminjaman::create([
+                'batch_id' => $batchId,
                 'aset_id' => $aset->id,
                 'user_id' => auth()->id(),
                 'keperluan' => $request->keperluan,
@@ -115,7 +125,7 @@ class PeminjamanController extends Controller
 
         $namaPegawai = auth()->user()->name;
         $namaAset = $templateAset->nama_barang . ' (' . $request->jumlah . ' buah)';
-        $pesan = "Halo, terdapat pengajuan peminjaman massal baru dari pegawai {$namaPegawai}. Aset yang dipinjam adalah {$namaAset}. Mohon untuk segera diproses di sistem SIM BMN.";
+        $pesan = "Halo, terdapat pengajuan peminjaman baru dari pegawai {$namaPegawai}. Aset yang dipinjam adalah {$namaAset}. Mohon untuk segera diproses di sistem SIM BMN.";
 
         $waService = app(\App\Services\WhatsappService::class);
 
@@ -136,7 +146,9 @@ class PeminjamanController extends Controller
             abort(403);
         }
 
+        $batch = Peminjaman::with(['asetBmn.ruangan', 'approver'])->where('batch_id', $peminjaman->batch_id)->get();
         $peminjaman->load(['asetBmn.ruangan', 'approver']);
-        return view('pegawai.peminjaman.show', compact('peminjaman'));
+        
+        return view('pegawai.peminjaman.show', compact('peminjaman', 'batch'));
     }
 }
