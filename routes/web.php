@@ -50,6 +50,7 @@ Route::middleware(['auth', 'verified', 'role:operator'])->prefix('operator')->na
     Route::resource('pengguna', \App\Http\Controllers\Operator\UserController::class)->except(['show']);
     Route::post('pengguna/{pengguna}/toggle-active', [\App\Http\Controllers\Operator\UserController::class, 'toggleActive'])->name('pengguna.toggle_active');
     
+    Route::get('aset/import/template', [\App\Http\Controllers\Operator\AsetController::class, 'downloadTemplate'])->name('aset.import_template');
     Route::get('aset/import', [\App\Http\Controllers\Operator\AsetController::class, 'importForm'])->name('aset.import_form');
     Route::post('aset/import', [\App\Http\Controllers\Operator\AsetController::class, 'import'])->name('aset.import');
     Route::get('aset/rekap', [\App\Http\Controllers\Operator\AsetController::class, 'rekap'])->name('aset.rekap');

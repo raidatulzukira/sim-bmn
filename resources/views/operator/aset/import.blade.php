@@ -22,7 +22,11 @@
                         </div>
                         <div>
                             <h3 class="text-lg font-bold text-slate-800">Unggah File Data Aset</h3>
-                            <p class="text-sm text-slate-500 mt-1">Tambahkan banyak data aset sekaligus melalui file Microsoft Excel atau CSV.</p>
+                            <p class="text-sm text-slate-500 mt-1 mb-3">Tambahkan banyak data aset sekaligus melalui file Microsoft Excel atau CSV.</p>
+                            <a href="{{ route('operator.aset.import_template') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg text-sm font-semibold hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm">
+                                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                Unduh Template Excel
+                            </a>
                         </div>
                     </div>
 

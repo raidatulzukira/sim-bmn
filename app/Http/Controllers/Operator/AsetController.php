@@ -134,6 +134,11 @@ class AsetController extends Controller
             ->with('success', 'Data Aset berhasil dihapus.');
     }
 
+    public function downloadTemplate()
+    {
+        return Excel::download(new \App\Exports\AsetTemplateExport, 'Template_Import_Aset.xlsx');
+    }
+
     public function importForm()
     {
         return view('operator.aset.import');
