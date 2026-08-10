@@ -29,15 +29,15 @@
         </tr>
         <tr>
             <td><strong>Merk/Tipe</strong></td>
-            <td>: {{ $aset->merk ?? '-' }} / {{ $aset->tipe ?? '-' }}</td>
+            <td>: {{ $aset->merk ?: '-' }} / {{ $aset->tipe ?: '-' }}</td>
         </tr>
     </table>
 
     <div style="font-weight:bold; margin-bottom: 10px; font-size: 14px;">DAFTAR REKAM PEMINJAMAN:</div>
 
     @forelse($peminjamans as $index => $item)
-        <div style="border: 1px solid #000; margin-bottom: 20px; padding: 10px;">
-            <div style="font-weight: bold; border-bottom: 1px dashed #ccc; margin-bottom: 10px; padding-bottom: 5px;">Peminjaman #{{ $index + 1 }} - Status: {{ strtoupper($item->status) }}</div>
+        <div style="border: 1px solid #000; margin-bottom: 20px; padding: 10px; {{ !$loop->first ? 'page-break-before: always;' : '' }}">
+            <div style="font-weight: bold; border-bottom: 1px dashed #ccc; margin-bottom: 10px; padding-bottom: 5px;">Peminjaman #{{ $index + 1 }} ({{ $item->jumlah_item }} Unit) - Status: {{ strtoupper($item->status) }}</div>
             
             <table style="width: 100%; font-size: 12px; border-collapse: collapse;">
                 <tr>

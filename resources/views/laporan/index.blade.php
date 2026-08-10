@@ -62,10 +62,10 @@
                                 <svg class="w-4 h-4 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
                                 Pilih Aset BMN <span class="text-red-500">*</span>
                             </label>
-                            <select id="aset_id" name="aset_id" class="block w-full border-slate-200 rounded-xl focus:ring-sky-500 focus:border-sky-500 sm:text-sm bg-white">
-                                <option value="" disabled {{ !request('aset_id') ? 'selected' : '' }}>-- Pilih Aset --</option>
+                            <select id="kode_barang" name="kode_barang" class="block w-full border-slate-200 rounded-xl focus:ring-sky-500 focus:border-sky-500 sm:text-sm bg-white">
+                                <option value="" disabled {{ !request('kode_barang') ? 'selected' : '' }}>-- Pilih Aset --</option>
                                 @foreach($asets as $aset)
-                                    <option value="{{ $aset->id }}" {{ request('aset_id') == $aset->id ? 'selected' : '' }}>[{{ $aset->kode_barang }}] {{ $aset->nama_barang }}</option>
+                                    <option value="{{ $aset->kode_barang }}" {{ request('kode_barang') == $aset->kode_barang ? 'selected' : '' }}>[{{ $aset->kode_barang }}] {{ $aset->nama_barang }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -113,7 +113,7 @@
                             <input type="hidden" name="jenis_laporan" value="{{ $jenis }}">
                             <input type="hidden" name="tanggal_awal" value="{{ request('tanggal_awal') }}">
                             <input type="hidden" name="tanggal_akhir" value="{{ request('tanggal_akhir') }}">
-                            <input type="hidden" name="aset_id" value="{{ request('aset_id') }}">
+                            <input type="hidden" name="kode_barang" value="{{ request('kode_barang') }}">
                             <input type="hidden" name="ruangan_id" value="{{ request('ruangan_id') }}">
 
                             <button type="submit" name="format" value="excel" class="px-5 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-bold hover:bg-emerald-700 transition-all duration-300 shadow-sm flex items-center gap-2">
@@ -160,7 +160,7 @@
                                             <tr class="hover:bg-slate-50/50 transition-colors">
                                                 <td class="px-4 py-3 text-sm text-slate-900">{{ $index + 1 }}</td>
                                                 <td class="px-4 py-3 text-sm font-bold text-slate-800 whitespace-nowrap">
-                                                    {{ $item->asetBmn->nama_barang }}
+                                                    {{ $item->jumlah_item }}x {{ $item->asetBmn->nama_barang }}
                                                     <div class="text-xs font-mono text-slate-400 font-normal">{{ $item->asetBmn->kode_barang }}</div>
                                                 </td>
                                                 <td class="px-4 py-3 text-sm text-slate-600 capitalize whitespace-nowrap">{{ $item->jenis }}</td>
@@ -198,6 +198,7 @@
                                     <table class="text-sm">
                                         <tr><td class="font-bold text-slate-500 pr-4">Nama Aset</td><td class="font-bold text-slate-800">: {{ $previewData['aset']->nama_barang }}</td></tr>
                                         <tr><td class="font-bold text-slate-500 pr-4">Kode Aset</td><td class="font-bold text-slate-800">: {{ $previewData['aset']->kode_barang }}</td></tr>
+                                        <tr><td class="font-bold text-slate-500 pr-4">Merk/Tipe</td><td class="font-bold text-slate-800">: {{ $previewData['aset']->merk ?: '-' }} / {{ $previewData['aset']->tipe ?: '-' }}</td></tr>
                                     </table>
                                 </div>
                             </div>
@@ -208,6 +209,7 @@
                                             <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase whitespace-nowrap">No</th>
                                             <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase whitespace-nowrap">Tgl Pengajuan</th>
                                             <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase whitespace-nowrap">Jenis</th>
+                                            <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase whitespace-nowrap">Dilaporkan Oleh</th>
                                             <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase whitespace-nowrap min-w-[200px]">Deskripsi Kerusakan</th>
                                             <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase whitespace-nowrap">Status</th>
                                             <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase whitespace-nowrap">Tgl Selesai</th>
@@ -219,6 +221,7 @@
                                                 <td class="px-4 py-3 text-sm text-slate-900">{{ $index + 1 }}</td>
                                                 <td class="px-4 py-3 text-sm text-slate-600 whitespace-nowrap">{{ $item->tanggal_pengajuan ? $item->tanggal_pengajuan->format('d/m/Y') : '-' }}</td>
                                                 <td class="px-4 py-3 text-sm text-slate-600 capitalize whitespace-nowrap">{{ $item->jenis }}</td>
+                                                <td class="px-4 py-3 text-sm text-slate-600 whitespace-nowrap">{{ $item->pelapor ? $item->pelapor->name : 'Sistem' }}</td>
                                                 <td class="px-4 py-3 text-sm text-slate-600">{{ $item->deskripsi_kerusakan ?? '-' }}</td>
                                                 <td class="px-4 py-3 text-sm font-bold capitalize whitespace-nowrap {{ $item->status === 'selesai' ? 'text-emerald-600' : 'text-slate-600' }}">{{ $item->status }}</td>
                                                 <td class="px-4 py-3 text-sm text-slate-600 whitespace-nowrap">{{ $item->tanggal_selesai ? $item->tanggal_selesai->format('d/m/Y') : '-' }}</td>
@@ -242,6 +245,7 @@
                                     <table class="text-sm">
                                         <tr><td class="font-bold text-slate-500 pr-4">Nama Aset</td><td class="font-bold text-slate-800">: {{ $previewData['aset']->nama_barang }}</td></tr>
                                         <tr><td class="font-bold text-slate-500 pr-4">Kode Aset</td><td class="font-bold text-slate-800">: {{ $previewData['aset']->kode_barang }}</td></tr>
+                                        <tr><td class="font-bold text-slate-500 pr-4">Merk/Tipe</td><td class="font-bold text-slate-800">: {{ $previewData['aset']->merk ?: '-' }} / {{ $previewData['aset']->tipe ?: '-' }}</td></tr>
                                     </table>
                                 </div>
                             </div>
@@ -290,7 +294,7 @@
                                                 <p class="text-slate-800 bg-orange-50 p-3 rounded-lg border border-orange-100">{{ $item->catatan_validasi }}</p>
                                             </div>
                                             @endif
-                                            @if($item->nota_teknisi)
+                                            @if($item->nota_teknisi && !preg_match('/\.(jpg|jpeg|png|gif)$/i', $item->nota_teknisi))
                                             <div>
                                                 <span class="block text-slate-500 font-bold mb-1">Nota/Catatan Teknisi:</span>
                                                 <p class="text-slate-800 bg-emerald-50 p-3 rounded-lg border border-emerald-100">{{ $item->nota_teknisi }}</p>
@@ -298,11 +302,30 @@
                                             @endif
                                         </div>
 
-                                        @if($item->foto)
+                                        @php
+                                            $hasNotaImg = $item->nota_teknisi && preg_match('/\.(jpg|jpeg|png|gif)$/i', $item->nota_teknisi);
+                                        @endphp
+                                        
+                                        @if($hasNotaImg || $item->foto)
                                         <div class="mt-4 pt-4 border-t border-slate-100">
-                                            <span class="block text-slate-500 font-bold mb-3 text-sm">Lampiran Foto:</span>
-                                            <div class="bg-slate-50 p-2 rounded-xl border border-slate-200 inline-block">
-                                                <img src="{{ asset('storage/' . $item->foto) }}" alt="Foto Bukti" class="max-w-full h-auto max-h-48 rounded-lg shadow-sm">
+                                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                                @if($hasNotaImg)
+                                                <div>
+                                                    <span class="block text-slate-500 font-bold mb-2 text-sm">Nota Teknisi:</span>
+                                                    <div class="bg-slate-50 p-2 rounded-xl border border-slate-200 inline-block">
+                                                        <img src="{{ asset('storage/' . $item->nota_teknisi) }}" alt="Nota Teknisi" class="max-w-full h-auto max-h-40 rounded-lg shadow-sm">
+                                                    </div>
+                                                </div>
+                                                @endif
+                                                
+                                                @if($item->foto)
+                                                <div>
+                                                    <span class="block text-slate-500 font-bold mb-2 text-sm">Lampiran Foto:</span>
+                                                    <div class="bg-slate-50 p-2 rounded-xl border border-slate-200 inline-block">
+                                                        <img src="{{ asset('storage/' . $item->foto) }}" alt="Foto Bukti" class="max-w-full h-auto max-h-40 rounded-lg shadow-sm">
+                                                    </div>
+                                                </div>
+                                                @endif
                                             </div>
                                         </div>
                                         @endif
@@ -322,6 +345,7 @@
                                     <table class="text-sm">
                                         <tr><td class="font-bold text-slate-500 pr-4">Nama Aset</td><td class="font-bold text-slate-800">: {{ $previewData['aset']->nama_barang }}</td></tr>
                                         <tr><td class="font-bold text-slate-500 pr-4">Kode Aset</td><td class="font-bold text-slate-800">: {{ $previewData['aset']->kode_barang }}</td></tr>
+                                        <tr><td class="font-bold text-slate-500 pr-4">Merk/Tipe</td><td class="font-bold text-slate-800">: {{ $previewData['aset']->merk ?: '-' }} / {{ $previewData['aset']->tipe ?: '-' }}</td></tr>
                                     </table>
                                 </div>
                             </div>
@@ -412,6 +436,7 @@
                                     <table class="text-sm">
                                         <tr><td class="font-bold text-slate-500 pr-4">Ruangan</td><td class="font-bold text-slate-800">: {{ $previewData['ruangan']->nama_ruangan }}</td></tr>
                                         <tr><td class="font-bold text-slate-500 pr-4">Keterangan</td><td class="font-bold text-slate-800">: {{ $previewData['ruangan']->keterangan ?? '-' }}</td></tr>
+                                        <tr><td class="font-bold text-slate-500 pr-4">Jumlah</td><td class="font-bold text-slate-800">: {{ $previewData['asets']->sum('jumlah_item') }} Unit</td></tr>
                                     </table>
                                 </div>
                             </div>
@@ -432,8 +457,8 @@
                                             <tr>
                                                 <td class="px-4 py-3 text-sm text-slate-900">{{ $index + 1 }}</td>
                                                 <td class="px-4 py-3 text-sm font-mono text-slate-500">{{ $item->kode_barang }}</td>
-                                                <td class="px-4 py-3 text-sm font-bold text-slate-800">{{ $item->nama_barang }}</td>
-                                                <td class="px-4 py-3 text-sm text-slate-600">{{ $item->tanggal_perolehan ? \Carbon\Carbon::parse($item->tanggal_perolehan)->format('d F Y') : '-' }}</td>
+                                                <td class="px-4 py-3 text-sm font-bold text-slate-800">{{ $item->nama_barang }} <span class="text-xs text-slate-500 font-normal">({{ $item->jumlah_item }} Unit)</span></td>
+                                                <td class="px-4 py-3 text-sm text-slate-600">{{ $item->max_tanggal_perolehan ? \Carbon\Carbon::parse($item->max_tanggal_perolehan)->format('d F Y') : '-' }}</td>
                                                 <td class="px-4 py-3 text-sm text-slate-600 capitalize">{{ $item->status }}</td>
                                             </tr>
                                         @empty
@@ -476,7 +501,7 @@
             const filterTanggal = document.getElementById('filter_tanggal');
             const filterAset = document.getElementById('filter_aset');
             const filterRuangan = document.getElementById('filter_ruangan');
-            const asetInput = document.getElementById('aset_id');
+            const asetInput = document.getElementById('kode_barang');
             const ruanganInput = document.getElementById('ruangan_id');
 
             // Reset visibilitas

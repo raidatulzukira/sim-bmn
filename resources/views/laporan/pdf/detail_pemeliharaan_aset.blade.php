@@ -35,7 +35,7 @@
         </tr>
         <tr>
             <td><strong>Merk/Tipe</strong></td>
-            <td>: {{ $aset->merk ?? '-' }} / {{ $aset->tipe ?? '-' }}</td>
+            <td>: {{ $aset->merk ?: '-' }} / {{ $aset->tipe ?: '-' }}</td>
             <td><strong>Lokasi Ruangan</strong></td>
             <td>: {{ $aset->ruangan ? $aset->ruangan->nama_ruangan : '-' }}</td>
         </tr>
@@ -44,8 +44,8 @@
     <div style="font-weight:bold; margin-bottom: 10px; font-size: 14px;">DAFTAR REKAM PEMELIHARAAN:</div>
 
     @forelse($pemeliharaans as $index => $item)
-        <div class="content-box">
-            <div class="box-title">Pemeliharaan #{{ $index + 1 }} - Status: {{ strtoupper($item->status) }}</div>
+        <div class="content-box" style="{{ !$loop->first ? 'page-break-before: always;' : '' }}">
+            <div class="box-title">Pemeliharaan #{{ $index + 1 }} ({{ $item->jumlah_item }} Unit) - Status: {{ strtoupper($item->status) }}</div>
             <table style="width: 100%; font-size: 12px; border-collapse: collapse;">
                 <tr>
                     <td style="width: 25%; padding: 3px 0;"><strong>Tanggal Pengajuan</strong></td>
@@ -79,20 +79,39 @@
             </div>
             @endif
 
-            @if($item->nota_teknisi)
+            @php
+                $hasNotaImg = $item->nota_teknisi && preg_match('/\.(jpg|jpeg|png|gif)$/i', $item->nota_teknisi);
+            @endphp
+            
+            @if($item->nota_teknisi && !$hasNotaImg)
             <div class="detail-row" style="margin-top: 10px;">
                 <span class="detail-label">Nota Teknisi</span>: <br/>
                 <div style="padding: 5px 10px; margin-top: 5px; border-left: 2px solid #28a745;">{{ $item->nota_teknisi }}</div>
             </div>
             @endif
 
-            @if($item->foto)
-            <div class="detail-row" style="margin-top: 10px;">
-                <span class="detail-label">Lampiran Foto</span>: <br/>
-                <div style="margin-top: 5px;">
-                    <img src="{{ public_path('storage/' . $item->foto) }}" style="max-width: 250px; max-height: 200px; border: 1px solid #ccc; padding: 2px;" alt="Foto Bukti">
-                </div>
-            </div>
+            @if($hasNotaImg || $item->foto)
+            <table style="width: 100%; margin-top: 15px;">
+                <tr>
+                    @if($hasNotaImg)
+                    <td style="width: 50%; vertical-align: top;">
+                        <span class="detail-label">Nota Teknisi</span>: <br/>
+                        <div style="margin-top: 5px;">
+                            <img src="{{ public_path('storage/' . $item->nota_teknisi) }}" style="max-width: 250px; max-height: 200px; border: 1px solid #ccc; padding: 2px;" alt="Nota Teknisi">
+                        </div>
+                    </td>
+                    @endif
+
+                    @if($item->foto)
+                    <td style="width: 50%; vertical-align: top;">
+                        <span class="detail-label">Lampiran Foto</span>: <br/>
+                        <div style="margin-top: 5px;">
+                            <img src="{{ public_path('storage/' . $item->foto) }}" style="max-width: 250px; max-height: 200px; border: 1px solid #ccc; padding: 2px;" alt="Foto Bukti">
+                        </div>
+                    </td>
+                    @endif
+                </tr>
+            </table>
             @endif
         </div>
     @empty

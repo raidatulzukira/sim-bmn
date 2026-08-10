@@ -24,8 +24,12 @@
             <td>: {{ $ruangan->nama_ruangan }}</td>
         </tr>
         <tr>
-            <td><strong>Gedung / Lantai</strong></td>
-            <td>: {{ $ruangan->gedung ?? '-' }} / Lt. {{ $ruangan->lantai ?? '-' }}</td>
+            <td><strong>Keterangan</strong></td>
+            <td>: {{ $ruangan->keterangan ?? '-' }}</td>
+        </tr>
+        <tr>
+            <td><strong>Total Seluruh Aset</strong></td>
+            <td>: {{ $asets->sum('jumlah_item') }} Unit</td>
         </tr>
     </table>
 
@@ -34,9 +38,7 @@
             <tr>
                 <th>No</th>
                 <th>Kode Barang</th>
-                <th>NUP</th>
                 <th>Nama Barang</th>
-                <th>Merk/Tipe</th>
                 <th>Tanggal Perolehan</th>
                 <th>Kondisi</th>
             </tr>
@@ -46,15 +48,13 @@
             <tr>
                 <td>{{ $index + 1 }}</td>
                 <td>{{ $aset->kode_barang }}</td>
-                <td>{{ $aset->nup ?? '-' }}</td>
-                <td style="text-align: left;">{{ $aset->nama_barang }}</td>
-                <td style="text-align: left;">{{ $aset->merk ?? '-' }} / {{ $aset->tipe ?? '-' }}</td>
-                <td>{{ $aset->tanggal_perolehan ? \Carbon\Carbon::parse($aset->tanggal_perolehan)->format('d F Y') : '-' }}</td>
+                <td style="text-align: left;">{{ $aset->nama_barang }} ({{ $aset->jumlah_item }} Unit)</td>
+                <td>{{ $aset->max_tanggal_perolehan ? \Carbon\Carbon::parse($aset->max_tanggal_perolehan)->format('d F Y') : '-' }}</td>
                 <td style="text-transform: capitalize;">{{ $aset->status }}</td>
             </tr>
             @empty
             <tr>
-                <td colspan="7">Belum ada aset terdaftar di ruangan ini.</td>
+                <td colspan="5">Belum ada aset terdaftar di ruangan ini.</td>
             </tr>
             @endforelse
         </tbody>

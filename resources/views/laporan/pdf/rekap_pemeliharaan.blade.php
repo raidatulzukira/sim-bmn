@@ -32,11 +32,15 @@
                 <th>Jenis</th>
                 <th>Dilaporkan Oleh</th>
                 <th>Deskripsi Kerusakan</th>
+                @if(!($isPdf ?? false))
                 <th>Foto</th>
+                @endif
                 <th>Status</th>
+                @if(!($isPdf ?? false))
                 <th>Catatan Validasi</th>
                 <th>Approved By</th>
                 <th>Nota Teknisi</th>
+                @endif
                 <th>Tgl Pengajuan</th>
                 <th>Tgl Selesai</th>
             </tr>
@@ -45,15 +49,19 @@
             @foreach($pemeliharaans as $index => $item)
             <tr>
                 <td>{{ $index + 1 }}</td>
-                <td>{{ $item->asetBmn->nama_barang }} ({{ $item->asetBmn->kode_barang }})</td>
+                <td>{{ $item->jumlah_item }}x {{ $item->asetBmn->nama_barang }} ({{ $item->asetBmn->kode_barang }})</td>
                 <td style="text-transform: capitalize;">{{ $item->jenis }}</td>
                 <td>{{ $item->pelapor ? $item->pelapor->name : 'Sistem' }}</td>
                 <td>{{ $item->deskripsi_kerusakan ?? '-' }}</td>
+                @if(!($isPdf ?? false))
                 <td>{{ $item->foto ? 'Ada' : 'Tidak' }}</td>
+                @endif
                 <td style="text-transform: capitalize;">{{ $item->status }}</td>
+                @if(!($isPdf ?? false))
                 <td>{{ $item->catatan_validasi ?? '-' }}</td>
                 <td>{{ $item->approver ? $item->approver->name : '-' }}</td>
                 <td>{{ $item->nota_teknisi ?? '-' }}</td>
+                @endif
                 <td>{{ $item->tanggal_pengajuan ? \Carbon\Carbon::parse($item->tanggal_pengajuan)->format('d/m/Y') : '-' }}</td>
                 <td>{{ $item->tanggal_selesai ? \Carbon\Carbon::parse($item->tanggal_selesai)->format('d/m/Y') : '-' }}</td>
             </tr>

@@ -29,7 +29,7 @@
         </tr>
         <tr>
             <td><strong>Merk/Tipe</strong></td>
-            <td>: {{ $aset->merk ?? '-' }} / {{ $aset->tipe ?? '-' }}</td>
+            <td>: {{ $aset->merk ?: '-' }} / {{ $aset->tipe ?: '-' }}</td>
         </tr>
     </table>
 
@@ -38,7 +38,9 @@
             <tr>
                 <th>No</th>
                 <th>Tgl Pengajuan</th>
+                <th>Jumlah</th>
                 <th>Jenis</th>
+                <th>Dilaporkan Oleh</th>
                 <th>Deskripsi Kerusakan</th>
                 <th>Status</th>
                 <th>Tgl Selesai</th>
@@ -49,7 +51,9 @@
             <tr>
                 <td>{{ $index + 1 }}</td>
                 <td>{{ $item->tanggal_pengajuan ? \Carbon\Carbon::parse($item->tanggal_pengajuan)->format('d/m/Y') : '-' }}</td>
+                <td>{{ $item->jumlah_item }} Unit</td>
                 <td style="text-transform: capitalize;">{{ $item->jenis }}</td>
+                <td>{{ $item->pelapor ? $item->pelapor->name : 'Sistem' }}</td>
                 <td>{{ $item->deskripsi_kerusakan ?? '-' }}</td>
                 <td style="text-transform: capitalize;">{{ $item->status }}</td>
                 <td>{{ $item->tanggal_selesai ? \Carbon\Carbon::parse($item->tanggal_selesai)->format('d/m/Y') : '-' }}</td>
