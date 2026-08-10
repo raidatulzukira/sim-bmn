@@ -34,9 +34,23 @@ class SendMaintenanceNotificationJob implements ShouldQueue
             return;
         }
 
-        // Hitung total unit dalam batch yang sama
+        $waService = new \App\Services\WhatsappService();
         $totalUnit = Pemeliharaan::where('batch_id', $pemeliharaan->batch_id)->count();
 
+        // 1. Jika aset_id belum ditentukan (laporan baru dari pegawai) -> Kirim WA ke Operator
+        if (is_null($pemeliharaan->aset_id)) {
+            $operators = User::where('role', 'operator')->get();
+            $pesan = "Halo Bapak/Ibu Operator, terdapat pelaporan kerusakan (situasional) baru dari pegawai. Mohon untuk segera meninjau laporan tersebut dan menentukan Aset BMN yang dimaksud melalui sistem.";
+            
+            foreach ($operators as $operator) {
+                if ($operator->no_wa) {
+                    $waService->kirimPesan($operator->no_wa, $pesan, $operator->id, 'pemeliharaan', $this->pemeliharaan_id);
+                }
+            }
+            return;
+        }
+
+        // 2. Jika aset_id sudah ada (sudah ditentukan operator atau servis rutin) -> Kirim WA ke Kasubag TU
         $kasubags = User::where('role', 'kasubag_tu')->get();
         $namaAset = $pemeliharaan->asetBmn->nama_barang ?? 'Tidak diketahui';
         
@@ -48,13 +62,9 @@ class SendMaintenanceNotificationJob implements ShouldQueue
         }
         $pesan .= "Mohon untuk segera divalidasi melalui sistem.";
 
-        $waService = new \App\Services\WhatsappService();
-
         foreach ($kasubags as $kasubag) {
-            $phone = $kasubag->no_wa;
-            
-            if ($phone) {
-                $waService->kirimPesan($phone, $pesan, $kasubag->id, 'pemeliharaan', $this->pemeliharaan_id);
+            if ($kasubag->no_wa) {
+                $waService->kirimPesan($kasubag->no_wa, $pesan, $kasubag->id, 'pemeliharaan', $this->pemeliharaan_id);
             }
         }
     }

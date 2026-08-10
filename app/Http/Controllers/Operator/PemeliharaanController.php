@@ -115,10 +115,35 @@ class PemeliharaanController extends Controller
         $pemeliharaan->load(['asetBmn', 'pelapor', 'approver']);
         
         $asets = null;
-        if ($pemeliharaan->status === 'disetujui' && is_null($pemeliharaan->aset_id)) {
+        if ($pemeliharaan->status === 'pending' && is_null($pemeliharaan->aset_id)) {
             $asets = AsetBmn::whereIn('status', ['tersedia', 'dipinjam'])->orderBy('nama_barang')->get();
         }
         return view('operator.pemeliharaan.show', compact('pemeliharaan', 'batch', 'asets'));
+    }
+
+    public function tentukanAset(Request $request, Pemeliharaan $pemeliharaan)
+    {
+        $request->validate([
+            'aset_id' => 'required|exists:aset_bmn,id',
+        ], [
+            'aset_id.required' => 'Anda harus memilih aset BMN yang dimaksud.'
+        ]);
+
+        if ($pemeliharaan->status !== 'pending' || !is_null($pemeliharaan->aset_id)) {
+            return redirect()->back()->with('error', 'Aset sudah ditentukan atau status tidak valid.');
+        }
+
+        DB::transaction(function () use ($request, $pemeliharaan) {
+            $pemeliharaan->update([
+                'aset_id' => $request->aset_id
+            ]);
+            
+            // Dispatch notification to Kasubag TU now that aset_id is set
+            \App\Jobs\SendMaintenanceNotificationJob::dispatch($pemeliharaan->id);
+        });
+
+        return redirect()->route('operator.pemeliharaan.show', $pemeliharaan->id)
+            ->with('success', 'Aset berhasil ditentukan. Pengajuan telah diteruskan ke Kasubag TU untuk persetujuan.');
     }
 
     public function proses(Request $request, Pemeliharaan $pemeliharaan)
@@ -129,15 +154,6 @@ class PemeliharaanController extends Controller
                 // We lock the specific record. If it's a batch from operator, we lock all.
                 $lockedBatch = Pemeliharaan::where('batch_id', $pemeliharaan->batch_id)->lockForUpdate()->get();
 
-                // Validation for Pegawai's single report
-                if (is_null($pemeliharaan->aset_id)) {
-                    $request->validate([
-                        'aset_id' => 'required|exists:aset_bmn,id',
-                    ], [
-                        'aset_id.required' => 'Anda harus memilih aset BMN yang akan diservis.'
-                    ]);
-                }
-
                 foreach ($lockedBatch as $item) {
                     if ($item->status !== 'disetujui') {
                         throw new \Exception('Hanya pengajuan berstatus disetujui yang dapat mulai diproses.');
@@ -146,7 +162,7 @@ class PemeliharaanController extends Controller
                     $aset_id = $item->aset_id;
 
                     if (is_null($aset_id)) {
-                        $aset_id = $request->aset_id;
+                        throw new \Exception('Aset belum ditentukan untuk pemeliharaan ini.');
                     }
 
                     $aset = AsetBmn::where('id', $aset_id)->lockForUpdate()->first();

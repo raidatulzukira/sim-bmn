@@ -152,7 +152,11 @@
                                     @if($pemeliharaan->status === 'pending')
                                         <div class="flex items-center gap-3 text-yellow-600 bg-white p-4 rounded-xl border border-slate-100">
                                             <svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                                            <span class="text-sm font-bold pr-4">Menunggu persetujuan Kasubag TU.</span>
+                                            @if(is_null($pemeliharaan->aset_id))
+                                                <span class="text-sm font-bold pr-4">Menunggu Anda menentukan Aset BMN terlebih dahulu.</span>
+                                            @else
+                                                <span class="text-sm font-bold pr-4">Menunggu persetujuan Kasubag TU.</span>
+                                            @endif
                                         </div>
                                     @else
                                         <div class="space-y-4">
@@ -253,7 +257,43 @@
                     </div>
 
                     <!-- AKSI OPERATOR -->
-                    @if($pemeliharaan->status === 'disetujui')
+                    @if($pemeliharaan->status === 'pending' && is_null($pemeliharaan->aset_id))
+                        <div class="bg-indigo-50/50 border border-indigo-100 rounded-3xl p-6 sm:p-8">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                </div>
+                                <h4 class="text-xl font-bold text-indigo-900">Tentukan Aset BMN</h4>
+                            </div>
+                            <p class="text-sm text-indigo-800 mb-6 bg-white/60 p-4 rounded-xl border border-indigo-100 leading-relaxed">
+                                Laporan ini dibuat oleh pegawai tanpa identifikasi aset. Silakan tinjau ke lapangan atau lihat foto kerusakan untuk mengidentifikasi NUP aset. 
+                                <strong class="text-indigo-900 block mt-1">Setelah Anda menentukan aset, notifikasi akan dikirim ke Kasubag TU untuk persetujuan.</strong>
+                            </p>
+                            
+                            <form action="{{ route('operator.pemeliharaan.tentukan_aset', $pemeliharaan->id) }}" method="POST" class="space-y-4">
+                                @csrf
+                                <div class="bg-white p-5 rounded-2xl border border-slate-200">
+                                    <label for="aset_id" class="block text-sm font-bold text-slate-700 mb-2">Pilih Aset BMN <span class="text-red-500">*</span></label>
+                                    <select id="aset_id" name="aset_id" class="block w-full text-base border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-xl transition-colors bg-slate-50 hover:bg-white" required>
+                                        <option value="">-- Pilih Aset BMN yang Dimaksud --</option>
+                                        @foreach($asets as $aset)
+                                            <option value="{{ $aset->id }}">
+                                                {{ $aset->kode_barang }} - {{ $aset->nama_barang }} (NUP: {{ $aset->nup }}) - {{ ucfirst($aset->status) }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('aset_id')
+                                        <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <button type="submit" onclick="return confirm('Lanjutkan laporan ini ke Kasubag TU?');" class="w-full sm:w-auto px-8 py-3.5 bg-indigo-600 text-white rounded-xl text-sm font-bold hover:bg-indigo-700 transition-all duration-300 shadow-sm hover:shadow-md flex items-center justify-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                    Simpan & Teruskan ke Kasubag TU
+                                </button>
+                            </form>
+                        </div>
+                    @elseif($pemeliharaan->status === 'disetujui')
                         <div class="bg-sky-50/50 border border-sky-100 rounded-3xl p-6 sm:p-8">
                             <div class="flex items-center gap-3 mb-4">
                                 <div class="w-10 h-10 bg-sky-100 text-sky-600 rounded-full flex items-center justify-center">
@@ -269,24 +309,6 @@
                             <form action="{{ route('operator.pemeliharaan.proses', $pemeliharaan->id) }}" method="POST" class="space-y-4">
                                 @csrf
                                 
-                                @if(is_null($pemeliharaan->aset_id) && isset($asets))
-                                    <div class="bg-white p-5 rounded-2xl border border-slate-200">
-                                        <label for="aset_id" class="block text-sm font-bold text-slate-700 mb-2">Identifikasi Aset yang Rusak <span class="text-red-500">*</span></label>
-                                        <p class="text-xs text-slate-500 mb-3">Laporan ini dibuat tanpa memilih aset. Silakan pilih aset BMN yang sesuai dengan deskripsi pelapor.</p>
-                                        <select id="aset_id" name="aset_id" class="block w-full text-base border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 sm:text-sm rounded-xl transition-colors bg-slate-50 hover:bg-white" required>
-                                            <option value="">-- Pilih Aset BMN --</option>
-                                            @foreach($asets as $aset)
-                                                <option value="{{ $aset->id }}">
-                                                    {{ $aset->kode_barang }} - {{ $aset->nama_barang }} (NUP: {{ $aset->nup }}) - {{ ucfirst($aset->status) }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('aset_id')
-                                            <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
-                                        @enderror
-                                    </div>
-                                @endif
-
                                 <button type="submit" onclick="return confirm('Mulai proses servis aset ini?');" class="w-full sm:w-auto px-8 py-3.5 bg-sky-700 text-white rounded-xl text-sm font-bold hover:bg-sky-800 transition-all duration-300 shadow-sm hover:shadow-md flex items-center justify-center gap-2">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                                     @if($batch->count() > 1)

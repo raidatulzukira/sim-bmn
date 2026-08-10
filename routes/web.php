@@ -80,6 +80,7 @@ Route::middleware(['auth', 'verified', 'role:operator'])->prefix('operator')->na
     Route::get('pemeliharaan/create', [\App\Http\Controllers\Operator\PemeliharaanController::class, 'create'])->name('pemeliharaan.create');
     Route::post('pemeliharaan', [\App\Http\Controllers\Operator\PemeliharaanController::class, 'store'])->name('pemeliharaan.store');
     Route::get('pemeliharaan/{pemeliharaan}', [\App\Http\Controllers\Operator\PemeliharaanController::class, 'show'])->name('pemeliharaan.show');
+    Route::post('pemeliharaan/{pemeliharaan}/tentukan-aset', [\App\Http\Controllers\Operator\PemeliharaanController::class, 'tentukanAset'])->name('pemeliharaan.tentukan_aset');
     Route::post('pemeliharaan/{pemeliharaan}/proses', [\App\Http\Controllers\Operator\PemeliharaanController::class, 'proses'])->name('pemeliharaan.proses');
     Route::post('pemeliharaan/{pemeliharaan}/selesai', [\App\Http\Controllers\Operator\PemeliharaanController::class, 'selesai'])->name('pemeliharaan.selesai');
 

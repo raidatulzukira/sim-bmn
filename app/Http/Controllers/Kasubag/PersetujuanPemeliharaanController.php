@@ -21,9 +21,9 @@ class PersetujuanPemeliharaanController extends Controller
 
         $batchQuery = Pemeliharaan::select(\Illuminate\Support\Facades\DB::raw('MAX(id) as max_id'))
             ->when($tab === 'pending', function ($query) {
-                return $query->where('status', 'pending');
+                return $query->where('status', 'pending')->whereNotNull('aset_id');
             }, function ($query) {
-                return $query->where('status', '!=', 'pending');
+                return $query->where('status', '!=', 'pending')->whereNotNull('aset_id');
             })
             ->groupBy('batch_id');
 
