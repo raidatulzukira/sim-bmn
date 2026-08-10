@@ -51,7 +51,7 @@
                             @endphp
                             <span class="px-4 py-1.5 inline-flex items-center gap-2 text-xs font-bold rounded-full border shadow-sm {{ $badge }} uppercase tracking-wider">
                                 <span class="w-1.5 h-1.5 rounded-full {{ in_array($peminjaman->status, ['pending', 'dipinjam']) ? 'animate-pulse' : '' }} {{ $peminjaman->status == 'pending' ? 'bg-amber-500' : ($peminjaman->status == 'dipinjam' ? 'bg-indigo-500' : ($peminjaman->status == 'dikembalikan' ? 'bg-emerald-500' : ($peminjaman->status == 'disetujui' ? 'bg-sky-500' : 'bg-slate-500'))) }}"></span>
-                                {{ $peminjaman->status }}
+                                {{ $peminjaman->status_label }}
                             </span>
                         </div>
                     </div>

@@ -18,10 +18,13 @@ class KatalogAsetController extends Controller
                 'kode_barang', 'nama_barang', 'merk', 'tipe', 'nama', 'jenis_bmn',
                 \DB::raw('COUNT(id) as total_stok'),
                 \DB::raw('SUM(CASE WHEN status = "tersedia" THEN 1 ELSE 0 END) as stok_tersedia'),
-                \DB::raw('SUM(CASE WHEN status IN ("dipinjam", "menunggu_persetujuan", "menunggu_serah_terima") THEN 1 ELSE 0 END) as stok_dipinjam_dan_diproses'),
-                \DB::raw('SUM(CASE WHEN status IN ("servis", "menunggu_servis") THEN 1 ELSE 0 END) as stok_maintenance'),
-                \DB::raw('MIN(nup) as nup_awal'),
-                \DB::raw('MAX(nup) as nup_akhir'),
+                \DB::raw('SUM(CASE WHEN status = "dipinjam" THEN 1 ELSE 0 END) as stok_dipinjam'),
+                \DB::raw('SUM(CASE WHEN status = "menunggu_persetujuan" THEN 1 ELSE 0 END) as stok_menunggu_persetujuan'),
+                \DB::raw('SUM(CASE WHEN status = "menunggu_serah_terima" THEN 1 ELSE 0 END) as stok_menunggu_serah_terima'),
+                \DB::raw('SUM(CASE WHEN status = "servis" THEN 1 ELSE 0 END) as stok_servis'),
+                \DB::raw('SUM(CASE WHEN status = "menunggu_servis" THEN 1 ELSE 0 END) as stok_menunggu_servis'),
+                \DB::raw('MIN(CAST(nup AS UNSIGNED)) as nup_awal'),
+                \DB::raw('MAX(CAST(nup AS UNSIGNED)) as nup_akhir'),
                 \DB::raw('MAX(tanggal_perolehan) as max_tanggal_perolehan')
             )
             ->when($search, function($query, $search) {
@@ -47,6 +50,27 @@ class KatalogAsetController extends Controller
     public function show(AsetBmn $katalog_aset)
     {
         $katalog_aset->load('ruangan');
-        return view('pegawai.katalog.show', compact('katalog_aset'));
+        
+        $semua_nup = AsetBmn::where('kode_barang', $katalog_aset->kode_barang)
+            ->where('nama_barang', $katalog_aset->nama_barang)
+            ->where('merk', $katalog_aset->merk)
+            ->where('tipe', $katalog_aset->tipe)
+            ->where('nama', $katalog_aset->nama)
+            ->orderByRaw('CAST(nup AS UNSIGNED)')
+            ->get(['nup', 'status']);
+            
+        $total_stok = $semua_nup->count();
+        $stok_tersedia = $semua_nup->where('status', 'tersedia')->count();
+        $stok_dipinjam = $semua_nup->where('status', 'dipinjam')->count();
+        $stok_menunggu_persetujuan = $semua_nup->where('status', 'menunggu_persetujuan')->count();
+        $stok_menunggu_serah_terima = $semua_nup->where('status', 'menunggu_serah_terima')->count();
+        $stok_menunggu_servis = $semua_nup->where('status', 'menunggu_servis')->count();
+        $stok_servis = $semua_nup->where('status', 'servis')->count();
+            
+        return view('pegawai.katalog.show', compact(
+            'katalog_aset', 'semua_nup', 'total_stok', 'stok_tersedia', 
+            'stok_dipinjam', 'stok_menunggu_persetujuan', 'stok_menunggu_serah_terima', 
+            'stok_menunggu_servis', 'stok_servis'
+        ));
     }
 }

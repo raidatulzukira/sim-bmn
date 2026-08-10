@@ -14,16 +14,19 @@ class SelesaiPemeliharaanRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nota_teknisi' => ['required', 'file', 'mimes:jpeg,png,jpg,pdf', 'max:5120'],
+            'nota_teknisi' => ['required', 'array', 'min:1'],
+            'nota_teknisi.*' => ['file', 'mimes:jpeg,png,jpg,pdf', 'max:5120'],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'nota_teknisi.required' => 'Nota teknisi / bukti servis wajib diunggah.',
-            'nota_teknisi.mimes' => 'File harus berupa gambar (JPEG/PNG) atau dokumen PDF.',
-            'nota_teknisi.max' => 'Ukuran file maksimal 5MB.',
+            'nota_teknisi.required' => 'Minimal 1 nota teknisi / bukti servis wajib diunggah.',
+            'nota_teknisi.array' => 'Format nota teknisi tidak valid.',
+            'nota_teknisi.min' => 'Minimal 1 nota teknisi / bukti servis wajib diunggah.',
+            'nota_teknisi.*.mimes' => 'File harus berupa gambar (JPEG/PNG) atau dokumen PDF.',
+            'nota_teknisi.*.max' => 'Ukuran setiap file maksimal 5MB.',
         ];
     }
 }

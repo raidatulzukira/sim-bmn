@@ -50,7 +50,7 @@
                 <td>{{ $aset->kode_barang }}</td>
                 <td style="text-align: left;">{{ $aset->nama_barang }} ({{ $aset->jumlah_item }} Unit)</td>
                 <td>{{ $aset->max_tanggal_perolehan ? \Carbon\Carbon::parse($aset->max_tanggal_perolehan)->format('d F Y') : '-' }}</td>
-                <td style="text-transform: capitalize;">{{ $aset->status }}</td>
+                <td style="text-transform: capitalize;">{{ $aset->status_label }}</td>
             </tr>
             @empty
             <tr>

@@ -37,7 +37,7 @@
 
     @forelse($peminjamans as $index => $item)
         <div style="border: 1px solid #000; margin-bottom: 20px; padding: 10px; {{ !$loop->first ? 'page-break-before: always;' : '' }}">
-            <div style="font-weight: bold; border-bottom: 1px dashed #ccc; margin-bottom: 10px; padding-bottom: 5px;">Peminjaman #{{ $index + 1 }} ({{ $item->jumlah_item }} Unit) - Status: {{ strtoupper($item->status) }}</div>
+            <div style="font-weight: bold; border-bottom: 1px dashed #ccc; margin-bottom: 10px; padding-bottom: 5px;">Peminjaman #{{ $index + 1 }} ({{ $item->jumlah_item }} Unit) - Status: {{ strtoupper($item->status_label) }}</div>
             
             <table style="width: 100%; font-size: 12px; border-collapse: collapse;">
                 <tr>

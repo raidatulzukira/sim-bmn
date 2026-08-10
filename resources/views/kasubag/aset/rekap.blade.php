@@ -70,11 +70,17 @@
                                             @if($aset->stok_dipinjam > 0)
                                                 <span class="px-2 py-0.5 inline-flex text-xs font-bold rounded-full bg-yellow-50 text-yellow-700">Dipinjam: {{ $aset->stok_dipinjam }}</span>
                                             @endif
-                                            @if($aset->stok_menunggu_persetujuan > 0 || $aset->stok_menunggu_serah_terima > 0)
-                                                <span class="px-2 py-0.5 inline-flex text-xs font-bold rounded-full bg-orange-50 text-orange-700">Diproses: {{ $aset->stok_menunggu_persetujuan + $aset->stok_menunggu_serah_terima }}</span>
+                                            @if($aset->stok_menunggu_persetujuan > 0)
+                                                <span class="px-2 py-0.5 inline-flex text-xs font-bold rounded-full bg-amber-50 text-amber-700">Menunggu Persetujuan: {{ $aset->stok_menunggu_persetujuan }}</span>
                                             @endif
-                                            @if($aset->stok_maintenance > 0)
-                                                <span class="px-2 py-0.5 inline-flex text-xs font-bold rounded-full bg-red-50 text-red-700">Servis: {{ $aset->stok_maintenance }}</span>
+                                            @if($aset->stok_menunggu_serah_terima > 0)
+                                                <span class="px-2 py-0.5 inline-flex text-xs font-bold rounded-full bg-sky-50 text-sky-700">Menunggu Serah Terima: {{ $aset->stok_menunggu_serah_terima }}</span>
+                                            @endif
+                                            @if($aset->stok_menunggu_servis > 0)
+                                                <span class="px-2 py-0.5 inline-flex text-xs font-bold rounded-full bg-orange-50 text-orange-700">Menunggu Servis: {{ $aset->stok_menunggu_servis }}</span>
+                                            @endif
+                                            @if($aset->stok_servis > 0)
+                                                <span class="px-2 py-0.5 inline-flex text-xs font-bold rounded-full bg-red-50 text-red-700">Servis: {{ $aset->stok_servis }}</span>
                                             @endif
                                         </div>
                                     </td>

@@ -138,6 +138,9 @@ class PemeliharaanController extends Controller
                 'aset_id' => $request->aset_id
             ]);
             
+            // Update status aset menjadi menunggu_persetujuan
+            AsetBmn::where('id', $request->aset_id)->update(['status' => 'menunggu_persetujuan']);
+
             // Dispatch notification to Kasubag TU now that aset_id is set
             \App\Jobs\SendMaintenanceNotificationJob::dispatch($pemeliharaan->id);
         });
@@ -194,7 +197,12 @@ class PemeliharaanController extends Controller
             DB::transaction(function () use ($request, $pemeliharaan) {
                 $lockedBatch = Pemeliharaan::where('batch_id', $pemeliharaan->batch_id)->lockForUpdate()->get();
 
-                $path = $request->file('nota_teknisi')->store('nota_servis', 'public');
+                $paths = [];
+                if ($request->hasFile('nota_teknisi')) {
+                    foreach ($request->file('nota_teknisi') as $file) {
+                        $paths[] = $file->store('nota_servis', 'public');
+                    }
+                }
 
                 foreach ($lockedBatch as $item) {
                     if ($item->status !== 'proses') {
@@ -204,7 +212,7 @@ class PemeliharaanController extends Controller
                     $item->update([
                         'status' => 'selesai',
                         'tanggal_selesai' => now(),
-                        'nota_teknisi' => $path
+                        'nota_teknisi' => $paths
                     ]);
 
                     $updateData = ['status' => 'tersedia'];

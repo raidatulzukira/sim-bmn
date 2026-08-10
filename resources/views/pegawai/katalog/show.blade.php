@@ -46,14 +46,24 @@
                                 <h3 class="text-3xl sm:text-4xl font-extrabold text-slate-900">{{ $katalog_aset->nama_barang }}</h3>
                             </div>
                         </div>
-                        <div class="mb-2 md:mb-4">
-                            <span class="px-5 py-2 inline-flex text-sm font-bold rounded-full border shadow-sm
-                                {{ $katalog_aset->status === 'tersedia' ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : ($katalog_aset->status === 'dipinjam' ? 'bg-amber-50 border-amber-200 text-amber-700' : 'bg-rose-50 border-rose-200 text-rose-700') }}">
-                                <span class="flex items-center gap-2">
-                                    <span class="w-2 h-2 rounded-full {{ $katalog_aset->status === 'tersedia' ? 'bg-emerald-500 animate-pulse' : ($katalog_aset->status === 'dipinjam' ? 'bg-amber-500' : 'bg-rose-500') }}"></span>
-                                    {{ $katalog_aset->status === 'dipinjam' ? 'Sedang Dipinjam' : ucfirst($katalog_aset->status) }}
-                                </span>
-                            </span>
+                        <div class="mb-2 md:mb-4 flex flex-col gap-1 items-end">
+                            <span class="px-3 py-1 inline-flex text-xs font-bold rounded-full bg-slate-100 text-slate-700">Total: {{ $total_stok }}</span>
+                            <span class="px-3 py-1 inline-flex text-xs font-bold rounded-full bg-green-50 text-green-700">Tersedia: {{ $stok_tersedia }}</span>
+                            @if($stok_dipinjam > 0)
+                                <span class="px-3 py-1 inline-flex text-xs font-bold rounded-full bg-indigo-50 text-indigo-700">Dipinjam: {{ $stok_dipinjam }}</span>
+                            @endif
+                            @if($stok_menunggu_persetujuan > 0)
+                                <span class="px-3 py-1 inline-flex text-xs font-bold rounded-full bg-amber-50 text-amber-700">Menunggu Persetujuan: {{ $stok_menunggu_persetujuan }}</span>
+                            @endif
+                            @if($stok_menunggu_serah_terima > 0)
+                                <span class="px-3 py-1 inline-flex text-xs font-bold rounded-full bg-sky-50 text-sky-700">Menunggu Serah Terima: {{ $stok_menunggu_serah_terima }}</span>
+                            @endif
+                            @if($stok_menunggu_servis > 0)
+                                <span class="px-3 py-1 inline-flex text-xs font-bold rounded-full bg-orange-50 text-orange-700">Menunggu Servis: {{ $stok_menunggu_servis }}</span>
+                            @endif
+                            @if($stok_servis > 0)
+                                <span class="px-3 py-1 inline-flex text-xs font-bold rounded-full bg-red-50 text-red-700">Servis: {{ $stok_servis }}</span>
+                            @endif
                         </div>
                     </div>
 
@@ -70,9 +80,28 @@
                                     <div class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center shrink-0 text-slate-400 border border-slate-100">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path></svg>
                                     </div>
-                                    <div>
-                                        <span class="block text-sm font-bold text-slate-400 mb-0.5">Nomor Urut Pendaftaran (NUP)</span>
-                                        <span class="block text-base font-medium text-slate-900">{{ $katalog_aset->nup ?? '-' }}</span>
+                                    <div class="w-full">
+                                        <span class="block text-sm font-bold text-slate-400 mb-1.5">Nomor Urut Pendaftaran (NUP) yang Terdaftar</span>
+                                        <div class="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto pr-1">
+                                            @forelse($semua_nup as $n)
+                                                @php
+                                                    $bg = match($n->status) {
+                                                        'tersedia' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                                                        'dipinjam' => 'bg-indigo-50 text-indigo-700 border-indigo-200',
+                                                        'servis' => 'bg-rose-50 text-rose-700 border-rose-200',
+                                                        'menunggu_persetujuan' => 'bg-amber-50 text-amber-700 border-amber-200',
+                                                        'menunggu_serah_terima' => 'bg-sky-50 text-sky-700 border-sky-200',
+                                                        'menunggu_servis' => 'bg-orange-50 text-orange-700 border-orange-200',
+                                                        default => 'bg-slate-50 text-slate-700 border-slate-200',
+                                                    };
+                                                @endphp
+                                                <span class="px-2 py-0.5 text-xs font-bold font-mono rounded border {{ $bg }}" title="{{ $n->status_label }}">
+                                                    {{ $n->nup }}
+                                                </span>
+                                            @empty
+                                                <span class="text-sm font-medium text-slate-500">-</span>
+                                            @endforelse
+                                        </div>
                                     </div>
                                 </li>
                                 <li class="flex items-start gap-4">

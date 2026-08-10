@@ -72,9 +72,19 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-left text-sm text-slate-600">{{ $aset->jenis_bmn }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-left text-sm text-slate-600">{{ $aset->ruangan ? $aset->ruangan->nama_ruangan : '-' }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-left">
-                                        <span class="px-3 py-1 inline-flex text-xs font-bold rounded-full border 
-                                            {{ $aset->status === 'tersedia' ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : ($aset->status === 'dipinjam' ? 'bg-amber-50 border-amber-200 text-amber-700' : 'bg-rose-50 border-rose-200 text-rose-700') }}">
-                                            {{ $aset->status === 'dipinjam' ? 'Dipinjam' : ucfirst($aset->status) }}
+                                        @php
+                                            $badge_class = match($aset->status) {
+                                                'tersedia' => 'bg-emerald-50 border-emerald-200 text-emerald-700',
+                                                'dipinjam' => 'bg-indigo-50 border-indigo-200 text-indigo-700',
+                                                'servis' => 'bg-rose-50 border-rose-200 text-rose-700',
+                                                'menunggu_persetujuan' => 'bg-amber-50 border-amber-200 text-amber-700',
+                                                'menunggu_serah_terima' => 'bg-sky-50 border-sky-200 text-sky-700',
+                                                'menunggu_servis' => 'bg-orange-50 border-orange-200 text-orange-700',
+                                                default => 'bg-slate-50 border-slate-200 text-slate-700',
+                                            };
+                                        @endphp
+                                        <span class="px-3 py-1 inline-flex text-xs font-bold rounded-full border {{ $badge_class }}">
+                                            {{ $aset->status_label }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">

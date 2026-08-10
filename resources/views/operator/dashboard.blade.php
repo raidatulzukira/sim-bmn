@@ -374,7 +374,7 @@
                                                         </span>
                                                     @else
                                                         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-bold border border-amber-200">
-                                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 inline-block"></span>{{ ucfirst($rawat->status) }}
+                                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 inline-block"></span>{{ $rawat->status_label }}
                                                         </span>
                                                     @endif
                                                 </td>

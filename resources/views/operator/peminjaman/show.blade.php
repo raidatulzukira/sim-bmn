@@ -46,7 +46,7 @@
                                 };
                             @endphp
                             <span class="px-4 py-1.5 inline-flex text-sm font-bold rounded-full border {{ $color }}">
-                                {{ ucfirst($peminjaman->status) }}
+                                {{ $peminjaman->status_label }}
                             </span>
                         </div>
                     </div>

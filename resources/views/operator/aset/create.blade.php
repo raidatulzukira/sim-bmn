@@ -154,6 +154,9 @@
                                     <option value="tersedia" {{ old('status') == 'tersedia' ? 'selected' : '' }}>Tersedia (Siap Digunakan)</option>
                                     <option value="dipinjam" {{ old('status') == 'dipinjam' ? 'selected' : '' }}>Dipinjam</option>
                                     <option value="servis" {{ old('status') == 'servis' ? 'selected' : '' }}>Servis (Pemeliharaan)</option>
+                                    <option value="menunggu_persetujuan" {{ old('status') == 'menunggu_persetujuan' ? 'selected' : '' }}>Menunggu Persetujuan</option>
+                                    <option value="menunggu_serah_terima" {{ old('status') == 'menunggu_serah_terima' ? 'selected' : '' }}>Menunggu Serah Terima</option>
+                                    <option value="menunggu_servis" {{ old('status') == 'menunggu_servis' ? 'selected' : '' }}>Menunggu Servis</option>
                                 </select>
                                 @error('status')
                                     <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>

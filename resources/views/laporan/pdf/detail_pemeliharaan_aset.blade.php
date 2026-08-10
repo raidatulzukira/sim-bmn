@@ -45,7 +45,7 @@
 
     @forelse($pemeliharaans as $index => $item)
         <div class="content-box" style="{{ !$loop->first ? 'page-break-before: always;' : '' }}">
-            <div class="box-title">Pemeliharaan #{{ $index + 1 }} ({{ $item->jumlah_item }} Unit) - Status: {{ strtoupper($item->status) }}</div>
+            <div class="box-title">Pemeliharaan #{{ $index + 1 }} ({{ $item->jumlah_item }} Unit) - Status: {{ strtoupper($item->status_label) }}</div>
             <table style="width: 100%; font-size: 12px; border-collapse: collapse;">
                 <tr>
                     <td style="width: 25%; padding: 3px 0;"><strong>Tanggal Pengajuan</strong></td>
@@ -80,31 +80,44 @@
             @endif
 
             @php
-                $hasNotaImg = $item->nota_teknisi && preg_match('/\.(jpg|jpeg|png|gif)$/i', $item->nota_teknisi);
+                $notas = (array) $item->nota_teknisi;
+                $notaImages = [];
+                $notaDocs = [];
+                foreach ($notas as $nota) {
+                    if (preg_match('/\.(jpg|jpeg|png|gif)$/i', $nota)) {
+                        $notaImages[] = $nota;
+                    } else {
+                        $notaDocs[] = $nota;
+                    }
+                }
             @endphp
             
-            @if($item->nota_teknisi && !$hasNotaImg)
+            @if(count($notaDocs) > 0)
             <div class="detail-row" style="margin-top: 10px;">
-                <span class="detail-label">Nota Teknisi</span>: <br/>
-                <div style="padding: 5px 10px; margin-top: 5px; border-left: 2px solid #28a745;">{{ $item->nota_teknisi }}</div>
+                <span class="detail-label">Dokumen Nota Teknisi</span>: <br/>
+                <div style="padding: 5px 10px; margin-top: 5px; border-left: 2px solid #28a745;">
+                    {{ implode(', ', $notaDocs) }}
+                </div>
             </div>
             @endif
 
-            @if($hasNotaImg || $item->foto)
+            @if(count($notaImages) > 0 || $item->foto)
             <table style="width: 100%; margin-top: 15px;">
                 <tr>
-                    @if($hasNotaImg)
+                    @if(count($notaImages) > 0)
                     <td style="width: 50%; vertical-align: top;">
-                        <span class="detail-label">Nota Teknisi</span>: <br/>
+                        <span class="detail-label">Nota Teknisi (Gambar)</span>: <br/>
                         <div style="margin-top: 5px;">
-                            <img src="{{ public_path('storage/' . $item->nota_teknisi) }}" style="max-width: 250px; max-height: 200px; border: 1px solid #ccc; padding: 2px;" alt="Nota Teknisi">
+                            @foreach($notaImages as $img)
+                            <img src="{{ public_path('storage/' . $img) }}" style="max-width: 150px; max-height: 150px; border: 1px solid #ccc; padding: 2px; margin-right: 5px; margin-bottom: 5px; display: inline-block;" alt="Nota Teknisi">
+                            @endforeach
                         </div>
                     </td>
                     @endif
 
                     @if($item->foto)
                     <td style="width: 50%; vertical-align: top;">
-                        <span class="detail-label">Lampiran Foto</span>: <br/>
+                        <span class="detail-label">Lampiran Foto Kerusakan</span>: <br/>
                         <div style="margin-top: 5px;">
                             <img src="{{ public_path('storage/' . $item->foto) }}" style="max-width: 250px; max-height: 200px; border: 1px solid #ccc; padding: 2px;" alt="Foto Bukti">
                         </div>

@@ -45,13 +45,30 @@
                             </div>
                         </div>
                         <div class="mb-2 md:mb-4">
-                            <span class="px-5 py-2 inline-flex text-sm font-bold rounded-full border shadow-sm
-                                {{ $aset->status === 'tersedia' ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : ($aset->status === 'dipinjam' ? 'bg-amber-50 border-amber-200 text-amber-700' : 'bg-rose-50 border-rose-200 text-rose-700') }}">
-                                <span class="flex items-center gap-2">
-                                    <span class="w-2 h-2 rounded-full {{ $aset->status === 'tersedia' ? 'bg-emerald-500 animate-pulse' : ($aset->status === 'dipinjam' ? 'bg-amber-500' : 'bg-rose-500') }}"></span>
-                                    {{ $aset->status === 'dipinjam' ? 'Sedang Dipinjam' : ucfirst($aset->status) }}
+                                @php
+                                    $badge_bg = match($aset->status) {
+                                        'tersedia' => 'bg-emerald-50 border-emerald-200 text-emerald-700',
+                                        'dipinjam' => 'bg-indigo-50 border-indigo-200 text-indigo-700',
+                                        'servis' => 'bg-rose-50 border-rose-200 text-rose-700',
+                                        'menunggu_persetujuan' => 'bg-amber-50 border-amber-200 text-amber-700',
+                                        'menunggu_serah_terima' => 'bg-sky-50 border-sky-200 text-sky-700',
+                                        'menunggu_servis' => 'bg-orange-50 border-orange-200 text-orange-700',
+                                        default => 'bg-slate-50 border-slate-200 text-slate-700',
+                                    };
+                                    $dot_bg = match($aset->status) {
+                                        'tersedia' => 'bg-emerald-500 animate-pulse',
+                                        'dipinjam' => 'bg-indigo-500',
+                                        'servis' => 'bg-rose-500',
+                                        'menunggu_persetujuan' => 'bg-amber-500',
+                                        'menunggu_serah_terima' => 'bg-sky-500',
+                                        'menunggu_servis' => 'bg-orange-500',
+                                        default => 'bg-slate-500',
+                                    };
+                                @endphp
+                                <span class="px-5 py-2 inline-flex items-center gap-2 text-sm font-bold rounded-full border shadow-sm {{ $badge_bg }}">
+                                    <span class="w-2 h-2 rounded-full {{ $dot_bg }}"></span>
+                                    {{ $aset->status_label }}
                                 </span>
-                            </span>
                         </div>
                     </div>
 

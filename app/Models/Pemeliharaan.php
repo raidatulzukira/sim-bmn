@@ -22,6 +22,7 @@ class Pemeliharaan extends Model
         return [
             'tanggal_pengajuan' => 'datetime',
             'tanggal_selesai' => 'datetime',
+            'nota_teknisi' => 'array',
         ];
     }
 
@@ -38,5 +39,17 @@ class Pemeliharaan extends Model
     public function approver(): BelongsTo
     {
         return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    public function getStatusLabelAttribute()
+    {
+        return match($this->status) {
+            'pending' => is_null($this->aset_id) ? 'Menunggu Peninjauan' : 'Menunggu TU',
+            'disetujui' => 'Siap Diservis',
+            'proses' => 'Sedang Diservis',
+            'selesai' => 'Servis Selesai',
+            'ditolak' => 'Ditolak',
+            default => ucfirst($this->status)
+        };
     }
 }

@@ -57,7 +57,7 @@
                                 };
                             @endphp
                             <span class="px-4 py-1.5 inline-flex text-sm font-bold rounded-full border {{ $color }}">
-                                {{ ucfirst($pemeliharaan->status) }}
+                                {{ $pemeliharaan->status_label }}
                             </span>
                         </div>
                     </div>
@@ -81,20 +81,24 @@
                             </div>
 
                             <!-- Bukti Perbaikan (Nota Teknisi) -->
-                            @if($pemeliharaan->status === 'selesai' && $pemeliharaan->nota_teknisi)
+                            @if($pemeliharaan->status === 'selesai' && !empty($pemeliharaan->nota_teknisi))
                                 <div>
                                     <h4 class="text-sm font-extrabold text-emerald-600 uppercase tracking-wider mb-4 flex items-center gap-2">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                        <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                         Hasil Perbaikan (Nota Teknisi)
                                     </h4>
-                                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 inline-block w-full text-left">
-                                        <a href="{{ asset('storage/' . $pemeliharaan->nota_teknisi) }}" target="_blank" class="inline-flex items-center px-6 py-3 border border-transparent text-sm font-bold rounded-xl shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 transition-colors duration-200 gap-2">
-                                            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                            </svg>
-                                            Lihat File Nota
-                                        </a>
+                                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 w-full text-left">
+                                        <div class="flex flex-wrap gap-3">
+                                            @foreach((array) $pemeliharaan->nota_teknisi as $index => $nota)
+                                                <a href="{{ asset('storage/' . $nota) }}" target="_blank" class="inline-flex items-center px-4 py-2 border border-transparent text-xs font-bold rounded-xl shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 transition-colors duration-200 gap-2">
+                                                    <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                    </svg>
+                                                    Lihat File {{ $index + 1 }}
+                                                </a>
+                                            @endforeach
+                                        </div>
                                     </div>
                                 </div>
                             @endif
@@ -237,21 +241,25 @@
                                 </div>
                             </div>
 
-                            @if(!$hasFoto && $pemeliharaan->status === 'selesai' && $pemeliharaan->nota_teknisi)
+                            @if(!$hasFoto && $pemeliharaan->status === 'selesai' && !empty($pemeliharaan->nota_teknisi))
                             <!-- Bukti Perbaikan (Nota Teknisi) untuk layout tanpa foto -->
                             <div class="bg-emerald-50/30 p-5 rounded-2xl border border-emerald-100 w-full h-fit">
                                 <h4 class="text-sm font-extrabold text-emerald-600 uppercase tracking-wider mb-4 flex items-center gap-2">
                                     <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                     Hasil Perbaikan (Nota Teknisi)
                                 </h4>
-                                <div class="bg-white p-4 rounded-xl border border-emerald-100 inline-block w-full text-left">
-                                    <a href="{{ asset('storage/' . $pemeliharaan->nota_teknisi) }}" target="_blank" class="inline-flex items-center px-6 py-3 border border-transparent text-sm font-bold rounded-xl shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 transition-colors duration-200 gap-2">
-                                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                        </svg>
-                                        Lihat File Nota
-                                    </a>
+                                <div class="bg-white p-4 rounded-xl border border-emerald-100 w-full text-left">
+                                    <div class="flex flex-wrap gap-3">
+                                        @foreach((array) $pemeliharaan->nota_teknisi as $index => $nota)
+                                            <a href="{{ asset('storage/' . $nota) }}" target="_blank" class="inline-flex items-center px-4 py-2 border border-transparent text-xs font-bold rounded-xl shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 transition-colors duration-200 gap-2">
+                                                <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                </svg>
+                                                Lihat File {{ $index + 1 }}
+                                            </a>
+                                        @endforeach
+                                    </div>
                                 </div>
                             </div>
                             @endif

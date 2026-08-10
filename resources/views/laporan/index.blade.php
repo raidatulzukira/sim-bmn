@@ -176,7 +176,13 @@
                                                 <td class="px-4 py-3 text-sm font-bold capitalize whitespace-nowrap {{ $item->status === 'selesai' ? 'text-emerald-600' : 'text-slate-600' }}">{{ $item->status }}</td>
                                                 <td class="px-4 py-3 text-sm text-slate-600">{{ $item->catatan_validasi ?? '-' }}</td>
                                                 <td class="px-4 py-3 text-sm text-slate-600 whitespace-nowrap">{{ $item->approver ? $item->approver->name : '-' }}</td>
-                                                <td class="px-4 py-3 text-sm text-slate-600">{{ $item->nota_teknisi ?? '-' }}</td>
+                                                <td class="px-4 py-3 text-sm text-slate-600">
+                                                    @if(!empty($item->nota_teknisi))
+                                                        {{ count((array)$item->nota_teknisi) }} Lampiran
+                                                    @else
+                                                        -
+                                                    @endif
+                                                </td>
                                                 <td class="px-4 py-3 text-sm text-slate-600 whitespace-nowrap">{{ $item->tanggal_pengajuan ? $item->tanggal_pengajuan->format('d/m/Y') : '-' }}</td>
                                                 <td class="px-4 py-3 text-sm text-slate-600 whitespace-nowrap">{{ $item->tanggal_selesai ? $item->tanggal_selesai->format('d/m/Y') : '-' }}</td>
                                             </tr>
@@ -259,7 +265,7 @@
                                                 <span class="ml-2 px-2 py-0.5 text-xs font-bold rounded-md bg-slate-100 text-slate-600">{{ ucfirst($item->jenis) }}</span>
                                             </div>
                                             <div class="flex flex-col items-end gap-1">
-                                                <span class="font-bold text-sm {{ $item->status === 'selesai' ? 'text-emerald-600' : 'text-slate-600' }}">{{ ucfirst($item->status) }}</span>
+                                                <span class="font-bold text-sm {{ $item->status === 'selesai' ? 'text-emerald-600' : 'text-slate-600' }}">{{ $item->status_label }}</span>
                                                 <span class="text-xs text-slate-500">Selesai: {{ $item->tanggal_selesai ? $item->tanggal_selesai->format('d F Y') : '-' }}</span>
                                             </div>
                                         </div>
@@ -294,26 +300,41 @@
                                                 <p class="text-slate-800 bg-orange-50 p-3 rounded-lg border border-orange-100">{{ $item->catatan_validasi }}</p>
                                             </div>
                                             @endif
-                                            @if($item->nota_teknisi && !preg_match('/\.(jpg|jpeg|png|gif)$/i', $item->nota_teknisi))
-                                            <div>
-                                                <span class="block text-slate-500 font-bold mb-1">Nota/Catatan Teknisi:</span>
-                                                <p class="text-slate-800 bg-emerald-50 p-3 rounded-lg border border-emerald-100">{{ $item->nota_teknisi }}</p>
-                                            </div>
-                                            @endif
-                                        </div>
-
                                         @php
-                                            $hasNotaImg = $item->nota_teknisi && preg_match('/\.(jpg|jpeg|png|gif)$/i', $item->nota_teknisi);
+                                            $notas = (array) $item->nota_teknisi;
+                                            $notaImages = [];
+                                            $notaDocs = [];
+                                            foreach ($notas as $nota) {
+                                                if (preg_match('/\.(jpg|jpeg|png|gif)$/i', $nota)) {
+                                                    $notaImages[] = $nota;
+                                                } else {
+                                                    $notaDocs[] = $nota;
+                                                }
+                                            }
                                         @endphp
+
+                                        @if(count($notaDocs) > 0)
+                                            <div>
+                                                <span class="block text-slate-500 font-bold mb-1">Nota/Catatan Teknisi (Dokumen):</span>
+                                                <p class="text-slate-800 bg-emerald-50 p-3 rounded-lg border border-emerald-100">
+                                                    @foreach($notaDocs as $doc)
+                                                        <a href="{{ asset('storage/' . $doc) }}" target="_blank" class="text-emerald-700 underline">{{ basename($doc) }}</a><br>
+                                                    @endforeach
+                                                </p>
+                                            </div>
+                                        @endif
+                                        </div>
                                         
-                                        @if($hasNotaImg || $item->foto)
+                                        @if(count($notaImages) > 0 || $item->foto)
                                         <div class="mt-4 pt-4 border-t border-slate-100">
                                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                                @if($hasNotaImg)
+                                                @if(count($notaImages) > 0)
                                                 <div>
-                                                    <span class="block text-slate-500 font-bold mb-2 text-sm">Nota Teknisi:</span>
-                                                    <div class="bg-slate-50 p-2 rounded-xl border border-slate-200 inline-block">
-                                                        <img src="{{ asset('storage/' . $item->nota_teknisi) }}" alt="Nota Teknisi" class="max-w-full h-auto max-h-40 rounded-lg shadow-sm">
+                                                    <span class="block text-slate-500 font-bold mb-2 text-sm">Nota Teknisi (Gambar):</span>
+                                                    <div class="bg-slate-50 p-2 rounded-xl border border-slate-200 inline-block flex flex-wrap gap-2">
+                                                        @foreach($notaImages as $img)
+                                                        <img src="{{ asset('storage/' . $img) }}" alt="Nota Teknisi" class="max-w-full h-auto max-h-40 rounded-lg shadow-sm">
+                                                        @endforeach
                                                     </div>
                                                 </div>
                                                 @endif

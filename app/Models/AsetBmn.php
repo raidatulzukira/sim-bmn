@@ -22,6 +22,19 @@ class AsetBmn extends Model
         'tanggal_servis_terakhir' => 'date',
     ];
 
+    public function getStatusLabelAttribute()
+    {
+        return match ($this->status) {
+            'tersedia' => 'Tersedia',
+            'dipinjam' => 'Dipinjam',
+            'servis' => 'Servis',
+            'menunggu_persetujuan' => 'Menunggu Persetujuan',
+            'menunggu_serah_terima' => 'Menunggu Serah Terima',
+            'menunggu_servis' => 'Menunggu Servis',
+            default => ucfirst(str_replace('_', ' ', $this->status)),
+        };
+    }
+
     public function getJadwalServisBerikutnyaAttribute()
     {
         if ($this->interval_servis_tahun && $this->tanggal_servis_terakhir) {

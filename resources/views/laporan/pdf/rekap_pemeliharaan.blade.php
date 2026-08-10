@@ -56,11 +56,17 @@
                 @if(!($isPdf ?? false))
                 <td>{{ $item->foto ? 'Ada' : 'Tidak' }}</td>
                 @endif
-                <td style="text-transform: capitalize;">{{ $item->status }}</td>
+                <td style="text-transform: capitalize;">{{ $item->status_label }}</td>
                 @if(!($isPdf ?? false))
                 <td>{{ $item->catatan_validasi ?? '-' }}</td>
                 <td>{{ $item->approver ? $item->approver->name : '-' }}</td>
-                <td>{{ $item->nota_teknisi ?? '-' }}</td>
+                <td>
+                    @if(!empty($item->nota_teknisi))
+                        {{ count((array)$item->nota_teknisi) }} Lampiran
+                    @else
+                        -
+                    @endif
+                </td>
                 @endif
                 <td>{{ $item->tanggal_pengajuan ? \Carbon\Carbon::parse($item->tanggal_pengajuan)->format('d/m/Y') : '-' }}</td>
                 <td>{{ $item->tanggal_selesai ? \Carbon\Carbon::parse($item->tanggal_selesai)->format('d/m/Y') : '-' }}</td>

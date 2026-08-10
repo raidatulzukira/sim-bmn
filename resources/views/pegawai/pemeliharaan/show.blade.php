@@ -54,7 +54,7 @@
                             @endphp
                             <span class="px-4 py-1.5 inline-flex items-center gap-2 text-xs font-bold rounded-full border shadow-sm {{ $badge }} uppercase tracking-wider">
                                 <span class="w-1.5 h-1.5 rounded-full {{ $laporan_kerusakan->status == 'pending' ? 'bg-amber-500 animate-pulse' : ($laporan_kerusakan->status == 'proses' ? 'bg-indigo-500 animate-pulse' : ($laporan_kerusakan->status == 'selesai' ? 'bg-emerald-500' : 'bg-slate-500')) }}"></span>
-                                {{ $laporan_kerusakan->status }}
+                                {{ $laporan_kerusakan->status_label }}
                             </span>
                         </div>
                     </div>
@@ -151,12 +151,17 @@
                                                     <span class="block text-xs font-bold text-emerald-600 uppercase tracking-wider mb-1">Diselesaikan Pada</span>
                                                     <span class="block text-sm font-bold text-slate-900">{{ $laporan_kerusakan->tanggal_selesai ? \Carbon\Carbon::parse($laporan_kerusakan->tanggal_selesai)->format('d F Y, H:i') : '-' }}</span>
                                                 </div>
-                                                @if($laporan_kerusakan->nota_teknisi)
+                                                @if(!empty($laporan_kerusakan->nota_teknisi))
                                                     <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex flex-col justify-center">
-                                                        <a href="{{ asset('storage/' . $laporan_kerusakan->nota_teknisi) }}" target="_blank" class="inline-flex items-center justify-center gap-2 w-full px-4 py-2 bg-slate-800 text-white rounded-xl text-sm font-bold hover:bg-slate-700 transition-colors shadow-sm">
-                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                                                            Lihat Bukti Perbaikan
-                                                        </a>
+                                                        <div class="flex flex-col gap-2">
+                                                            <span class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Bukti Perbaikan</span>
+                                                            @foreach((array) $laporan_kerusakan->nota_teknisi as $index => $nota)
+                                                                <a href="{{ asset('storage/' . $nota) }}" target="_blank" class="inline-flex items-center justify-center gap-2 w-full px-4 py-2 bg-slate-800 text-white rounded-xl text-sm font-bold hover:bg-slate-700 transition-colors shadow-sm">
+                                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                                                    Lihat Bukti Perbaikan {{ $index + 1 }}
+                                                                </a>
+                                                            @endforeach
+                                                        </div>
                                                     </div>
                                                 @endif
                                             </div>

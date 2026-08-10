@@ -54,9 +54,10 @@ class AsetController extends Controller
                 \DB::raw('SUM(CASE WHEN status = "dipinjam" THEN 1 ELSE 0 END) as stok_dipinjam'),
                 \DB::raw('SUM(CASE WHEN status = "menunggu_persetujuan" THEN 1 ELSE 0 END) as stok_menunggu_persetujuan'),
                 \DB::raw('SUM(CASE WHEN status = "menunggu_serah_terima" THEN 1 ELSE 0 END) as stok_menunggu_serah_terima'),
-                \DB::raw('SUM(CASE WHEN status IN ("servis", "menunggu_servis") THEN 1 ELSE 0 END) as stok_maintenance'),
-                \DB::raw('MIN(nup) as nup_awal'),
-                \DB::raw('MAX(nup) as nup_akhir'),
+                \DB::raw('SUM(CASE WHEN status = "servis" THEN 1 ELSE 0 END) as stok_servis'),
+                \DB::raw('SUM(CASE WHEN status = "menunggu_servis" THEN 1 ELSE 0 END) as stok_menunggu_servis'),
+                \DB::raw('MIN(CAST(nup AS UNSIGNED)) as nup_awal'),
+                \DB::raw('MAX(CAST(nup AS UNSIGNED)) as nup_akhir'),
                 \DB::raw('MAX(tanggal_perolehan) as max_tanggal_perolehan')
             )
             ->when($search, function($query, $search) {

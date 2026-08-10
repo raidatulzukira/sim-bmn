@@ -83,7 +83,7 @@
                                                 };
                                             @endphp
                                             <span class="px-3 py-1 inline-flex text-xs font-bold rounded-full border {{ $color }}">
-                                                {{ ucfirst($rawat->status) }}
+                                                {{ $rawat->status_label }}
                                             </span>
                                         </td>
                                     @endif
