@@ -51,13 +51,14 @@ class KatalogAsetController extends Controller
     {
         $katalog_aset->load('ruangan');
         
-        $semua_nup = AsetBmn::where('kode_barang', $katalog_aset->kode_barang)
+        $semua_nup = AsetBmn::with('ruangan')
+            ->where('kode_barang', $katalog_aset->kode_barang)
             ->where('nama_barang', $katalog_aset->nama_barang)
             ->where('merk', $katalog_aset->merk)
             ->where('tipe', $katalog_aset->tipe)
             ->where('nama', $katalog_aset->nama)
             ->orderByRaw('CAST(nup AS UNSIGNED)')
-            ->get(['nup', 'status']);
+            ->get(['nup', 'status', 'ruangan_id']);
             
         $total_stok = $semua_nup->count();
         $stok_tersedia = $semua_nup->where('status', 'tersedia')->count();

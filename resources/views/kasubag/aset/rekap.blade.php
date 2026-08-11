@@ -60,7 +60,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-left text-sm text-slate-600 font-medium">{{ $aset->nup_awal == $aset->nup_akhir ? $aset->nup_awal : $aset->nup_awal . ' - ' . $aset->nup_akhir }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-left text-sm text-slate-600 font-medium">
                                         <div class="font-bold text-slate-800">{{ $aset->nama_barang }}</div>
-                                        <div class="text-xs text-slate-500">{{ $aset->merk }} {{ $aset->tipe }}</div>
+                                        <div class="text-xs text-slate-500">{{ $aset->merk }}{{ $aset->tipe ? ' - ' . $aset->tipe : '' }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-left text-sm text-slate-600">{{ $aset->jenis_bmn }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-left">
