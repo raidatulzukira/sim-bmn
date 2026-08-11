@@ -68,8 +68,8 @@
             </table>
 
             <div class="detail-row" style="margin-top: 10px;">
-                <span class="detail-label">Deskripsi Kerusakan</span>: <br/>
-                <div style="padding: 5px 10px; margin-top: 5px; border-left: 2px solid #ccc;">{{ $item->deskripsi_kerusakan ?? '-' }}</div>
+                <span class="detail-label">Deskripsi / Tindakan</span>: <br/>
+                <div style="padding: 5px 10px; margin-top: 5px; border-left: 2px solid #ccc;">{{ $item->aggregated_deskripsi ?? $item->deskripsi_kerusakan ?? '-' }}</div>
             </div>
 
             @if($item->catatan_validasi)

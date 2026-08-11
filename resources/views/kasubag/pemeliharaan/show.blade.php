@@ -14,7 +14,37 @@
 @endsection
 
 @section('content')
-    <div class="py-10 bg-sky-50 min-h-screen" x-data="{ showRejectModal: false }">
+    <div class="py-10 bg-sky-50 min-h-screen" x-data="{ 
+        showRejectModal: false,
+        showPartialRejectModal: false,
+        selectedAssets: [{{ $batch->pluck('id')->implode(',') }}],
+        get uncheckedCount() { return {{ $batch->count() }} - this.selectedAssets.length; },
+        get checkedCount() { return this.selectedAssets.length; },
+        confirmApproval(e) {
+            if (this.checkedCount === 0) {
+                alert('Anda harus memilih minimal 1 aset untuk disetujui, atau gunakan tombol Tolak Pengajuan untuk menolak semua.');
+                e.preventDefault();
+                return;
+            }
+            if (this.uncheckedCount > 0) {
+                e.preventDefault();
+                this.showPartialRejectModal = true;
+                return;
+            }
+            if (!confirm('Anda yakin menyetujui pengajuan pemeliharaan ini seluruhnya?')) {
+                e.preventDefault();
+            }
+        },
+        submitPartial() {
+            const catatan = document.getElementById('partial_catatan').value;
+            if(!catatan.trim()) {
+                alert('Alasan penolakan wajib diisi!');
+                return;
+            }
+            document.getElementById('partialCatatanValidasi').value = catatan;
+            document.getElementById('approveForm').submit();
+        }
+    }">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 space-y-6">
             
             <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-100 relative overflow-hidden">
@@ -103,14 +133,7 @@
                                 </div>
                             @endif
 
-                            <!-- Catatan / Deskripsi Kerusakan -->
-                            <div class="bg-indigo-50/30 p-5 rounded-2xl border border-indigo-100 w-full h-fit">
-                                <h4 class="text-sm font-extrabold text-indigo-600 uppercase tracking-wider mb-3 flex items-center gap-2">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                                    Catatan / Deskripsi Kerusakan
-                                </h4>
-                                <p class="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap font-medium">{{ $pemeliharaan->deskripsi_kerusakan ?? 'Tidak ada catatan.' }}</p>
-                            </div>
+
                         </div>
                         @endif
 
@@ -227,12 +250,37 @@
                                                 </span>
                                             </div>
                                             <div class="pl-11 border-t border-slate-50 pt-3">
-                                                <p class="text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">Nomor Urut Pendaftaran (NUP)</p>
-                                                <div class="flex flex-wrap gap-2">
-                                                    @foreach($items as $item)
-                                                        <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-mono font-bold bg-slate-50 text-slate-700 border border-slate-200">
-                                                            {{ $item->asetBmn ? $item->asetBmn->nup : '?' }}
-                                                        </span>
+                                                <p class="text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">Detail NUP & Tindakan</p>
+                                                <div class="flex flex-col gap-2">
+                                                    @php
+                                                        $groupedByAction = $items->groupBy(function($i) {
+                                                            return $i->deskripsi_kerusakan ?: 'Tidak ada tindakan khusus';
+                                                        });
+                                                    @endphp
+                                                    @foreach($groupedByAction as $action => $actionItems)
+                                                        <div class="flex flex-col gap-2">
+                                                            <div class="flex items-start gap-3">
+                                                                <div class="flex flex-wrap gap-2 shrink-0 max-w-[50%]">
+                                                                    @foreach($actionItems as $item)
+                                                                        @if($pemeliharaan->status === 'pending')
+                                                                            <label class="flex items-center gap-1 cursor-pointer">
+                                                                                <input type="checkbox" x-model="selectedAssets" value="{{ $item->id }}" class="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4 border-slate-300">
+                                                                                <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-mono font-bold bg-slate-50 text-slate-700 border border-slate-200">
+                                                                                    NUP: {{ $item->asetBmn ? $item->asetBmn->nup : '?' }}
+                                                                                </span>
+                                                                            </label>
+                                                                        @else
+                                                                            <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-mono font-bold bg-slate-50 text-slate-700 border border-slate-200">
+                                                                                NUP: {{ $item->asetBmn ? $item->asetBmn->nup : '?' }}
+                                                                            </span>
+                                                                        @endif
+                                                                    @endforeach
+                                                                </div>
+                                                                <span class="text-sm font-medium text-slate-600 bg-white border border-slate-100 px-3 py-1 rounded-md w-full">
+                                                                    {{ $action }}
+                                                                </span>
+                                                            </div>
+                                                        </div>
                                                     @endforeach
                                                 </div>
                                             </div>
@@ -264,16 +312,7 @@
                             </div>
                             @endif
 
-                            <!-- Catatan / Deskripsi Kerusakan -->
-                            @if(!$hasFoto)
-                            <div class="bg-indigo-50/30 p-5 rounded-2xl border border-indigo-100 w-full h-fit">
-                                <h4 class="text-sm font-extrabold text-indigo-600 uppercase tracking-wider mb-3 flex items-center gap-2">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                                    Catatan / Deskripsi Kerusakan
-                                </h4>
-                                <p class="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap font-medium">{{ $pemeliharaan->deskripsi_kerusakan ?? 'Tidak ada catatan.' }}</p>
-                            </div>
-                            @endif
+
                             
                         </div>
                     </div>
@@ -285,8 +324,12 @@
                             
                             <div class="flex flex-col sm:flex-row gap-4 justify-center">
                                 <!-- Form Setujui -->
-                                <form action="{{ route('kasubag.persetujuan_pemeliharaan.approve', $pemeliharaan->id) }}" method="POST" class="w-full sm:w-64" onsubmit="return confirm('Anda yakin menyetujui pengajuan pemeliharaan ini?');">
+                                <form action="{{ route('kasubag.persetujuan_pemeliharaan.approve', $pemeliharaan->id) }}" method="POST" class="w-full sm:w-64" id="approveForm" @submit="confirmApproval($event)">
                                     @csrf
+                                    <template x-for="id in selectedAssets">
+                                        <input type="hidden" name="selected_assets[]" :value="id">
+                                    </template>
+                                    <input type="hidden" name="catatan_validasi" id="partialCatatanValidasi">
                                     <button type="submit" class="w-full flex justify-center items-center gap-2 py-3 px-4 rounded-xl shadow-md text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-all transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                                         Setujui Pemeliharaan
@@ -345,6 +388,41 @@
                                 </button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PARTIAL REJECT MODAL -->
+            <div x-show="showPartialRejectModal" class="fixed z-50 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true" style="display: none;" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+                <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                    <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" @click="showPartialRejectModal = false"></div>
+                    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                    <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-slate-100" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+                        <div class="bg-white px-6 pt-6 pb-6">
+                            <div class="sm:flex sm:items-start">
+                                <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 sm:mx-0 sm:h-10 sm:w-10">
+                                    <svg class="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                    </svg>
+                                </div>
+                                <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                                    <h3 class="text-lg leading-6 font-extrabold text-slate-900">Persetujuan Parsial</h3>
+                                    <div class="mt-4">
+                                        <p class="text-sm font-medium text-slate-500 mb-3">Anda hanya menyetujui <strong x-text="checkedCount" class="text-indigo-600"></strong> aset. Ada <strong x-text="uncheckedCount" class="text-red-600"></strong> aset yang tidak dipilih dan akan <strong class="text-red-600">ditolak</strong>. Harap berikan alasan penolakan untuk aset tersebut.</p>
+                                        <label for="partial_catatan" class="block text-sm font-bold text-slate-700 mb-2">Alasan Penolakan <span class="text-red-500">*</span></label>
+                                        <textarea id="partial_catatan" rows="3" class="mt-1 block w-full border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl shadow-sm text-sm" placeholder="Tulis alasan penolakan di sini..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-slate-50 px-6 py-4 sm:flex sm:flex-row-reverse border-t border-slate-100">
+                            <button type="button" @click="submitPartial()" class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-6 py-2.5 bg-indigo-600 text-base font-bold text-white hover:bg-indigo-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm transition-colors">
+                                Konfirmasi & Setujui
+                            </button>
+                            <button type="button" @click="showPartialRejectModal = false" class="mt-3 w-full inline-flex justify-center rounded-xl border border-slate-300 shadow-sm px-6 py-2.5 bg-white text-base font-bold text-slate-700 hover:bg-slate-50 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm transition-colors">
+                                Batal
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

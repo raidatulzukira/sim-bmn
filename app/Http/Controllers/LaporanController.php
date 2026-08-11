@@ -40,6 +40,24 @@ class LaporanController extends Controller
                     $previewData['pemeliharaans'] = $pemeliharaans->groupBy('batch_id')->map(function ($group) {
                         $first = $group->first();
                         $first->jumlah_item = $group->count();
+                        
+                        $deskripsiCounts = [];
+                        foreach($group as $item) {
+                            $desc = $item->deskripsi_kerusakan ?: 'Tanpa Keterangan';
+                            if (!isset($deskripsiCounts[$desc])) $deskripsiCounts[$desc] = 0;
+                            $deskripsiCounts[$desc]++;
+                        }
+                        
+                        $aggregatedDesc = [];
+                        foreach($deskripsiCounts as $desc => $count) {
+                            if ($count == $first->jumlah_item) {
+                                $aggregatedDesc[] = $desc;
+                            } else {
+                                $aggregatedDesc[] = "$desc ($count Unit)";
+                            }
+                        }
+                        $first->aggregated_deskripsi = implode(', ', $aggregatedDesc);
+                        
                         return $first;
                     })->values();
                     
@@ -62,6 +80,21 @@ class LaporanController extends Controller
                             $previewData['pemeliharaans'] = $pemeliharaans->groupBy('batch_id')->map(function ($group) {
                                 $first = $group->first();
                                 $first->jumlah_item = $group->count();
+                                $deskripsiCounts = [];
+                                foreach($group as $item) {
+                                    $desc = $item->deskripsi_kerusakan ?: 'Tanpa Keterangan';
+                                    if (!isset($deskripsiCounts[$desc])) $deskripsiCounts[$desc] = 0;
+                                    $deskripsiCounts[$desc]++;
+                                }
+                                $aggregatedDesc = [];
+                                foreach($deskripsiCounts as $desc => $count) {
+                                    if ($count == $first->jumlah_item) {
+                                        $aggregatedDesc[] = $desc;
+                                    } else {
+                                        $aggregatedDesc[] = "$desc ($count Unit)";
+                                    }
+                                }
+                                $first->aggregated_deskripsi = implode(', ', $aggregatedDesc);
                                 return $first;
                             })->values();
                         }
@@ -83,6 +116,21 @@ class LaporanController extends Controller
                             $previewData['pemeliharaans'] = $pemeliharaans->groupBy('batch_id')->map(function ($group) {
                                 $first = $group->first();
                                 $first->jumlah_item = $group->count();
+                                $deskripsiCounts = [];
+                                foreach($group as $item) {
+                                    $desc = $item->deskripsi_kerusakan ?: 'Tanpa Keterangan';
+                                    if (!isset($deskripsiCounts[$desc])) $deskripsiCounts[$desc] = 0;
+                                    $deskripsiCounts[$desc]++;
+                                }
+                                $aggregatedDesc = [];
+                                foreach($deskripsiCounts as $desc => $count) {
+                                    if ($count == $first->jumlah_item) {
+                                        $aggregatedDesc[] = $desc;
+                                    } else {
+                                        $aggregatedDesc[] = "$desc ($count Unit)";
+                                    }
+                                }
+                                $first->aggregated_deskripsi = implode(', ', $aggregatedDesc);
                                 return $first;
                             })->values();
                         }
@@ -156,6 +204,21 @@ class LaporanController extends Controller
                 $data['pemeliharaans'] = $pemeliharaans->groupBy('batch_id')->map(function ($group) {
                     $first = $group->first();
                     $first->jumlah_item = $group->count();
+                    $deskripsiCounts = [];
+                    foreach($group as $item) {
+                        $desc = $item->deskripsi_kerusakan ?: 'Tanpa Keterangan';
+                        if (!isset($deskripsiCounts[$desc])) $deskripsiCounts[$desc] = 0;
+                        $deskripsiCounts[$desc]++;
+                    }
+                    $aggregatedDesc = [];
+                    foreach($deskripsiCounts as $desc => $count) {
+                        if ($count == $first->jumlah_item) {
+                            $aggregatedDesc[] = $desc;
+                        } else {
+                            $aggregatedDesc[] = "$desc ($count Unit)";
+                        }
+                    }
+                    $first->aggregated_deskripsi = implode(', ', $aggregatedDesc);
                     return $first;
                 })->values();
                 
@@ -180,6 +243,21 @@ class LaporanController extends Controller
                 $data['pemeliharaans'] = $pemeliharaans->groupBy('batch_id')->map(function ($group) {
                     $first = $group->first();
                     $first->jumlah_item = $group->count();
+                    $deskripsiCounts = [];
+                    foreach($group as $item) {
+                        $desc = $item->deskripsi_kerusakan ?: 'Tanpa Keterangan';
+                        if (!isset($deskripsiCounts[$desc])) $deskripsiCounts[$desc] = 0;
+                        $deskripsiCounts[$desc]++;
+                    }
+                    $aggregatedDesc = [];
+                    foreach($deskripsiCounts as $desc => $count) {
+                        if ($count == $first->jumlah_item) {
+                            $aggregatedDesc[] = $desc;
+                        } else {
+                            $aggregatedDesc[] = "$desc ($count Unit)";
+                        }
+                    }
+                    $first->aggregated_deskripsi = implode(', ', $aggregatedDesc);
                     return $first;
                 })->values();
                 $viewName = 'laporan.pdf.riwayat_pemeliharaan_aset';
@@ -201,6 +279,21 @@ class LaporanController extends Controller
                 $data['pemeliharaans'] = $pemeliharaans->groupBy('batch_id')->map(function ($group) {
                     $first = $group->first();
                     $first->jumlah_item = $group->count();
+                    $deskripsiCounts = [];
+                    foreach($group as $item) {
+                        $desc = $item->deskripsi_kerusakan ?: 'Tanpa Keterangan';
+                        if (!isset($deskripsiCounts[$desc])) $deskripsiCounts[$desc] = 0;
+                        $deskripsiCounts[$desc]++;
+                    }
+                    $aggregatedDesc = [];
+                    foreach($deskripsiCounts as $desc => $count) {
+                        if ($count == $first->jumlah_item) {
+                            $aggregatedDesc[] = $desc;
+                        } else {
+                            $aggregatedDesc[] = "$desc ($count Unit)";
+                        }
+                    }
+                    $first->aggregated_deskripsi = implode(', ', $aggregatedDesc);
                     return $first;
                 })->values();
                 $viewName = 'laporan.pdf.detail_pemeliharaan_aset';

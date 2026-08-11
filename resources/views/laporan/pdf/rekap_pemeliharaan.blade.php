@@ -52,7 +52,7 @@
                 <td>{{ $item->jumlah_item }}x {{ $item->asetBmn->nama_barang }} ({{ $item->asetBmn->kode_barang }})</td>
                 <td style="text-transform: capitalize;">{{ $item->jenis }}</td>
                 <td>{{ $item->pelapor ? $item->pelapor->name : 'Sistem' }}</td>
-                <td>{{ $item->deskripsi_kerusakan ?? '-' }}</td>
+                <td>{{ $item->aggregated_deskripsi ?? $item->deskripsi_kerusakan ?? '-' }}</td>
                 @if(!($isPdf ?? false))
                 <td>{{ $item->foto ? 'Ada' : 'Tidak' }}</td>
                 @endif

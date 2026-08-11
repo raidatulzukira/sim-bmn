@@ -54,7 +54,7 @@
                 <td>{{ $item->jumlah_item }} Unit</td>
                 <td style="text-transform: capitalize;">{{ $item->jenis }}</td>
                 <td>{{ $item->pelapor ? $item->pelapor->name : 'Sistem' }}</td>
-                <td>{{ $item->deskripsi_kerusakan ?? '-' }}</td>
+                <td>{{ $item->aggregated_deskripsi ?? $item->deskripsi_kerusakan ?? '-' }}</td>
                 <td style="text-transform: capitalize;">{{ $item->status_label }}</td>
                 <td>{{ $item->tanggal_selesai ? \Carbon\Carbon::parse($item->tanggal_selesai)->format('d/m/Y') : '-' }}</td>
             </tr>

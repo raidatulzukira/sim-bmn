@@ -56,16 +56,21 @@
                                     </div>
                                     <div class="p-2 space-y-1">
                                         @foreach($asets as $aset)
-                                            <label class="flex items-start p-3 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors border border-transparent hover:border-slate-100">
-                                                <div class="flex items-center h-5">
-                                                    <input type="checkbox" name="aset_ids[]" value="{{ $aset->id }}" class="aset-checkbox rounded border-slate-300 text-sky-600 shadow-sm focus:border-sky-300 focus:ring focus:ring-sky-200 focus:ring-opacity-50 h-4 w-4"
-                                                    {{ (is_array(old('aset_ids')) && in_array($aset->id, old('aset_ids'))) || (!old('aset_ids') && isset($kodeBarang)) ? 'checked' : '' }}>
+                                            <div class="p-3 hover:bg-slate-50 rounded-lg transition-colors border border-transparent hover:border-slate-100 flex flex-col gap-2">
+                                                <label class="flex items-start cursor-pointer">
+                                                    <div class="flex items-center h-5">
+                                                        <input type="checkbox" name="aset_ids[]" value="{{ $aset->id }}" class="aset-checkbox rounded border-slate-300 text-sky-600 shadow-sm focus:border-sky-300 focus:ring focus:ring-sky-200 focus:ring-opacity-50 h-4 w-4"
+                                                        {{ (is_array(old('aset_ids')) && in_array($aset->id, old('aset_ids'))) || (!old('aset_ids') && isset($kodeBarang)) ? 'checked' : '' }}>
+                                                    </div>
+                                                    <div class="ml-3 flex flex-col">
+                                                        <span class="text-sm font-bold text-slate-700 leading-tight">{{ $aset->nama_barang }}</span>
+                                                        <span class="text-xs text-slate-500 font-mono mt-0.5">NUP: {{ $aset->nup }}</span>
+                                                    </div>
+                                                </label>
+                                                <div class="ml-7 deskripsi-input {{ ((is_array(old('aset_ids')) && in_array($aset->id, old('aset_ids'))) || (!old('aset_ids') && isset($kodeBarang))) ? '' : 'hidden' }}">
+                                                    <input type="text" name="deskripsi_kerusakan[{{ $aset->id }}]" class="block w-full border-slate-200 rounded-md text-sm focus:ring-sky-500 focus:border-sky-500 p-2" placeholder="Tindakan (contoh: ganti oli, ganti baut) - Opsional" value="{{ old('deskripsi_kerusakan.'.$aset->id) }}">
                                                 </div>
-                                                <div class="ml-3 flex flex-col">
-                                                    <span class="text-sm font-bold text-slate-700 leading-tight">{{ $aset->nama_barang }}</span>
-                                                    <span class="text-xs text-slate-500 font-mono mt-0.5">NUP: {{ $aset->nup }}</span>
-                                                </div>
-                                            </label>
+                                            </div>
                                         @endforeach
                                     </div>
                                 </div>
@@ -75,17 +80,33 @@
                                 @error('aset_ids.*')
                                     <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
                                 @enderror
-                                <p class="text-xs font-medium text-slate-500 mt-2 bg-slate-50 p-3 rounded-lg border border-slate-100">
+                                <p class="text-xs font-medium text-slate-500 mt-2 mb-4 bg-slate-50 p-3 rounded-lg border border-slate-100">
                                     Pilih satu atau lebih aset untuk diservis sekaligus. Aset yang dipilih akan digabungkan dalam satu pengajuan (batch) untuk memudahkan proses.
                                 </p>
+
+                                <!-- Alat Pengisian Catatan Massal -->
+                                <div class="bg-sky-50 border border-sky-200 rounded-xl p-4 mb-2 shadow-sm">
+                                    <h4 class="font-bold text-sky-800 text-sm mb-3 flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                        Pengisian Catatan Massal (Bulk Action)
+                                    </h4>
+                                    <div class="flex flex-col sm:flex-row gap-3">
+                                        <input type="text" id="bulkCatatan" class="block w-full border-white shadow-sm rounded-lg text-sm focus:ring-sky-500 focus:border-sky-500 px-3 py-2" placeholder="Ketik tindakan (misal: Ganti Oli)">
+                                        
+                                        <button type="button" onclick="applyBulk()" class="whitespace-nowrap px-4 py-2 bg-sky-600 text-white rounded-lg text-sm font-bold hover:bg-sky-700 transition-colors shadow-sm">
+                                            Terapkan ke yang Dicentang
+                                        </button>
+                                        <button type="button" onclick="applyBulkEmpty()" class="whitespace-nowrap px-4 py-2 bg-slate-700 text-white rounded-lg text-sm font-bold hover:bg-slate-800 transition-colors shadow-sm">
+                                            Terapkan ke yang Masih Kosong
+                                        </button>
+                                    </div>
+                                    <p class="text-xs text-sky-700 mt-2">
+                                        <strong>Tips 100 Barang:</strong> Centang barang yang rusak sama (misal 50 barang), ketik "Ganti Oli" di atas, lalu klik <strong>Terapkan ke yang Dicentang</strong>. Lanjut centang 30 barang lainnya, ketik "Cuci Mesin", lalu klik terapkan lagi.
+                                    </p>
+                                </div>
                             </div>
 
                             <script>
-                                document.getElementById('selectAll').addEventListener('change', function() {
-                                    const checkboxes = document.querySelectorAll('.aset-checkbox');
-                                    checkboxes.forEach(cb => cb.checked = this.checked);
-                                });
-                                
                                 const checkboxes = document.querySelectorAll('.aset-checkbox');
                                 checkboxes.forEach(cb => {
                                     cb.addEventListener('change', function() {
@@ -94,6 +115,23 @@
                                         const selectAll = document.getElementById('selectAll');
                                         selectAll.checked = allChecked;
                                         selectAll.indeterminate = someChecked && !allChecked;
+
+                                        const deskripsiInput = this.closest('div.p-3').querySelector('.deskripsi-input');
+                                        if (this.checked) {
+                                            deskripsiInput.classList.remove('hidden');
+                                        } else {
+                                            deskripsiInput.classList.add('hidden');
+                                        }
+                                    });
+                                });
+
+                                document.getElementById('selectAll').addEventListener('change', function() {
+                                    const isChecked = this.checked;
+                                    checkboxes.forEach(cb => {
+                                        if (cb.checked !== isChecked) {
+                                            cb.checked = isChecked;
+                                            cb.dispatchEvent(new Event('change'));
+                                        }
                                     });
                                 });
                                 
@@ -105,15 +143,43 @@
                                     selectAll.checked = allChecked;
                                     selectAll.indeterminate = someChecked && !allChecked;
                                 }
+
+                                // Fungsi untuk Bulk Action
+                                function applyBulk() {
+                                    const val = document.getElementById('bulkCatatan').value;
+                                    const checkedBoxes = document.querySelectorAll('.aset-checkbox:checked');
+                                    if(checkedBoxes.length === 0) {
+                                        alert('Pilih (centang) minimal 1 aset terlebih dahulu!');
+                                        return;
+                                    }
+                                    checkedBoxes.forEach(cb => {
+                                        const input = cb.closest('.p-3').querySelector('input[type="text"]');
+                                        input.value = val;
+                                    });
+                                }
+
+                                function applyBulkEmpty() {
+                                    const val = document.getElementById('bulkCatatan').value;
+                                    const checkedBoxes = document.querySelectorAll('.aset-checkbox:checked');
+                                    if(checkedBoxes.length === 0) {
+                                        alert('Pilih (centang) minimal 1 aset terlebih dahulu!');
+                                        return;
+                                    }
+                                    let applied = 0;
+                                    checkedBoxes.forEach(cb => {
+                                        const input = cb.closest('.p-3').querySelector('input[type="text"]');
+                                        if(input.value.trim() === '') {
+                                            input.value = val;
+                                            applied++;
+                                        }
+                                    });
+                                    if(applied === 0) {
+                                        alert('Semua aset yang dicentang sudah memiliki catatan.');
+                                    }
+                                }
                             </script>
 
-                            <div>
-                                <label for="deskripsi_kerusakan" class="block text-sm font-bold text-slate-700 mb-2">Catatan / Area Servis <span class="text-slate-400 font-normal ml-1">(Opsional)</span></label>
-                                <textarea id="deskripsi_kerusakan" name="deskripsi_kerusakan" rows="4" class="block w-full border-slate-200 rounded-xl focus:ring-sky-500 focus:border-sky-500 sm:text-sm transition-colors duration-200 bg-slate-50/50 focus:bg-white px-4 py-3" placeholder="Misal: Ganti oli rutin, pembersihan kipas, pengecekan fungsi utama, dll...">{{ old('deskripsi_kerusakan') }}</textarea>
-                                @error('deskripsi_kerusakan')
-                                    <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
-                                @enderror
-                            </div>
+                            <!-- Global Catatan removed since it's now per-asset -->
 
                             <div class="flex items-center justify-end gap-4 mt-8 pt-6 border-t border-slate-100">
                                 <a href="{{ route('operator.pemeliharaan.index') }}" class="px-6 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl text-sm font-bold hover:bg-slate-50 transition-colors duration-200">

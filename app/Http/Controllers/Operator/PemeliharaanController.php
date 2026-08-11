@@ -80,12 +80,14 @@ class PemeliharaanController extends Controller
 
         DB::transaction(function () use ($validated, $batchId, &$firstPemeliharaanId) {
             foreach ($validated['aset_ids'] as $aset_id) {
+                $deskripsi = $validated['deskripsi_kerusakan'][$aset_id] ?? null;
+
                 $pemeliharaan = Pemeliharaan::create([
                     'batch_id' => $batchId,
                     'aset_id' => $aset_id,
                     'jenis' => 'rutin',
                     'dilaporkan_oleh' => auth()->id(),
-                    'deskripsi_kerusakan' => $validated['deskripsi_kerusakan'],
+                    'deskripsi_kerusakan' => $deskripsi,
                     'status' => 'pending',
                     'tanggal_pengajuan' => now(),
                 ]);

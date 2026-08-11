@@ -101,14 +101,7 @@
                                 </div>
                             @endif
 
-                            <!-- Catatan / Deskripsi Kerusakan -->
-                            <div class="bg-sky-50/30 p-5 rounded-2xl border border-sky-100 w-full h-fit">
-                                <h4 class="text-sm font-extrabold text-sky-600 uppercase tracking-wider mb-3 flex items-center gap-2">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                                    Catatan / Deskripsi Kerusakan
-                                </h4>
-                                <p class="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap font-medium">{{ $pemeliharaan->deskripsi_kerusakan ?? 'Tidak ada catatan.' }}</p>
-                            </div>
+
                         </div>
                         @endif
 
@@ -213,12 +206,22 @@
                                                 </span>
                                             </div>
                                             <div class="pl-11 border-t border-slate-50 pt-3">
-                                                <p class="text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">Nomor Urut Pendaftaran (NUP)</p>
-                                                <div class="flex flex-wrap gap-2">
-                                                    @foreach($items as $item)
-                                                        <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-mono font-bold bg-slate-50 text-slate-700 border border-slate-200">
-                                                            {{ $item->asetBmn ? $item->asetBmn->nup : '?' }}
-                                                        </span>
+                                                <p class="text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">Detail NUP & Tindakan</p>
+                                                <div class="flex flex-col gap-2">
+                                                    @php
+                                                        $groupedByAction = $items->groupBy(function($i) {
+                                                            return $i->deskripsi_kerusakan ?: 'Tidak ada tindakan khusus';
+                                                        });
+                                                    @endphp
+                                                    @foreach($groupedByAction as $action => $actionItems)
+                                                        <div class="flex items-start gap-3">
+                                                            <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-mono font-bold bg-slate-50 text-slate-700 border border-slate-200 shrink-0 text-center">
+                                                                NUP: {{ $actionItems->map(fn($i) => $i->asetBmn ? $i->asetBmn->nup : '?')->implode(', ') }}
+                                                            </span>
+                                                            <span class="text-sm font-medium text-slate-600 bg-white border border-slate-100 px-3 py-1 rounded-md w-full">
+                                                                {{ $action }}
+                                                            </span>
+                                                        </div>
                                                     @endforeach
                                                 </div>
                                             </div>
@@ -250,16 +253,7 @@
                             </div>
                             @endif
 
-                            <!-- Catatan / Deskripsi Kerusakan -->
-                            @if(!$hasFoto)
-                            <div class="bg-sky-50/30 p-5 rounded-2xl border border-sky-100 w-full h-fit">
-                                <h4 class="text-sm font-extrabold text-sky-600 uppercase tracking-wider mb-3 flex items-center gap-2">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                                    Catatan / Deskripsi Kerusakan
-                                </h4>
-                                <p class="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap font-medium">{{ $pemeliharaan->deskripsi_kerusakan ?? 'Tidak ada catatan.' }}</p>
-                            </div>
-                            @endif
+
                             
                         </div>
                     </div>

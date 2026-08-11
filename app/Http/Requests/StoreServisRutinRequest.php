@@ -21,7 +21,8 @@ class StoreServisRutinRequest extends FormRequest
                 // Operator can only service assets that are NOT in 'servis' and NOT 'dipinjam'
                 Rule::exists('aset_bmn', 'id')->where('status', 'tersedia')
             ],
-            'deskripsi_kerusakan' => ['nullable', 'string'],
+            'deskripsi_kerusakan' => ['nullable', 'array'],
+            'deskripsi_kerusakan.*' => ['nullable', 'string'],
         ];
     }
 

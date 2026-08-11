@@ -165,7 +165,7 @@
                                                 </td>
                                                 <td class="px-4 py-3 text-sm text-slate-600 capitalize whitespace-nowrap">{{ $item->jenis }}</td>
                                                 <td class="px-4 py-3 text-sm text-slate-600 whitespace-nowrap">{{ $item->pelapor ? $item->pelapor->name : 'Sistem' }}</td>
-                                                <td class="px-4 py-3 text-sm text-slate-600">{{ $item->deskripsi_kerusakan ?? '-' }}</td>
+                                                <td class="px-4 py-3 text-sm text-slate-600">{{ $item->aggregated_deskripsi ?? $item->deskripsi_kerusakan ?? '-' }}</td>
                                                 <td class="px-4 py-3 text-sm text-slate-600 text-center">
                                                     @if($item->foto)
                                                         <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-emerald-50 text-emerald-600 border border-emerald-100">Ada</span>
@@ -228,7 +228,7 @@
                                                 <td class="px-4 py-3 text-sm text-slate-600 whitespace-nowrap">{{ $item->tanggal_pengajuan ? $item->tanggal_pengajuan->format('d/m/Y') : '-' }}</td>
                                                 <td class="px-4 py-3 text-sm text-slate-600 capitalize whitespace-nowrap">{{ $item->jenis }}</td>
                                                 <td class="px-4 py-3 text-sm text-slate-600 whitespace-nowrap">{{ $item->pelapor ? $item->pelapor->name : 'Sistem' }}</td>
-                                                <td class="px-4 py-3 text-sm text-slate-600">{{ $item->deskripsi_kerusakan ?? '-' }}</td>
+                                                <td class="px-4 py-3 text-sm text-slate-600">{{ $item->aggregated_deskripsi ?? $item->deskripsi_kerusakan ?? '-' }}</td>
                                                 <td class="px-4 py-3 text-sm font-bold capitalize whitespace-nowrap {{ $item->status === 'selesai' ? 'text-emerald-600' : 'text-slate-600' }}">{{ $item->status }}</td>
                                                 <td class="px-4 py-3 text-sm text-slate-600 whitespace-nowrap">{{ $item->tanggal_selesai ? $item->tanggal_selesai->format('d/m/Y') : '-' }}</td>
                                             </tr>
@@ -291,8 +291,8 @@
 
                                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
                                             <div>
-                                                <span class="block text-slate-500 font-bold mb-1">Deskripsi/Keluhan:</span>
-                                                <p class="text-slate-800 bg-slate-50 p-3 rounded-lg border border-slate-100">{{ $item->deskripsi_kerusakan ?? '-' }}</p>
+                                                <span class="block text-slate-500 font-bold mb-1">Deskripsi/Tindakan:</span>
+                                                <p class="text-slate-800 bg-slate-50 p-3 rounded-lg border border-slate-100">{{ $item->aggregated_deskripsi ?? $item->deskripsi_kerusakan ?? '-' }}</p>
                                             </div>
                                             @if($item->catatan_validasi)
                                             <div>
