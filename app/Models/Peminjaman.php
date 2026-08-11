@@ -17,7 +17,7 @@ class Peminjaman extends Model
         'user_id',
         'keperluan', 'estimasi_waktu_pinjam',
         'tanggal_pinjam', 'tanggal_kembali_rencana', 'tanggal_kembali_aktual',
-        'status', 'catatan_penolakan', 'foto_serah_terima', 'foto_pengembalian', 'approved_by'
+        'status', 'catatan_penolakan', 'foto_serah_terima', 'foto_pengembalian', 'approved_by', 'catatan_pengembalian'
     ];
 
     protected function casts(): array

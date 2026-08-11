@@ -158,14 +158,23 @@
                             <div class="mt-8">
                                 <h4 class="text-md font-bold text-slate-800 mb-3 flex items-center gap-2">
                                     <svg class="w-5 h-5 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
-                                    Daftar NUP Aset yang Dipinjam
+                                    Daftar NUP Aset Peminjaman
                                 </h4>
                                 <div class="bg-white p-4 rounded-xl border border-slate-200 max-h-60 overflow-y-auto">
                                     <ul class="space-y-2">
                                         @foreach($batch as $item)
-                                            <li class="flex items-center justify-between text-sm">
-                                                <span class="font-mono text-slate-600 font-bold bg-slate-50 px-2 py-1 rounded border border-slate-100">{{ $item->asetBmn->nup }}</span>
-                                                <span class="text-slate-500">{{ $item->asetBmn->ruangan ? $item->asetBmn->ruangan->nama_ruangan : 'Gudang' }}</span>
+                                            <li class="flex flex-col sm:flex-row sm:items-center justify-between text-sm p-2 hover:bg-slate-50 rounded-lg transition-colors border border-transparent hover:border-slate-100">
+                                                <div class="flex items-center gap-3">
+                                                    <span class="font-mono text-slate-600 font-bold bg-slate-50 px-2 py-1 rounded border border-slate-200">{{ $item->asetBmn->nup }}</span>
+                                                    <span class="text-slate-600 font-medium">{{ $item->asetBmn->ruangan ? $item->asetBmn->ruangan->nama_ruangan : 'Gudang' }}</span>
+                                                </div>
+                                                <div class="flex items-center gap-3 mt-2 sm:mt-0">
+                                                    @if($item->status === 'dikembalikan')
+                                                        <span class="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-md text-xs font-bold border border-slate-200">Dikembalikan pada {{ $item->tanggal_kembali_aktual ? $item->tanggal_kembali_aktual->format('d M Y') : '-' }}</span>
+                                                    @else
+                                                        <span class="px-2.5 py-1 bg-emerald-50 text-emerald-600 rounded-md text-xs font-bold border border-emerald-100">{{ $item->status_label }} (Batas: {{ $item->tanggal_kembali_rencana ? $item->tanggal_kembali_rencana->format('d M Y') : '-' }})</span>
+                                                    @endif
+                                                </div>
                                             </li>
                                         @endforeach
                                     </ul>
@@ -227,6 +236,26 @@
                                 <h4 class="text-xl font-bold text-slate-900">Proses Serah Terima Aset</h4>
                             </div>
                             
+                            @php
+                                $batasH1 = $peminjaman->estimasi_waktu_pinjam->copy()->subDay()->startOfDay();
+                                $isTooEarly = now()->startOfDay()->lt($batasH1);
+                            @endphp
+
+                            @if($isTooEarly)
+                                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg mb-6">
+                                    <div class="flex items-start">
+                                        <div class="flex-shrink-0 mt-0.5">
+                                            <svg class="h-5 w-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                        </div>
+                                        <div class="ml-3">
+                                            <p class="text-sm text-yellow-800 font-medium leading-relaxed">
+                                                Proses serah terima baru dapat dilakukan paling cepat H-1 dari tanggal rencana peminjaman (mulai <strong>{{ $batasH1->format('d M Y') }}</strong>).
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+
                             <form action="{{ route('operator.peminjaman.serah_terima', $peminjaman->id) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                                 @csrf
                                 <div>
@@ -237,8 +266,9 @@
                                             file:rounded-xl file:border-0
                                             file:text-sm file:font-bold
                                             file:bg-blue-600 file:text-white
-                                            hover:file:bg-blue-700 file:transition-colors file:cursor-pointer
-                                            border border-slate-200 rounded-xl bg-white cursor-pointer" accept="image/*" required />
+                                            hover:file:bg-blue-700 file:transition-colors
+                                            {{ $isTooEarly ? 'opacity-50 cursor-not-allowed file:cursor-not-allowed' : 'cursor-pointer file:cursor-pointer' }}
+                                            border border-slate-200 rounded-xl bg-white" accept="image/*" required {{ $isTooEarly ? 'disabled' : '' }} />
                                     </div>
                                     @error('foto_serah_terima')
                                         <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
@@ -246,7 +276,7 @@
                                     <p class="text-sm text-slate-500 mt-2 bg-white/50 px-3 py-2 rounded-lg border border-slate-100"><span class="font-bold text-slate-700">Catatan:</span> Pastikan foto terlihat jelas, menampilkan fisik barang saat diserahkan.</p>
                                 </div>
 
-                                <button type="submit" onclick="return confirm('Apakah Anda yakin barang ini telah diserahkan kepada {{ $peminjaman->user->name }}?');" class="w-full sm:w-auto px-8 py-3.5 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition-all duration-300 shadow-sm hover:shadow-md flex items-center justify-center gap-2">
+                                <button type="submit" {{ $isTooEarly ? 'disabled' : '' }} onclick="return confirm('Apakah Anda yakin barang ini telah diserahkan kepada {{ $peminjaman->user->name }}?');" class="w-full sm:w-auto px-8 py-3.5 {{ $isTooEarly ? 'bg-slate-300 cursor-not-allowed text-slate-500' : 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm hover:shadow-md cursor-pointer' }} rounded-xl text-sm font-bold transition-all duration-300 flex items-center justify-center gap-2">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                                     Konfirmasi Serah Terima Barang
                                 </button>
@@ -285,7 +315,7 @@
     </div>
 
     <!-- Return Modal -->
-    <div id="returnModal" class="fixed inset-0 z-[100] hidden">
+    <div id="returnModal" class="fixed inset-0 z-[100] {{ $errors->any() ? '' : 'hidden' }}">
         <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeReturnModal()"></div>
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
             <div class="relative bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-2xl sm:w-full border border-slate-100 flex flex-col max-h-[90vh]">
@@ -307,28 +337,44 @@
                     <div class="grid grid-cols-2 gap-4 mb-6">
                         <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
                             <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Total Dipinjam</p>
-                            <p class="text-3xl font-black text-slate-800" id="totalBarangDisplay">{{ $batch->count() }}</p>
-                            <p class="text-[10px] text-slate-500 font-medium mt-1">Unit</p>
+                            <p class="text-3xl font-black text-slate-800" id="totalBarangDisplay">{{ $batch->where('status', 'dipinjam')->count() }}</p>
+                            <p class="text-[10px] text-slate-500 font-medium mt-1">Unit Sedang Dipinjam</p>
                         </div>
                         <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100 text-center">
                             <p class="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-1">Kondisi Baik</p>
-                            <p class="text-3xl font-black text-emerald-700" id="kondisiBaikDisplay">{{ $batch->count() }}</p>
-                            <p class="text-[10px] text-emerald-600 font-medium mt-1">Unit kembali ke gudang</p>
+                            <p class="text-3xl font-black text-emerald-700" id="kondisiBaikDisplay">{{ $batch->where('status', 'dipinjam')->count() }}</p>
+                            <p class="text-[10px] text-emerald-600 font-medium mt-1">Unit akan dikembalikan</p>
                         </div>
                     </div>
 
                     <div class="space-y-5">
-                        <div class="bg-rose-50/50 p-5 rounded-2xl border border-rose-100">
-                            <label for="jumlah_rusak" class="block text-sm font-bold text-rose-800 mb-2">Jumlah Rusak / Hilang (Opsional)</label>
-                            <input type="number" id="jumlah_rusak" name="jumlah_rusak" min="0" max="{{ $batch->count() }}" value="0" oninput="updateKondisiBaik()" class="block w-full rounded-xl border-rose-200 focus:border-rose-500 focus:ring-rose-500 sm:text-sm bg-white" placeholder="0">
-                            <p class="text-xs text-rose-600 mt-2 font-medium">Jika ada barang yang rusak atau hilang, isi jumlahnya di sini. Sistem otomatis membuatkan laporan kerusakan.</p>
+                        <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                            <label class="block text-sm font-bold text-slate-700 mb-3">Pilih Aset yang Dikembalikan <span class="text-red-500">*</span></label>
+                            <div class="space-y-2 max-h-40 overflow-y-auto pr-2">
+                                @foreach($batch->where('status', 'dipinjam') as $item)
+                                    <label class="flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-200 cursor-pointer hover:bg-emerald-50 transition-colors">
+                                        <input type="checkbox" name="aset_dikembalikan[]" value="{{ $item->aset_id }}" class="w-5 h-5 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500 aset-checkbox" checked onchange="updateKondisiBaik()">
+                                        <span class="text-sm font-bold text-slate-700">{{ $item->asetBmn->nup }} - {{ $item->asetBmn->nama_barang }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                            @error('aset_dikembalikan')
+                                <p class="text-xs text-red-600 mt-2 font-medium">{{ $message }}</p>
+                            @enderror
                         </div>
 
-                        <div id="kerusakanFields" class="space-y-5 hidden bg-rose-50 p-5 rounded-2xl border border-rose-100">
-                            <div>
-                                <label for="deskripsi_kerusakan" class="block text-sm font-bold text-rose-800 mb-2">Deskripsi Kerusakan <span class="text-red-500">*</span></label>
-                                <textarea id="deskripsi_kerusakan" name="deskripsi_kerusakan" rows="3" class="block w-full rounded-xl border-rose-200 focus:border-rose-500 focus:ring-rose-500 sm:text-sm bg-white" placeholder="Jelaskan bagian mana yang rusak/patah/hilang..."></textarea>
-                            </div>
+                        <div id="perpanjanganField" class="hidden bg-amber-50 p-5 rounded-2xl border border-amber-100">
+                            <label for="tanggal_perpanjangan" class="block text-sm font-bold text-amber-800 mb-2">Tanggal Perpanjangan (Sisa Aset) <span class="text-red-500">*</span></label>
+                            <input type="date" id="tanggal_perpanjangan" name="tanggal_perpanjangan" class="block w-full rounded-xl border-amber-200 focus:border-amber-500 focus:ring-amber-500 sm:text-sm bg-white" min="{{ date('Y-m-d') }}">
+                            <p class="text-xs text-amber-600 mt-2 font-medium">Tentukan batas tanggal pengembalian baru untuk aset yang belum dikembalikan.</p>
+                            @error('tanggal_perpanjangan')
+                                <p class="text-xs text-red-600 mt-2 font-medium">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                            <label for="deskripsi_pengembalian" class="block text-sm font-bold text-slate-700 mb-2">Catatan Pengembalian (Opsional)</label>
+                            <textarea id="deskripsi_pengembalian" name="deskripsi_pengembalian" rows="2" class="block w-full rounded-xl border-slate-200 focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm bg-white" placeholder="Contoh: Aset dikembalikan dalam keadaan baik, atau ada keterlambatan karena..."></textarea>
                         </div>
 
                         <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100">
@@ -350,7 +396,7 @@
                         <button type="button" onclick="closeReturnModal()" class="px-6 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl text-sm font-bold hover:bg-slate-50 transition-colors">
                             Batal
                         </button>
-                        <button type="submit" onclick="return confirm('Apakah Anda yakin data jumlah barang rusak dan foto sudah benar?');" class="px-8 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-bold hover:bg-emerald-700 transition-colors shadow-sm">
+                        <button type="submit" onclick="return confirm('Apakah Anda yakin data pengembalian dan foto sudah benar?');" class="px-8 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-bold hover:bg-emerald-700 transition-colors shadow-sm">
                             Selesaikan Pengembalian
                         </button>
                     </div>
@@ -360,7 +406,7 @@
     </div>
 
     <script>
-        const totalBarang = {{ $batch->count() }};
+        const totalBarang = {{ $batch->where('status', 'dipinjam')->count() }};
         
         function openReturnModal() {
             document.getElementById('returnModal').classList.remove('hidden');
@@ -371,29 +417,20 @@
         }
         
         function updateKondisiBaik() {
-            const input = document.getElementById('jumlah_rusak');
-            let rusak = parseInt(input.value) || 0;
+            const checkboxes = document.querySelectorAll('.aset-checkbox:checked');
+            const jumlahDikembalikan = checkboxes.length;
             
-            if(rusak > totalBarang) {
-                rusak = totalBarang;
-                input.value = rusak;
-            } else if(rusak < 0) {
-                rusak = 0;
-                input.value = 0;
-            }
+            document.getElementById('kondisiBaikDisplay').innerText = jumlahDikembalikan;
             
-            const baik = totalBarang - rusak;
-            document.getElementById('kondisiBaikDisplay').innerText = baik;
+            const perpanjanganField = document.getElementById('perpanjanganField');
+            const inputPerpanjangan = document.getElementById('tanggal_perpanjangan');
             
-            const fields = document.getElementById('kerusakanFields');
-            const textarea = document.getElementById('deskripsi_kerusakan');
-            
-            if(rusak > 0) {
-                fields.classList.remove('hidden');
-                textarea.required = true;
+            if(jumlahDikembalikan < totalBarang && jumlahDikembalikan > 0) {
+                perpanjanganField.classList.remove('hidden');
+                inputPerpanjangan.required = true;
             } else {
-                fields.classList.add('hidden');
-                textarea.required = false;
+                perpanjanganField.classList.add('hidden');
+                inputPerpanjangan.required = false;
             }
         }
     </script>

@@ -21,14 +21,16 @@ class PeminjamanController extends Controller
         $status = $request->input('status');
 
         $batchQuery = Peminjaman::select(DB::raw('MAX(id) as max_id'))
-            ->groupBy('batch_id');
+            ->groupBy('batch_id', 'status');
 
         $peminjamans = Peminjaman::with(['user', 'asetBmn'])
             ->whereIn('id', $batchQuery)
             ->when($status, function ($query, $status) {
                 return $query->where('status', $status);
             })
-            ->addSelect(['*', 'total_barang' => Peminjaman::selectRaw('COUNT(*)')->from('peminjaman as p_sub')->whereColumn('p_sub.batch_id', 'peminjaman.batch_id')
+            ->addSelect(['*', 'total_barang' => Peminjaman::selectRaw('COUNT(*)')->from('peminjaman as p_sub')
+                ->whereColumn('p_sub.batch_id', 'peminjaman.batch_id')
+                ->whereColumn('p_sub.status', 'peminjaman.status')
             ])
             ->latest()
             ->paginate(10)
@@ -50,8 +52,14 @@ class PeminjamanController extends Controller
             DB::transaction(function () use ($request, $peminjaman) {
                 $batchPeminjaman = Peminjaman::where('batch_id', $peminjaman->batch_id)->lockForUpdate()->get();
 
-                if ($batchPeminjaman->first()->status !== 'disetujui') {
+                $firstItem = $batchPeminjaman->first();
+                if ($firstItem->status !== 'disetujui') {
                     throw new \Exception('Hanya pengajuan berstatus disetujui yang dapat diproses serah terima.');
+                }
+
+                $batasH1 = $firstItem->estimasi_waktu_pinjam->copy()->subDay()->startOfDay();
+                if (now()->startOfDay()->lt($batasH1)) {
+                    throw new \Exception('Proses serah terima hanya dapat dilakukan paling cepat H-1 dari tanggal estimasi pinjam.');
                 }
 
                 $path = $request->file('foto_serah_terima')->store('serah_terima', 'public');
@@ -83,75 +91,51 @@ class PeminjamanController extends Controller
 
     public function konfirmasiDikembalikan(Request $request, Peminjaman $peminjaman)
     {
-        $batchTotal = Peminjaman::where('batch_id', $peminjaman->batch_id)->count();
-
         $request->validate([
             'foto_pengembalian' => 'required|image|max:2048',
-            'jumlah_rusak' => 'nullable|integer|min:0|max:' . $batchTotal,
-            'deskripsi_kerusakan' => 'required_if:jumlah_rusak,>0|nullable|string',
+            'aset_dikembalikan' => 'required|array|min:1',
+            'aset_dikembalikan.*' => 'exists:aset_bmn,id',
+            'tanggal_perpanjangan' => 'nullable|date|after_or_equal:today',
+            'deskripsi_pengembalian' => 'nullable|string',
         ]);
 
-        $jumlahRusak = (int) $request->input('jumlah_rusak', 0);
+        $dikembalikanIds = $request->input('aset_dikembalikan', []);
+        $tanggalPerpanjangan = $request->input('tanggal_perpanjangan');
+        $deskripsi = $request->input('deskripsi_pengembalian');
 
         try {
-            DB::transaction(function () use ($request, $peminjaman, $jumlahRusak) {
-                $batchPeminjaman = Peminjaman::where('batch_id', $peminjaman->batch_id)->lockForUpdate()->get();
+            DB::transaction(function () use ($request, $peminjaman, $dikembalikanIds, $tanggalPerpanjangan, $deskripsi) {
+                $batchPeminjaman = Peminjaman::where('batch_id', $peminjaman->batch_id)
+                    ->where('status', 'dipinjam')
+                    ->lockForUpdate()->get();
 
-                if ($batchPeminjaman->first()->status !== 'dipinjam') {
-                    throw new \Exception('Status peminjaman tidak valid untuk dikonfirmasi kembali.');
+                if ($batchPeminjaman->isEmpty()) {
+                    throw new \Exception('Semua aset dalam peminjaman ini sudah dikembalikan.');
                 }
 
                 $path = $request->file('foto_pengembalian')->store('pengembalian', 'public');
                 
-                $rusakCount = 0;
-                $pemeliharaanBatchId = (string) \Illuminate\Support\Str::uuid();
-                $firstPemeliharaanId = null;
-
                 foreach ($batchPeminjaman as $item) {
-                    $item->update([
-                        'status' => 'dikembalikan',
-                        'tanggal_kembali_aktual' => now(),
-                        'foto_pengembalian' => $path
-                    ]);
-
-                    if ($rusakCount < $jumlahRusak) {
-                        // Mark as menunggu_persetujuan and create Pemeliharaan
-                        AsetBmn::where('id', $item->aset_id)->update(['status' => 'menunggu_persetujuan']);
-                        
-                        $pemeliharaan = \App\Models\Pemeliharaan::create([
-                            'batch_id' => $pemeliharaanBatchId,
-                            'aset_id' => $item->aset_id,
-                            'jenis' => 'situasional', // Type laporan kerusakan
-                            'dilaporkan_oleh' => $item->user_id, // Atas nama pegawai yang meminjam
-                            'deskripsi_kerusakan' => $request->input('deskripsi_kerusakan'),
-                            'foto' => $path, // Gunakan foto pengembalian sebagai bukti
-                            'status' => 'pending',
-                            'tanggal_pengajuan' => now(),
+                    if (in_array($item->aset_id, $dikembalikanIds)) {
+                        $item->update([
+                            'status' => 'dikembalikan',
+                            'tanggal_kembali_aktual' => now(),
+                            'foto_pengembalian' => $path,
+                            'catatan_pengembalian' => $deskripsi
                         ]);
-                        
-                        if (!$firstPemeliharaanId) {
-                            $firstPemeliharaanId = $pemeliharaan->id;
-                        }
-                        
-                        $rusakCount++;
-                    } else {
-                        // Update Aset status back to tersedia
+
                         AsetBmn::where('id', $item->aset_id)->update(['status' => 'tersedia']);
+                    } else {
+                        if ($tanggalPerpanjangan) {
+                            $item->update([
+                                'tanggal_kembali_rencana' => $tanggalPerpanjangan
+                            ]);
+                        }
                     }
-                }
-                
-                // Dispatch WA notification ONCE for the whole batch
-                if ($firstPemeliharaanId) {
-                    \App\Jobs\SendMaintenanceNotificationJob::dispatch($firstPemeliharaanId);
                 }
             });
 
-            $msg = 'Peminjaman berhasil dikonfirmasi selesai beserta dokumentasi fotonya.';
-            if ($jumlahRusak > 0) {
-                $msg .= " Sebanyak {$jumlahRusak} unit otomatis dilaporkan rusak dan menunggu persetujuan Kasubag TU.";
-            }
-
-            return redirect()->route('operator.peminjaman.show', $peminjaman->id)->with('success', $msg);
+            return redirect()->route('operator.peminjaman.show', $peminjaman->id)->with('success', 'Pengembalian aset berhasil diproses.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }

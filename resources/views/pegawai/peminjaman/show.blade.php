@@ -123,14 +123,23 @@
                                 <div>
                                     <h4 class="text-md font-bold text-slate-800 mb-3 flex items-center gap-2">
                                         <svg class="w-5 h-5 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
-                                        Daftar NUP Aset yang Dipinjam
+                                        Daftar NUP Aset Peminjaman
                                     </h4>
                                     <div class="bg-white p-4 rounded-xl border border-slate-200 max-h-60 overflow-y-auto">
                                         <ul class="space-y-2">
                                             @foreach($batch as $item)
-                                                <li class="flex items-center justify-between text-sm">
-                                                    <span class="font-mono text-slate-600 font-bold bg-slate-50 px-2 py-1 rounded border border-slate-100">{{ $item->asetBmn->nup }}</span>
-                                                    <span class="text-slate-500">{{ $item->asetBmn->ruangan ? $item->asetBmn->ruangan->nama_ruangan : 'Gudang' }}</span>
+                                                <li class="flex flex-col sm:flex-row sm:items-center justify-between text-sm p-2 hover:bg-slate-50 rounded-lg transition-colors border border-transparent hover:border-slate-100">
+                                                    <div class="flex items-center gap-3">
+                                                        <span class="font-mono text-slate-600 font-bold bg-slate-50 px-2 py-1 rounded border border-slate-200">{{ $item->asetBmn->nup }}</span>
+                                                        <span class="text-slate-600 font-medium">{{ $item->asetBmn->ruangan ? $item->asetBmn->ruangan->nama_ruangan : 'Gudang' }}</span>
+                                                    </div>
+                                                    <div class="flex items-center gap-3 mt-2 sm:mt-0">
+                                                        @if($item->status === 'dikembalikan')
+                                                            <span class="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-md text-xs font-bold border border-slate-200">Dikembalikan pada {{ $item->tanggal_kembali_aktual ? $item->tanggal_kembali_aktual->format('d M Y') : '-' }}</span>
+                                                        @else
+                                                            <span class="px-2.5 py-1 bg-emerald-50 text-emerald-600 rounded-md text-xs font-bold border border-emerald-100">{{ $item->status_label }} (Batas: {{ $item->tanggal_kembali_rencana ? $item->tanggal_kembali_rencana->format('d M Y') : '-' }})</span>
+                                                        @endif
+                                                    </div>
                                                 </li>
                                             @endforeach
                                         </ul>

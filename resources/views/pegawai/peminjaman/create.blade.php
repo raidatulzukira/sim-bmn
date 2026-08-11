@@ -101,4 +101,41 @@
             </div>
         </div>
     </div>
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            if(form) {
+                form.addEventListener('submit', function(e) {
+                    const estimasi = new Date(document.getElementById('estimasi_waktu_pinjam').value);
+                    const kembali = new Date(document.getElementById('tanggal_kembali_rencana').value);
+
+                    // Set time to 00:00:00 to compare dates only
+                    estimasi.setHours(0,0,0,0);
+                    kembali.setHours(0,0,0,0);
+
+                    if (kembali < estimasi) {
+                        e.preventDefault();
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Terdapat Kesalahan!',
+                            text: 'Tanggal Kembali (Rencana) tidak boleh lebih awal dari Tanggal Pinjam (Estimasi). Harap periksa kembali tanggal yang Anda pilih.',
+                            confirmButtonColor: '#0ea5e9'
+                        });
+                    }
+                });
+            }
+
+            @if($errors->any())
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Terdapat Kesalahan!',
+                    html: `{!! implode('<br>', $errors->all()) !!}`,
+                    confirmButtonColor: '#0ea5e9'
+                });
+            @endif
+        });
+    </script>
 @endsection

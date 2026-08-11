@@ -23,7 +23,7 @@ class PeminjamanController extends Controller
 
         $batchQuery = Peminjaman::select(DB::raw('MAX(id) as max_id'))
             ->where('user_id', auth()->id())
-            ->groupBy('batch_id');
+            ->groupBy('batch_id', 'status');
 
         $peminjamans = Peminjaman::with('asetBmn')
             ->whereIn('id', $batchQuery)
@@ -36,7 +36,9 @@ class PeminjamanController extends Controller
             ->when($status, function($query, $status) {
                 return $query->where('status', $status);
             })
-            ->addSelect(['*', 'total_barang' => Peminjaman::selectRaw('COUNT(*)')->from('peminjaman as p_sub')->whereColumn('p_sub.batch_id', 'peminjaman.batch_id')
+            ->addSelect(['*', 'total_barang' => Peminjaman::selectRaw('COUNT(*)')->from('peminjaman as p_sub')
+                ->whereColumn('p_sub.batch_id', 'peminjaman.batch_id')
+                ->whereColumn('p_sub.status', 'peminjaman.status')
             ])
             ->latest()
             ->paginate(10)
@@ -80,6 +82,8 @@ class PeminjamanController extends Controller
             'keperluan' => 'required|string',
             'estimasi_waktu_pinjam' => 'required|date',
             'tanggal_kembali_rencana' => 'required|date|after_or_equal:estimasi_waktu_pinjam',
+        ], [
+            'tanggal_kembali_rencana.after_or_equal' => 'Tanggal kembali harus sama dengan atau lebih akhir dari tanggal pinjam.'
         ]);
 
         $templateAset = AsetBmn::findOrFail($request->template_aset_id);

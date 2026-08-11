@@ -21,7 +21,7 @@ class PersetujuanPeminjamanController extends Controller
         $tab = $request->input('tab', 'pending');
 
         $batchQuery = Peminjaman::select(DB::raw('MAX(id) as max_id'))
-            ->groupBy('batch_id');
+            ->groupBy('batch_id', 'status');
 
         $query = Peminjaman::with(['user', 'asetBmn'])
             ->whereIn('id', $batchQuery);
@@ -32,7 +32,9 @@ class PersetujuanPeminjamanController extends Controller
             $query->whereIn('status', ['disetujui', 'ditolak', 'dipinjam', 'dikembalikan']);
         }
 
-        $peminjamans = $query->addSelect(['*', 'total_barang' => Peminjaman::selectRaw('COUNT(*)')->from('peminjaman as p_sub')->whereColumn('p_sub.batch_id', 'peminjaman.batch_id')
+        $peminjamans = $query->addSelect(['*', 'total_barang' => Peminjaman::selectRaw('COUNT(*)')->from('peminjaman as p_sub')
+                ->whereColumn('p_sub.batch_id', 'peminjaman.batch_id')
+                ->whereColumn('p_sub.status', 'peminjaman.status')
             ])
             ->latest()
             ->paginate(10)
