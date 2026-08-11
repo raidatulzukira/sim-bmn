@@ -123,6 +123,11 @@ Route::middleware(['auth', 'verified', 'role:pegawai'])->prefix('pegawai')->name
     Route::get('/dashboard', [\App\Http\Controllers\Pegawai\DashboardController::class, 'index'])->name('dashboard');
 
     Route::resource('katalog-aset', \App\Http\Controllers\Pegawai\KatalogAsetController::class)->only(['index', 'show'])->names('katalog_aset');
+    
+    Route::get('keranjang', [\App\Http\Controllers\Pegawai\KeranjangController::class, 'index'])->name('keranjang.index');
+    Route::post('keranjang', [\App\Http\Controllers\Pegawai\KeranjangController::class, 'store'])->name('keranjang.store');
+    Route::delete('keranjang/{id}', [\App\Http\Controllers\Pegawai\KeranjangController::class, 'destroy'])->name('keranjang.destroy');
+
     Route::resource('peminjaman', \App\Http\Controllers\Pegawai\PeminjamanController::class)->only(['index', 'create', 'store', 'show']);
     Route::resource('laporan-kerusakan', \App\Http\Controllers\Pegawai\LaporanKerusakanController::class)->only(['index', 'create', 'store', 'show'])->names('laporan_kerusakan');
 

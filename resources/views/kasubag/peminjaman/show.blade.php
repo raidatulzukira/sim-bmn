@@ -27,11 +27,24 @@
                     <!-- Header Info -->
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 pb-8 border-b border-slate-100 gap-4">
                         <div>
-                            <div class="flex gap-2 mb-1.5">
-                                <span class="px-2.5 py-0.5 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold font-mono border border-slate-200">{{ $peminjaman->asetBmn->kode_barang }}</span>
-                                <span class="px-2.5 py-0.5 bg-sky-100 text-sky-700 rounded-lg text-xs font-bold border border-sky-200">{{ isset($batch) ? $batch->count() : 1 }} Unit</span>
-                            </div>
-                            <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-2">{{ $peminjaman->asetBmn->nama_barang }}</h3>
+                            @php
+                                $jenisCount = isset($batch) ? $batch->map(function($item) {
+                                    return $item->asetBmn->nama_barang . '|' . $item->asetBmn->merk . '|' . $item->asetBmn->tipe;
+                                })->unique()->count() : 1;
+                            @endphp
+                            @if($jenisCount > 1)
+                                <div class="flex gap-2 mb-1.5">
+                                    <span class="px-2.5 py-0.5 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold font-mono border border-slate-200">Multi</span>
+                                    <span class="px-2.5 py-0.5 bg-sky-100 text-sky-700 rounded-lg text-xs font-bold border border-sky-200">{{ isset($batch) ? $batch->count() : 1 }} Unit ({{ $jenisCount }} Jenis)</span>
+                                </div>
+                                <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-2">Pengajuan Multi-Aset</h3>
+                            @else
+                                <div class="flex gap-2 mb-1.5">
+                                    <span class="px-2.5 py-0.5 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold font-mono border border-slate-200">{{ $peminjaman->asetBmn->kode_barang }}</span>
+                                    <span class="px-2.5 py-0.5 bg-sky-100 text-sky-700 rounded-lg text-xs font-bold border border-sky-200">{{ isset($batch) ? $batch->count() : 1 }} Unit</span>
+                                </div>
+                                <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-2">{{ $peminjaman->asetBmn->nama_barang }}</h3>
+                            @endif
                         </div>
                         <div class="text-left md:text-right">
                             <span class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Status Pengajuan</span>
@@ -153,6 +166,36 @@
                             </div>
                         </div>
 
+                        <!-- Ringkasan Aset -->
+                        @if(isset($batch) && $batch->count() > 0)
+                            <div class="mt-8">
+                                <h4 class="text-md font-bold text-slate-800 mb-3 flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                                    Ringkasan Aset
+                                </h4>
+                                <div class="bg-white p-4 rounded-xl border border-slate-200">
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                        @php
+                                            $groupedAssets = $batch->groupBy(function($item) {
+                                                return $item->asetBmn->nama_barang;
+                                            });
+                                        @endphp
+                                        @foreach($groupedAssets as $namaBarang => $items)
+                                            <div class="flex items-center gap-4 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                                <div class="w-10 h-10 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-lg">
+                                                    {{ $items->count() }}
+                                                </div>
+                                                <div>
+                                                    <p class="text-sm font-bold text-slate-800">{{ $namaBarang }}</p>
+                                                    <p class="text-xs font-medium text-slate-500">Unit Dipinjam</p>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
                         <!-- Daftar Aset -->
                         @if(isset($batch) && $batch->count() > 0)
                             <div class="mt-8">
@@ -163,9 +206,12 @@
                                 <div class="bg-white p-4 rounded-xl border border-slate-200 max-h-60 overflow-y-auto">
                                     <ul class="space-y-2">
                                         @foreach($batch as $item)
-                                            <li class="flex items-center justify-between text-sm">
-                                                <span class="font-mono text-slate-600 font-bold bg-slate-50 px-2 py-1 rounded border border-slate-100">{{ $item->asetBmn->nup }}</span>
-                                                <span class="text-slate-500">{{ $item->asetBmn->ruangan ? $item->asetBmn->ruangan->nama_ruangan : 'Gudang' }}</span>
+                                            <li class="flex flex-col sm:flex-row sm:items-center justify-between text-sm p-2 hover:bg-slate-50 rounded-lg transition-colors border border-transparent hover:border-slate-100">
+                                                <div class="flex items-center gap-3">
+                                                    <span class="font-mono text-slate-600 font-bold bg-slate-50 px-2 py-1 rounded border border-slate-200">{{ $item->asetBmn->nup }}</span>
+                                                    <span class="text-slate-700 font-bold">{{ $item->asetBmn->nama_barang }}</span>
+                                                    <span class="text-slate-500 font-medium hidden sm:inline-block">({{ $item->asetBmn->ruangan ? $item->asetBmn->ruangan->nama_ruangan : 'Gudang' }})</span>
+                                                </div>
                                             </li>
                                         @endforeach
                                     </ul>

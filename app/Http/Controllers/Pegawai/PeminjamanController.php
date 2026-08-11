@@ -49,99 +49,131 @@ class PeminjamanController extends Controller
 
     public function create(Request $request)
     {
-        $selectedAset = $request->query('aset_id');
-        $templateAset = null;
-        $maxStok = 0;
+        $keranjangIds = $request->input('keranjang_ids');
 
-        if ($selectedAset) {
-            $templateAset = AsetBmn::find($selectedAset);
-            if ($templateAset) {
-                $maxStok = AsetBmn::where('kode_barang', $templateAset->kode_barang)
-                                  ->where('nama_barang', $templateAset->nama_barang)
-                                  ->where('merk', $templateAset->merk)
-                                  ->where('tipe', $templateAset->tipe)
-                                  ->where('nama', $templateAset->nama)
-                                  ->where('status', 'tersedia')
-                                  ->count();
+        if (!$keranjangIds || !is_array($keranjangIds) || count($keranjangIds) === 0) {
+            return redirect()->route('pegawai.keranjang.index')->with('error', 'Pilih minimal satu aset dari keranjang untuk dipinjam.');
+        }
+
+        $keranjangItems = \App\Models\KeranjangPeminjaman::with('asetBmn')->where('user_id', auth()->id())->whereIn('id', $keranjangIds)->get();
+
+        if ($keranjangItems->isEmpty()) {
+            return redirect()->route('pegawai.keranjang.index')->with('error', 'Item keranjang tidak ditemukan.');
+        }
+
+        // Validate stock for all items
+        foreach ($keranjangItems as $item) {
+            $stokTersedia = AsetBmn::where('kode_barang', $item->asetBmn->kode_barang)
+                ->where('nama_barang', $item->asetBmn->nama_barang)
+                ->where('merk', $item->asetBmn->merk)
+                ->where('tipe', $item->asetBmn->tipe)
+                ->where('nama', $item->asetBmn->nama)
+                ->where('status', 'tersedia')
+                ->count();
+                
+            if ($item->jumlah > $stokTersedia) {
+                return redirect()->route('pegawai.keranjang.index')->with('error', 'Stok untuk ' . $item->asetBmn->nama_barang . ' tidak mencukupi (Tersedia: ' . $stokTersedia . ', Diminta: ' . $item->jumlah . ').');
             }
         }
 
-        // Jika tidak ada parameter aset_id atau barangnya tidak valid/habis, redirect kembali ke katalog
-        if (!$templateAset || $maxStok === 0) {
-            return redirect()->route('pegawai.katalog_aset.index')->with('error', 'Aset tidak ditemukan atau stok tidak tersedia.');
-        }
-
-        return view('pegawai.peminjaman.create', compact('templateAset', 'maxStok'));
+        return view('pegawai.peminjaman.create', compact('keranjangItems'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'template_aset_id' => 'required|exists:aset_bmn,id',
-            'jumlah' => 'required|integer|min:1',
+            'keranjang_ids' => 'required|array',
+            'keranjang_ids.*' => 'exists:keranjang_peminjaman,id',
             'keperluan' => 'required|string',
             'estimasi_waktu_pinjam' => 'required|date',
             'tanggal_kembali_rencana' => 'required|date|after_or_equal:estimasi_waktu_pinjam',
         ], [
-            'tanggal_kembali_rencana.after_or_equal' => 'Tanggal kembali harus sama dengan atau lebih akhir dari tanggal pinjam.'
+            'tanggal_kembali_rencana.after_or_equal' => 'Tanggal kembali harus sama dengan atau lebih akhir dari tanggal pinjam.',
+            'keranjang_ids.required' => 'Pilih minimal satu aset dari keranjang.'
         ]);
 
-        $templateAset = AsetBmn::findOrFail($request->template_aset_id);
-        
-        // Cari aset yang available sesuai template (kode, nama, merk, tipe, nama alias)
-        $availableAsets = AsetBmn::where('kode_barang', $templateAset->kode_barang)
-            ->where('nama_barang', $templateAset->nama_barang)
-            ->where('merk', $templateAset->merk)
-            ->where('tipe', $templateAset->tipe)
-            ->where('nama', $templateAset->nama)
-            ->where('status', 'tersedia')
-            ->limit($request->jumlah)
+        $keranjangItems = \App\Models\KeranjangPeminjaman::with('asetBmn')
+            ->where('user_id', auth()->id())
+            ->whereIn('id', $request->keranjang_ids)
             ->get();
 
-        if ($availableAsets->count() < $request->jumlah) {
-            return redirect()->back()->with('error', 'Gagal meminjam: Stok aset tidak mencukupi (Tersedia: ' . $availableAsets->count() . ').');
+        if ($keranjangItems->isEmpty()) {
+            return redirect()->route('pegawai.keranjang.index')->with('error', 'Item keranjang tidak ditemukan.');
         }
 
         $peminjamanIds = [];
         $batchId = (string) Str::uuid();
+        $totalAsetDiminta = 0;
+        $namaAsetArray = [];
 
-        foreach ($availableAsets as $aset) {
-            $peminjaman = Peminjaman::create([
-                'batch_id' => $batchId,
-                'aset_id' => $aset->id,
-                'user_id' => auth()->id(),
-                'keperluan' => $request->keperluan,
-                'estimasi_waktu_pinjam' => $request->estimasi_waktu_pinjam,
-                'tanggal_kembali_rencana' => $request->tanggal_kembali_rencana,
-                'status' => 'pending',
-            ]);
+        DB::beginTransaction();
+        try {
+            foreach ($keranjangItems as $item) {
+                $templateAset = $item->asetBmn;
+                
+                // Cari aset yang available
+                $availableAsets = AsetBmn::where('kode_barang', $templateAset->kode_barang)
+                    ->where('nama_barang', $templateAset->nama_barang)
+                    ->where('merk', $templateAset->merk)
+                    ->where('tipe', $templateAset->tipe)
+                    ->where('nama', $templateAset->nama)
+                    ->where('status', 'tersedia')
+                    ->lockForUpdate() // Lock table to prevent race conditions
+                    ->limit($item->jumlah)
+                    ->get();
 
-            // Update status aset agar tidak bisa dipinjam orang lain
-            $aset->update(['status' => 'menunggu_persetujuan']);
-            $peminjamanIds[] = $peminjaman->id;
+                if ($availableAsets->count() < $item->jumlah) {
+                    DB::rollBack();
+                    return redirect()->route('pegawai.keranjang.index')->with('error', 'Gagal meminjam: Stok ' . $templateAset->nama_barang . ' tidak mencukupi (Tersedia: ' . $availableAsets->count() . ').');
+                }
+
+                $totalAsetDiminta += $item->jumlah;
+                $namaAsetArray[] = $templateAset->nama_barang . ' (' . $item->jumlah . ')';
+
+                foreach ($availableAsets as $aset) {
+                    $peminjaman = Peminjaman::create([
+                        'batch_id' => $batchId,
+                        'aset_id' => $aset->id,
+                        'user_id' => auth()->id(),
+                        'keperluan' => $request->keperluan,
+                        'estimasi_waktu_pinjam' => $request->estimasi_waktu_pinjam,
+                        'tanggal_kembali_rencana' => $request->tanggal_kembali_rencana,
+                        'status' => 'pending',
+                    ]);
+
+                    $aset->update(['status' => 'menunggu_persetujuan']);
+                    $peminjamanIds[] = $peminjaman->id;
+                }
+                
+                // Hapus dari keranjang setelah diproses
+                $item->delete();
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage());
         }
 
-        // Mengirim notifikasi WhatsApp (kirim 1 kali saja untuk mengabari ada peminjaman masuk)
+        // Mengirim notifikasi WhatsApp
         $usersToNotify = User::whereIn('role', ['kasubag_tu', 'operator'])
             ->whereNotNull('no_wa')
             ->where('no_wa', '!=', '')
             ->get();
 
         $namaPegawai = auth()->user()->name;
-        $namaAset = $templateAset->nama_barang . ' (' . $request->jumlah . ' buah)';
-        $pesan = "Halo, terdapat pengajuan peminjaman baru dari pegawai {$namaPegawai}. Aset yang dipinjam adalah {$namaAset}. Mohon untuk segera diproses di sistem SIM BMN.";
+        $namaAsetSummary = implode(', ', $namaAsetArray);
+        $pesan = "Halo, terdapat pengajuan peminjaman baru dari pegawai {$namaPegawai}. Aset yang dipinjam adalah: {$namaAsetSummary}. Mohon untuk segera diproses di sistem SIM BMN.";
 
         $waService = app(\App\Services\WhatsappService::class);
 
         foreach ($usersToNotify as $user) {
             if ($user->no_wa) {
-                // Untuk link notifikasi, kita bisa mengarah ke peminjaman pertama dari batch tersebut
                 $waService->kirimPesan($user->no_wa, $pesan, $user->id, 'peminjaman', $peminjamanIds[0] ?? null);
             }
         }
 
         return redirect()->route('pegawai.peminjaman.index')
-            ->with('success', 'Pengajuan peminjaman ' . $request->jumlah . ' aset berhasil dikirim dan sedang menunggu persetujuan.');
+            ->with('success', 'Pengajuan peminjaman ' . $totalAsetDiminta . ' aset berhasil dikirim dan sedang menunggu persetujuan.');
     }
 
     public function show(Peminjaman $peminjaman)

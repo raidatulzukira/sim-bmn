@@ -89,7 +89,19 @@
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-left text-sm text-slate-600 font-medium">
-                                        {{ $pinjam->asetBmn->nama_barang ?? '-' }} <span class="text-xs text-sky-600 bg-sky-50 px-2 py-0.5 rounded-full ml-1">({{ $pinjam->total_barang }} Unit)</span>
+                                        @php
+                                            $jenisCount = \App\Models\Peminjaman::where('batch_id', $pinjam->batch_id)
+                                                ->join('aset_bmn', 'peminjaman.aset_id', '=', 'aset_bmn.id')
+                                                ->select('aset_bmn.nama_barang', 'aset_bmn.merk', 'aset_bmn.tipe', 'aset_bmn.nama')
+                                                ->distinct()
+                                                ->count();
+                                        @endphp
+                                        @if($jenisCount > 1)
+                                            Peminjaman Berbagai Aset ({{ $jenisCount }} Jenis)
+                                        @else
+                                            {{ $pinjam->asetBmn->nama_barang ?? '-' }}
+                                        @endif
+                                        <span class="text-xs text-sky-600 bg-sky-50 px-2 py-0.5 rounded-full ml-1">({{ $pinjam->total_barang }} Unit)</span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-left text-sm text-slate-500 font-medium">{{ $pinjam->created_at->format('d M Y H:i') }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-left">

@@ -85,8 +85,20 @@
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
                                             </div>
                                             <div>
-                                                <div class="text-sm font-bold text-slate-900 group-hover:text-sky-600 transition-colors">{{ $pinjam->asetBmn->nama_barang }} ({{ $pinjam->total_barang }} unit)</div>
-                                                <div class="text-xs text-slate-500 mt-0.5 font-mono">{{ $pinjam->asetBmn->kode_barang }}</div>
+                                                @php
+                                                    $jenisCount = \App\Models\Peminjaman::where('batch_id', $pinjam->batch_id)
+                                                        ->join('aset_bmn', 'peminjaman.aset_id', '=', 'aset_bmn.id')
+                                                        ->select('aset_bmn.nama_barang', 'aset_bmn.merk', 'aset_bmn.tipe', 'aset_bmn.nama')
+                                                        ->distinct()
+                                                        ->count();
+                                                @endphp
+                                                @if($jenisCount > 1)
+                                                    <div class="text-sm font-bold text-slate-900 group-hover:text-sky-600 transition-colors">Pengajuan Multi-Aset ({{ $jenisCount }} Jenis)</div>
+                                                    <div class="text-xs text-slate-500 mt-0.5 font-mono">Total {{ $pinjam->total_barang }} unit</div>
+                                                @else
+                                                    <div class="text-sm font-bold text-slate-900 group-hover:text-sky-600 transition-colors">{{ $pinjam->asetBmn->nama_barang }} ({{ $pinjam->total_barang }} unit)</div>
+                                                    <div class="text-xs text-slate-500 mt-0.5 font-mono">{{ $pinjam->asetBmn->kode_barang }}</div>
+                                                @endif
                                             </div>
                                         </div>
                                     </td>

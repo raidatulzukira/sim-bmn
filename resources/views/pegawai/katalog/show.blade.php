@@ -12,10 +12,15 @@
         </div>
         @if($stok_tersedia > 0)
             <div>
-                <a href="{{ route('pegawai.peminjaman.create', ['aset_id' => $katalog_aset->id]) }}" class="px-5 py-2.5 bg-sky-600 text-white rounded-xl text-sm font-bold hover:bg-sky-700 transition-all duration-300 shadow-sm hover:shadow-md flex items-center gap-2 group">
-                    <svg class="w-4 h-4 group-hover:-rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
-                    Ajukan Peminjaman
-                </a>
+                <form action="{{ route('pegawai.keranjang.store') }}" method="POST" class="flex items-center gap-2">
+                    @csrf
+                    <input type="hidden" name="template_aset_id" value="{{ $katalog_aset->id }}">
+                    <input type="number" name="jumlah" value="1" min="1" max="{{ $stok_tersedia }}" class="w-20 rounded-xl border-slate-200 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm h-10 px-3" required title="Jumlah">
+                    <button type="submit" class="px-5 h-10 bg-sky-600 text-white rounded-xl text-sm font-bold hover:bg-sky-700 transition-all duration-300 shadow-sm hover:shadow-md flex items-center gap-2 group">
+                        <svg class="w-4 h-4 group-hover:-rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        Tambah Keranjang
+                    </button>
+                </form>
             </div>
         @endif
     </div>

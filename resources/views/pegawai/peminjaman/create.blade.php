@@ -32,14 +32,14 @@
                         </div>
                     </div>
                 
-                    @if(!$templateAset || $maxStok === 0)
+                    @if(!isset($keranjangItems) || $keranjangItems->isEmpty())
                         <div class="bg-amber-50 border border-amber-200 rounded-2xl p-6 flex flex-col items-center justify-center text-center">
                             <div class="w-16 h-16 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center mb-4">
                                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             </div>
-                            <h4 class="text-lg font-bold text-amber-800 mb-2">Aset Tidak Tersedia</h4>
-                            <p class="text-amber-700 max-w-md">Saat ini aset yang Anda pilih sedang dipinjam seluruhnya atau tidak tersedia stoknya. Silakan pilih aset lain dari Katalog.</p>
-                            <a href="{{ route('pegawai.katalog_aset.index') }}" class="mt-4 px-4 py-2 bg-amber-500 text-white rounded-lg text-sm font-bold hover:bg-amber-600 transition-colors">Kembali ke Katalog</a>
+                            <h4 class="text-lg font-bold text-amber-800 mb-2">Tidak Ada Aset Dipilih</h4>
+                            <p class="text-amber-700 max-w-md">Anda belum memilih aset dari keranjang untuk diajukan peminjamannya.</p>
+                            <a href="{{ route('pegawai.keranjang.index') }}" class="mt-4 px-4 py-2 bg-amber-500 text-white rounded-lg text-sm font-bold hover:bg-amber-600 transition-colors">Kembali ke Keranjang</a>
                         </div>
                     @else
                         <form method="POST" action="{{ route('pegawai.peminjaman.store') }}" class="space-y-6">
@@ -47,20 +47,24 @@
                             
                             <!-- Info Aset Terpilih -->
                             <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl">
-                                <label class="block text-sm font-bold text-slate-700 mb-1">Aset yang Dipinjam</label>
-                                <div class="text-base font-semibold text-slate-900">
-                                    [{{ $templateAset->kode_barang }}] {{ $templateAset->nama_barang }} {{ $templateAset->merk ? '- ' . $templateAset->merk : '' }}
+                                <label class="block text-sm font-bold text-slate-700 mb-3">Aset yang Diajukan Peminjamannya</label>
+                                <div class="space-y-3">
+                                    @foreach($keranjangItems as $item)
+                                        <div class="flex items-center justify-between bg-white p-3 rounded-lg border border-slate-100 shadow-sm">
+                                            <div>
+                                                <div class="text-sm font-bold text-slate-900">
+                                                    [{{ $item->asetBmn->kode_barang }}] {{ $item->asetBmn->nama_barang }} {{ $item->asetBmn->merk ? '- ' . $item->asetBmn->merk : '' }}
+                                                </div>
+                                                <div class="text-xs text-sky-600 font-bold mt-1">Stok Tersedia: {{ $item->stok_tersedia ?? \App\Models\AsetBmn::where('kode_barang', $item->asetBmn->kode_barang)->where('nama_barang', $item->asetBmn->nama_barang)->where('merk', $item->asetBmn->merk)->where('tipe', $item->asetBmn->tipe)->where('nama', $item->asetBmn->nama)->where('status', 'tersedia')->count() }}</div>
+                                            </div>
+                                            <div class="text-right">
+                                                <span class="text-xs text-slate-500 block">Jumlah Diminta</span>
+                                                <span class="text-base font-bold text-slate-800">{{ $item->jumlah }}</span>
+                                                <input type="hidden" name="keranjang_ids[]" value="{{ $item->id }}">
+                                            </div>
+                                        </div>
+                                    @endforeach
                                 </div>
-                                <div class="text-sm text-sky-600 font-bold mt-1">Stok Tersedia: {{ $maxStok }}</div>
-                                <input type="hidden" name="template_aset_id" value="{{ $templateAset->id }}">
-                            </div>
-
-                            <!-- Jumlah Barang -->
-                            <div>
-                                <label for="jumlah" class="block text-sm font-bold text-slate-700 mb-2">Jumlah Barang <span class="text-sky-500">*</span></label>
-                                <input type="number" id="jumlah" name="jumlah" value="{{ old('jumlah', 1) }}" min="1" max="{{ $maxStok }}" class="block w-full px-4 py-3 border-slate-200 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 sm:text-sm rounded-xl transition-colors bg-slate-50 hover:bg-white" required>
-                                <x-input-error :messages="$errors->get('jumlah')" class="mt-2" />
-                                <p class="text-xs text-slate-500 mt-2 flex items-center gap-1"><svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Maksimal jumlah yang bisa dipinjam adalah {{ $maxStok }}.</p>
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -196,5 +196,6 @@
                 // Select2 doesn't auto-init on dynamically added elements
             });
         </script>
+        @stack('scripts')
     </body>
 </html>

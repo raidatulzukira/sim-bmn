@@ -147,9 +147,24 @@ class PeminjamanController extends Controller
             return redirect()->back()->with('error', 'Hanya aset yang sedang dipinjam yang dapat dikirimi reminder.');
         }
 
-        $totalBarang = Peminjaman::where('batch_id', $peminjaman->batch_id)->count();
+        $batch = Peminjaman::with('asetBmn')->where('batch_id', $peminjaman->batch_id)->where('status', 'dipinjam')->get();
+        $totalBarang = $batch->count();
         
-        $pesan = "Halo pegawai atas nama {$peminjaman->user->name}, mengingatkan bahwa batas waktu pengembalian untuk peminjaman {$totalBarang} unit {$peminjaman->asetBmn->nama_barang} adalah pada tanggal {$peminjaman->tanggal_kembali_rencana->format('d M Y')}. Harap untuk segera dikembalikan ke ruangan Operator.";
+        if ($totalBarang == 0) {
+            return redirect()->back()->with('error', 'Tidak ada aset yang sedang dipinjam untuk diingatkan.');
+        }
+
+        $groupedNames = $batch->map(function($p) {
+            return $p->asetBmn->nama_barang;
+        })->unique();
+
+        if ($groupedNames->count() > 1) {
+            $namaAsetString = "Berbagai Aset (" . implode(', ', $groupedNames->toArray()) . ")";
+        } else {
+            $namaAsetString = $groupedNames->first() ?? 'Aset BMN';
+        }
+
+        $pesan = "Halo pegawai atas nama {$peminjaman->user->name}, mengingatkan bahwa batas waktu pengembalian untuk peminjaman {$totalBarang} unit {$namaAsetString} adalah pada tanggal {$peminjaman->tanggal_kembali_rencana->format('d M Y')}. Harap untuk segera dikembalikan ke ruangan Operator.";
         
         $phone = $peminjaman->user->no_wa;
         
