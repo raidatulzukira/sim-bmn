@@ -161,7 +161,7 @@
                                     <div>
                                         <span class="block text-sm font-bold text-slate-400 mb-0.5">Pemeliharaan (Servis)</span>
                                         <span class="block text-base font-medium text-slate-900">
-                                            Interval: {{ $aset->interval_servis_tahun ? $aset->interval_servis_tahun . ' Tahun' : '-' }} <br>
+                                            Interval: {{ $aset->interval_servis_bulan ? $aset->interval_servis_bulan . ' Bulan' : '-' }} <br>
                                             Terakhir: {{ $aset->tanggal_servis_terakhir ? \Carbon\Carbon::parse($aset->tanggal_servis_terakhir)->format('d M Y') : '-' }}
                                         </span>
                                     </div>

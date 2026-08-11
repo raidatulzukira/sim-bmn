@@ -54,7 +54,7 @@ class PemeliharaanController extends Controller
         }
 
         if ($filter === 'rutin') {
-            $query->whereNotNull('interval_servis_tahun')
+            $query->whereNotNull('interval_servis_bulan')
                   ->whereNotNull('tanggal_servis_terakhir')
                   ->whereDoesntHave('pemeliharaan', function ($q) {
                       $q->where('jenis', 'rutin')

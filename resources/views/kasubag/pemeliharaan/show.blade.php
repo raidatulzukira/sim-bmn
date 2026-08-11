@@ -94,19 +94,43 @@
 
                     @php $hasFoto = $pemeliharaan->foto ? true : false; @endphp
                     <!-- Main Grid Layout -->
-                    <div class="grid grid-cols-1 {{ $hasFoto ? 'lg:grid-cols-2' : 'max-w-4xl mx-auto' }} gap-8 mb-8 items-start">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8 items-start">
                         
-                        @if($hasFoto)
-                        <!-- KOLOM KIRI: Media & Dokumen -->
-                        <div class="flex flex-col gap-6">
+                        <!-- KOLOM KIRI: Media, Dokumen & Deskripsi -->
+                        <div class="flex flex-col gap-6 w-full">
+                            
+                            @if($hasFoto)
                             <!-- Foto Bukti Kerusakan -->
                             <div>
                                 <h4 class="text-sm font-extrabold text-indigo-600 uppercase tracking-wider mb-4 flex items-center gap-2">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                     Foto Bukti Kerusakan
                                 </h4>
                                 <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 inline-block w-full text-center">
                                     <img src="{{ asset('storage/' . $pemeliharaan->foto) }}" alt="Foto Kerusakan" class="w-full max-w-[240px] h-auto mx-auto rounded-lg shadow-sm border border-slate-200">
+                                </div>
+                            </div>
+                            @endif
+
+                            <!-- Deskripsi Kerusakan / Tindakan -->
+                            <div>
+                                <h4 class="text-sm font-extrabold text-indigo-600 uppercase tracking-wider mb-4 flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    Deskripsi Kerusakan / Tindakan
+                                </h4>
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 w-full text-left">
+                                    @php
+                                        $uniqueDescriptions = $batch->pluck('deskripsi_kerusakan')->filter()->unique();
+                                    @endphp
+                                    @if($uniqueDescriptions->count() > 0)
+                                        <ul class="list-disc list-inside text-sm font-medium text-slate-700 space-y-2">
+                                            @foreach($uniqueDescriptions as $desc)
+                                                <li>{{ $desc }}</li>
+                                            @endforeach
+                                        </ul>
+                                    @else
+                                        <p class="text-sm font-medium text-slate-500 italic">Tidak ada deskripsi khusus yang diberikan.</p>
+                                    @endif
                                 </div>
                             </div>
 
@@ -120,7 +144,7 @@
                                     <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 w-full text-left">
                                         <div class="flex flex-wrap gap-3">
                                             @foreach((array) $pemeliharaan->nota_teknisi as $index => $nota)
-                                                <a href="{{ asset('storage/' . $nota) }}" target="_blank" class="inline-flex items-center px-4 py-2 border border-transparent text-xs font-bold rounded-xl shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 transition-colors duration-200 gap-2">
+                                                <a href="{{ asset('storage/' . $nota) }}" target="_blank" class="inline-flex items-center px-4 py-2 border border-transparent text-xs font-bold rounded-xl shadow-sm text-white bg-slate-800 hover:bg-slate-700 transition-colors duration-200 gap-2">
                                                     <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -133,14 +157,12 @@
                                 </div>
                             @endif
 
-
                         </div>
-                        @endif
 
                         <!-- KOLOM KANAN: Informasi & Deskripsi -->
                         <div class="flex flex-col gap-6 w-full">
                             
-                            <div class="{{ $hasFoto ? 'flex flex-col gap-6' : 'grid grid-cols-1 md:grid-cols-2 gap-6 w-full' }}">
+                            <div class="flex flex-col gap-6">
                                 <!-- Informasi Pengajuan -->
                                 <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100 w-full h-fit">
                                     <h4 class="text-sm font-extrabold text-indigo-600 uppercase tracking-wider mb-4 flex items-center gap-2">
@@ -222,7 +244,7 @@
                             </div>
 
                             <!-- DAFTAR ASET DALAM BATCH INI -->
-                            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100 w-full h-fit {{ $hasFoto ? '' : 'md:col-span-2' }}">
+                            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100 w-full h-fit">
                                 <h4 class="text-sm font-extrabold text-indigo-600 uppercase tracking-wider mb-4 flex items-center gap-2">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                                     Daftar Aset yang Diservis
@@ -250,37 +272,21 @@
                                                 </span>
                                             </div>
                                             <div class="pl-11 border-t border-slate-50 pt-3">
-                                                <p class="text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">Detail NUP & Tindakan</p>
-                                                <div class="flex flex-col gap-2">
-                                                    @php
-                                                        $groupedByAction = $items->groupBy(function($i) {
-                                                            return $i->deskripsi_kerusakan ?: 'Tidak ada tindakan khusus';
-                                                        });
-                                                    @endphp
-                                                    @foreach($groupedByAction as $action => $actionItems)
-                                                        <div class="flex flex-col gap-2">
-                                                            <div class="flex items-start gap-3">
-                                                                <div class="flex flex-wrap gap-2 shrink-0 max-w-[50%]">
-                                                                    @foreach($actionItems as $item)
-                                                                        @if($pemeliharaan->status === 'pending')
-                                                                            <label class="flex items-center gap-1 cursor-pointer">
-                                                                                <input type="checkbox" x-model="selectedAssets" value="{{ $item->id }}" class="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4 border-slate-300">
-                                                                                <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-mono font-bold bg-slate-50 text-slate-700 border border-slate-200">
-                                                                                    NUP: {{ $item->asetBmn ? $item->asetBmn->nup : '?' }}
-                                                                                </span>
-                                                                            </label>
-                                                                        @else
-                                                                            <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-mono font-bold bg-slate-50 text-slate-700 border border-slate-200">
-                                                                                NUP: {{ $item->asetBmn ? $item->asetBmn->nup : '?' }}
-                                                                            </span>
-                                                                        @endif
-                                                                    @endforeach
-                                                                </div>
-                                                                <span class="text-sm font-medium text-slate-600 bg-white border border-slate-100 px-3 py-1 rounded-md w-full">
-                                                                    {{ $action }}
+                                                <p class="text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">Detail NUP</p>
+                                                <div class="flex flex-wrap gap-2">
+                                                    @foreach($items as $item)
+                                                        @if($pemeliharaan->status === 'pending')
+                                                            <label class="flex items-center gap-1 cursor-pointer">
+                                                                <input type="checkbox" x-model="selectedAssets" value="{{ $item->id }}" class="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4 border-slate-300">
+                                                                <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-mono font-bold bg-slate-50 text-slate-700 border border-slate-200 text-center">
+                                                                    NUP: {{ $item->asetBmn ? $item->asetBmn->nup : '?' }}
                                                                 </span>
-                                                            </div>
-                                                        </div>
+                                                            </label>
+                                                        @else
+                                                            <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-mono font-bold bg-slate-50 text-slate-700 border border-slate-200 text-center">
+                                                                NUP: {{ $item->asetBmn ? $item->asetBmn->nup : '?' }}
+                                                            </span>
+                                                        @endif
                                                     @endforeach
                                                 </div>
                                             </div>
@@ -289,28 +295,7 @@
                                 </div>
                             </div>
 
-                            @if(!$hasFoto && $pemeliharaan->status === 'selesai' && !empty($pemeliharaan->nota_teknisi))
-                            <!-- Bukti Perbaikan (Nota Teknisi) untuk layout tanpa foto -->
-                            <div class="bg-emerald-50/30 p-5 rounded-2xl border border-emerald-100 w-full h-fit">
-                                <h4 class="text-sm font-extrabold text-emerald-600 uppercase tracking-wider mb-4 flex items-center gap-2">
-                                    <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                    Hasil Perbaikan (Nota Teknisi)
-                                </h4>
-                                <div class="bg-white p-4 rounded-xl border border-emerald-100 w-full text-left">
-                                    <div class="flex flex-wrap gap-3">
-                                        @foreach((array) $pemeliharaan->nota_teknisi as $index => $nota)
-                                            <a href="{{ asset('storage/' . $nota) }}" target="_blank" class="inline-flex items-center px-4 py-2 border border-transparent text-xs font-bold rounded-xl shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 transition-colors duration-200 gap-2">
-                                                <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                                </svg>
-                                                Lihat File {{ $index + 1 }}
-                                            </a>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            </div>
-                            @endif
+
 
 
                             

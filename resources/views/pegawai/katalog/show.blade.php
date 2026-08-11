@@ -10,7 +10,7 @@
                 {{ __('Detail Aset BMN') }}
             </h2>
         </div>
-        @if($katalog_aset->status === 'tersedia')
+        @if($stok_tersedia > 0)
             <div>
                 <a href="{{ route('pegawai.peminjaman.create', ['aset_id' => $katalog_aset->id]) }}" class="px-5 py-2.5 bg-sky-600 text-white rounded-xl text-sm font-bold hover:bg-sky-700 transition-all duration-300 shadow-sm hover:shadow-md flex items-center gap-2 group">
                     <svg class="w-4 h-4 group-hover:-rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
@@ -175,7 +175,7 @@
                                     <div>
                                         <span class="block text-sm font-bold text-slate-400 mb-0.5">Pemeliharaan (Servis)</span>
                                         <span class="block text-base font-medium text-slate-900">
-                                            Interval: {{ $katalog_aset->interval_servis_tahun ? $katalog_aset->interval_servis_tahun . ' Tahun' : '-' }} <br>
+                                            Interval: {{ $katalog_aset->interval_servis_bulan ? $katalog_aset->interval_servis_bulan . ' Bulan' : '-' }} <br>
                                             Terakhir: {{ $katalog_aset->tanggal_servis_terakhir ? \Carbon\Carbon::parse($katalog_aset->tanggal_servis_terakhir)->format('d M Y') : '-' }}
                                         </span>
                                     </div>

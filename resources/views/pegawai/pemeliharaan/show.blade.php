@@ -146,19 +146,19 @@
                                         @endif
 
                                         @if($laporan_kerusakan->status === 'selesai')
-                                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                                <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100">
+                                            <div class="flex flex-col sm:flex-row gap-4 items-start">
+                                                <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100 w-full sm:w-auto shrink-0">
                                                     <span class="block text-xs font-bold text-emerald-600 uppercase tracking-wider mb-1">Diselesaikan Pada</span>
                                                     <span class="block text-sm font-bold text-slate-900">{{ $laporan_kerusakan->tanggal_selesai ? \Carbon\Carbon::parse($laporan_kerusakan->tanggal_selesai)->format('d F Y, H:i') : '-' }}</span>
                                                 </div>
                                                 @if(!empty($laporan_kerusakan->nota_teknisi))
-                                                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex flex-col justify-center">
-                                                        <div class="flex flex-col gap-2">
-                                                            <span class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Bukti Perbaikan</span>
+                                                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex flex-col justify-center w-full grow">
+                                                        <span class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Bukti Perbaikan</span>
+                                                        <div class="flex flex-wrap gap-2">
                                                             @foreach((array) $laporan_kerusakan->nota_teknisi as $index => $nota)
-                                                                <a href="{{ asset('storage/' . $nota) }}" target="_blank" class="inline-flex items-center justify-center gap-2 w-full px-4 py-2 bg-slate-800 text-white rounded-xl text-sm font-bold hover:bg-slate-700 transition-colors shadow-sm">
-                                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                                                                    Lihat Bukti Perbaikan {{ $index + 1 }}
+                                                                <a href="{{ asset('storage/' . $nota) }}" target="_blank" class="inline-flex items-center justify-center gap-1 px-2 py-1.5 bg-slate-800 text-white rounded-lg text-xs font-bold hover:bg-slate-700 transition-colors shadow-sm">
+                                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                                                    File {{ $index + 1 }}
                                                                 </a>
                                                             @endforeach
                                                         </div>

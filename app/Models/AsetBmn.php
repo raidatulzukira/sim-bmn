@@ -14,7 +14,7 @@ class AsetBmn extends Model
     protected $table = 'aset_bmn';
     protected $fillable = [
         'jenis_bmn', 'kode_barang', 'nup', 'nama_barang', 'merk', 'tipe', 'nama', 'tanggal_perolehan', 'nilai_perolehan_pertama', 'ruangan_id', 'status',
-        'interval_servis_tahun', 'tanggal_servis_terakhir'
+        'interval_servis_bulan', 'tanggal_servis_terakhir'
     ];
 
     protected $casts = [
@@ -37,8 +37,8 @@ class AsetBmn extends Model
 
     public function getJadwalServisBerikutnyaAttribute()
     {
-        if ($this->interval_servis_tahun && $this->tanggal_servis_terakhir) {
-            return $this->tanggal_servis_terakhir->copy()->addYears($this->interval_servis_tahun);
+        if ($this->interval_servis_bulan && $this->tanggal_servis_terakhir) {
+            return $this->tanggal_servis_terakhir->copy()->addMonths($this->interval_servis_bulan);
         }
         return null;
     }
@@ -47,10 +47,27 @@ class AsetBmn extends Model
     {
         $next = $this->jadwal_servis_berikutnya;
         if ($next) {
-            // Beri peringatan jika hari ini sudah melewati atau H-30 dari jadwal servis berikutnya
-            return now()->copy()->addDays(30)->greaterThanOrEqualTo($next);
+            // Beri peringatan jika hari ini sudah melewati atau H-7 dari jadwal servis berikutnya
+            return now()->copy()->addDays(7)->greaterThanOrEqualTo($next);
         }
         return false;
+    }
+
+    public function getIsKembaliWarningAttribute()
+    {
+        return $this->peminjaman()
+            ->where('status', 'dipinjam')
+            ->whereNotNull('tanggal_kembali_rencana')
+            ->whereDate('tanggal_kembali_rencana', '<=', now()->copy()->addDays(1))
+            ->exists();
+    }
+
+    public function getIsKerusakanWarningAttribute()
+    {
+        return $this->pemeliharaan()
+            ->where('jenis', 'situasional')
+            ->whereIn('status', ['pending', 'disetujui', 'proses'])
+            ->exists();
     }
 
     public function ruangan(): BelongsTo

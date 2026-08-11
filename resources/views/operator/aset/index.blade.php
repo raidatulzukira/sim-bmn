@@ -98,7 +98,17 @@
                         </thead>
                         <tbody class="bg-white divide-y divide-slate-50">
                             @forelse($asets as $index => $aset)
-                                <tr class="hover:bg-sky-50/50 transition-colors duration-200 group {{ $aset->is_servis_warning ? 'bg-orange-50 border-l-4 border-orange-400' : '' }}">
+                                @php
+                                    $row_class = '';
+                                    if ($aset->is_kembali_warning) {
+                                        $row_class = 'bg-rose-50 border-l-4 border-rose-500 animate-[pulse_2s_ease-in-out_infinite]';
+                                    } elseif ($aset->is_servis_warning) {
+                                        $row_class = 'bg-orange-50 border-l-4 border-orange-500 animate-[pulse_2s_ease-in-out_infinite]';
+                                    } elseif ($aset->is_kerusakan_warning) {
+                                        $row_class = 'bg-amber-50 border-l-4 border-amber-500 animate-[pulse_2s_ease-in-out_infinite]';
+                                    }
+                                @endphp
+                                <tr class="hover:bg-sky-50/50 transition-colors duration-200 group {{ $row_class }}">
                                     <td class="px-6 py-4 whitespace-nowrap text-left text-sm text-slate-500 font-medium">{{ ($asets->currentPage() - 1) * $asets->perPage() + $loop->iteration }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-left text-sm font-bold text-slate-900">{{ $aset->kode_barang }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-left text-sm text-slate-600 font-medium">{{ $aset->nup ?? '-' }}</td>

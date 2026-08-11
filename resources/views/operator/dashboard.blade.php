@@ -242,7 +242,7 @@
                         <div class="mt-3 h-1 rounded-full bg-indigo-50 overflow-hidden">
                             <div class="h-full rounded-full bg-gradient-to-r from-indigo-400 to-purple-600" style="width:{{ $asetMembutuhkanServis->count() > 0 ? '100%' : '4%' }};"></div>
                         </div>
-                        <p class="text-[11px] text-slate-400 font-semibold mt-1.5">H-30 atau sudah terlewat</p>
+                        <p class="text-[11px] text-slate-400 font-semibold mt-1.5">H-7 atau sudah terlewat</p>
                     </div>
                 </div>
 
@@ -268,7 +268,7 @@
                             </div>
                             <div>
                                 <h3 class="text-sm font-black text-slate-800">Peminjaman Mendekati Jatuh Tempo</h3>
-                                <p class="text-xs text-slate-500 font-medium">Batas waktu pengembalian dalam H-2</p>
+                                <p class="text-xs text-slate-500 font-medium">Batas waktu pengembalian dalam H-1</p>
                             </div>
                         </div>
                         @if($alertPeminjaman->count() > 0)
@@ -320,7 +320,7 @@
                                     <svg class="w-8 h-8 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                 </div>
                                 <p class="text-slate-700 font-bold text-sm">Semua Tepat Waktu</p>
-                                <p class="text-slate-400 text-xs mt-1 font-medium">Tidak ada peminjaman yang mendekati jatuh tempo (H-2).</p>
+                                <p class="text-slate-400 text-xs mt-1 font-medium">Tidak ada peminjaman yang mendekati jatuh tempo (H-1).</p>
                             </div>
                         @endif
                     </div>
@@ -408,7 +408,7 @@
                     </div>
                     <div>
                         <h3 class="text-sm font-black text-slate-800">Jadwal Servis Rutin Aset</h3>
-                        <p class="text-xs text-slate-500 font-medium">Aset yang mendekati (H-30) atau telah melewati jadwal servis</p>
+                        <p class="text-xs text-slate-500 font-medium">Aset yang mendekati (H-7) atau telah melewati jadwal servis</p>
                     </div>
                 </div>
                 @if($asetMembutuhkanServis->count() > 0)

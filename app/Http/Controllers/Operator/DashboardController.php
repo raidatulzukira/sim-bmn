@@ -22,12 +22,12 @@ class DashboardController extends Controller
         // 3. Jumlah aset dengan status 'servis'
         $asetServis = AsetBmn::where('status', 'servis')->count();
 
-        // 4. Notifikasi/alert: daftar peminjaman yang mendekati tanggal_kembali_rencana (H-2)
+        // 4. Notifikasi/alert: daftar peminjaman yang mendekati tanggal_kembali_rencana (H-1)
         // dan belum berstatus 'dikembalikan'
         $batchQuery = Peminjaman::select(\Illuminate\Support\Facades\DB::raw('MAX(id) as max_id'))
             ->where('status', 'dipinjam')
             ->whereNotNull('tanggal_kembali_rencana')
-            ->whereDate('tanggal_kembali_rencana', '<=', Carbon::now()->addDays(2))
+            ->whereDate('tanggal_kembali_rencana', '<=', Carbon::now()->addDays(1))
             ->groupBy('batch_id');
 
         $alertPeminjaman = Peminjaman::with(['asetBmn', 'user'])
@@ -47,8 +47,8 @@ class DashboardController extends Controller
             ->latest()
             ->get();
 
-        // 6. Notifikasi: daftar aset yang perlu servis rutin (H-30 atau terlewat)
-        $asetMembutuhkanServisRaw = AsetBmn::whereNotNull('interval_servis_tahun')
+        // 6. Notifikasi: daftar aset yang perlu servis rutin (H-7 atau terlewat)
+        $asetMembutuhkanServisRaw = AsetBmn::whereNotNull('interval_servis_bulan')
             ->whereNotNull('tanggal_servis_terakhir')
             ->where('status', 'tersedia')
             ->whereDoesntHave('pemeliharaan', function ($query) {

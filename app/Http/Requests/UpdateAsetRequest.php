@@ -30,7 +30,7 @@ class UpdateAsetRequest extends FormRequest
             'nilai_perolehan_pertama' => ['required', 'numeric', 'min:0'],
             'ruangan_id' => ['nullable', 'exists:ruangan,id'],
             'status' => ['nullable', 'in:tersedia,dipinjam,servis'],
-            'interval_servis_tahun' => ['nullable', 'integer', 'min:1', 'max:20'],
+            'interval_servis_bulan' => ['nullable', 'integer', 'min:1', 'max:120'],
             'tanggal_servis_terakhir' => ['nullable', 'date'],
         ];
     }

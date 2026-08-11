@@ -130,10 +130,10 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <!-- Interval Servis -->
                             <div>
-                                <label for="interval_servis_tahun" class="block text-sm font-bold text-slate-700 mb-2">Interval Servis Rutin <span class="text-slate-400 font-normal ml-1">(Tahun)</span></label>
-                                <input id="interval_servis_tahun" name="interval_servis_tahun" type="number" min="1" max="20" class="block w-full border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200 bg-slate-50/50 focus:bg-white px-4 py-3" value="{{ old('interval_servis_tahun') }}" placeholder="Contoh: 1 atau 5" />
+                                <label for="interval_servis_bulan" class="block text-sm font-bold text-slate-700 mb-2">Interval Servis Rutin <span class="text-slate-400 font-normal ml-1">(Bulan)</span></label>
+                                <input id="interval_servis_bulan" name="interval_servis_bulan" type="number" min="1" max="120" class="block w-full border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200 bg-slate-50/50 focus:bg-white px-4 py-3" value="{{ old('interval_servis_bulan') }}" placeholder="Contoh: 6 atau 12" />
                                 <p class="text-xs text-slate-500 mt-2">Isi jika aset ini membutuhkan pemeliharaan/servis rutin secara berkala.</p>
-                                @error('interval_servis_tahun')
+                                @error('interval_servis_bulan')
                                     <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
                                 @enderror
                             </div>
