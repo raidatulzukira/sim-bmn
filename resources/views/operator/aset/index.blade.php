@@ -55,7 +55,12 @@
                     </div>
                     <div class="w-full sm:w-48">
                         <label for="jenis_bmn" class="block text-sm font-bold text-slate-700 mb-2">Jenis BMN</label>
-                        <input type="text" name="jenis_bmn" id="jenis_bmn" value="{{ request('jenis_bmn') }}" class="block w-full border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200" placeholder="Jenis BMN..." />
+                        <select name="jenis_bmn" id="jenis_bmn" class="block w-full border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200">
+                            <option value="">Semua Jenis BMN</option>
+                            @foreach($jenis_bmn_list as $jenis)
+                                <option value="{{ $jenis }}" {{ request('jenis_bmn') == $jenis ? 'selected' : '' }}>{{ $jenis }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="w-full sm:w-48">
                         <label for="status" class="block text-sm font-bold text-slate-700 mb-2">Filter Status</label>

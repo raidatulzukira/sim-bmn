@@ -11,18 +11,26 @@ class AsetController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
+        $jenis_bmn = $request->input('jenis_bmn');
         
         $asets = AsetBmn::with('ruangan')
             ->when($search, function($query, $search) {
-                return $query->where('nama_barang', 'like', "%{$search}%")
-                             ->orWhere('kode_barang', 'like', "%{$search}%");
+                return $query->where(function($q) use ($search) {
+                    $q->where('nama_barang', 'like', "%{$search}%")
+                      ->orWhere('kode_barang', 'like', "%{$search}%");
+                });
+            })
+            ->when($jenis_bmn, function($query, $jenis_bmn) {
+                return $query->where('jenis_bmn', 'like', "%{$jenis_bmn}%");
             })
             ->orderBy('tanggal_perolehan', 'desc')
             ->orderBy('kode_barang', 'desc')
             ->paginate(10)
             ->withQueryString();
 
-        return view('kasubag.aset.index', compact('asets', 'search'));
+        $jenis_bmn_list = AsetBmn::select('jenis_bmn')->distinct()->whereNotNull('jenis_bmn')->orderBy('jenis_bmn')->pluck('jenis_bmn');
+
+        return view('kasubag.aset.index', compact('asets', 'search', 'jenis_bmn', 'jenis_bmn_list'));
     }
 
     public function rekap(Request $request)

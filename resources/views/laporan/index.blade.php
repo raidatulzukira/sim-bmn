@@ -58,16 +58,30 @@
 
                         <!-- Filter Pilih Aset -->
                         <div id="filter_aset" class="mb-8 hidden bg-slate-50 p-6 rounded-2xl border border-slate-100">
-                            <label for="aset_id" class="block text-sm font-bold text-slate-700 mb-2 flex items-center gap-2">
+                            <h4 class="text-sm font-bold text-slate-700 mb-4 flex items-center gap-2">
                                 <svg class="w-4 h-4 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
-                                Pilih Aset BMN <span class="text-red-500">*</span>
-                            </label>
-                            <select id="kode_barang" name="kode_barang" class="block w-full border-slate-200 rounded-xl focus:ring-sky-500 focus:border-sky-500 sm:text-sm bg-white">
-                                <option value="" disabled {{ !request('kode_barang') ? 'selected' : '' }}>-- Pilih Aset --</option>
-                                @foreach($asets as $aset)
-                                    <option value="{{ $aset->kode_barang }}" {{ request('kode_barang') == $aset->kode_barang ? 'selected' : '' }}>[{{ $aset->kode_barang }}] {{ $aset->nama_barang }}</option>
-                                @endforeach
-                            </select>
+                                Filter Berjenjang Aset BMN
+                            </h4>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div>
+                                    <label for="jenis_bmn" class="block text-xs font-bold text-slate-500 mb-2">Pilih Jenis Aset</label>
+                                    <select id="jenis_bmn" name="jenis_bmn" class="block w-full border-slate-200 rounded-xl focus:ring-sky-500 focus:border-sky-500 sm:text-sm bg-white select2" style="width: 100%">
+                                        <option value="">-- Pilih Jenis Aset --</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="nama_barang" class="block text-xs font-bold text-slate-500 mb-2">Pilih Nama Aset</label>
+                                    <select id="nama_barang" name="nama_barang" class="block w-full border-slate-200 rounded-xl focus:ring-sky-500 focus:border-sky-500 sm:text-sm bg-white select2" style="width: 100%" disabled>
+                                        <option value="">-- Pilih Nama Aset --</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="aset_id" class="block text-xs font-bold text-slate-500 mb-2">Pilih NUP Aset <span class="text-red-500">*</span></label>
+                                    <select id="aset_id" name="aset_id" class="block w-full border-slate-200 rounded-xl focus:ring-sky-500 focus:border-sky-500 sm:text-sm bg-white select2" style="width: 100%" disabled>
+                                        <option value="">-- Pilih NUP Aset --</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Filter Pilih Ruangan -->
@@ -113,7 +127,7 @@
                             <input type="hidden" name="jenis_laporan" value="{{ $jenis }}">
                             <input type="hidden" name="tanggal_awal" value="{{ request('tanggal_awal') }}">
                             <input type="hidden" name="tanggal_akhir" value="{{ request('tanggal_akhir') }}">
-                            <input type="hidden" name="kode_barang" value="{{ request('kode_barang') }}">
+                            <input type="hidden" name="aset_id" value="{{ request('aset_id') }}">
                             <input type="hidden" name="ruangan_id" value="{{ request('ruangan_id') }}">
 
                             <button type="submit" name="format" value="excel" class="px-5 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-bold hover:bg-emerald-700 transition-all duration-300 shadow-sm flex items-center gap-2">
@@ -143,6 +157,8 @@
                                         <tr>
                                             <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase whitespace-nowrap">No</th>
                                             <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase whitespace-nowrap">Aset</th>
+                                            <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase whitespace-nowrap">Tgl Pengajuan</th>
+                                            <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase whitespace-nowrap">Tgl Selesai</th>
                                             <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase whitespace-nowrap">Jenis</th>
                                             <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase whitespace-nowrap">Dilaporkan Oleh</th>
                                             <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase whitespace-nowrap min-w-[200px]">Deskripsi Kerusakan</th>
@@ -151,8 +167,6 @@
                                             <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase whitespace-nowrap min-w-[200px]">Catatan Validasi</th>
                                             <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase whitespace-nowrap">Approved By</th>
                                             <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase whitespace-nowrap min-w-[150px]">Nota Teknisi</th>
-                                            <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase whitespace-nowrap">Tgl Pengajuan</th>
-                                            <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase whitespace-nowrap">Tgl Selesai</th>
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-slate-200 bg-white">
@@ -163,6 +177,8 @@
                                                     {{ $item->jumlah_item }}x {{ $item->asetBmn->nama_barang }}
                                                     <div class="text-xs font-mono text-slate-400 font-normal">{{ $item->asetBmn->kode_barang }}</div>
                                                 </td>
+                                                <td class="px-4 py-3 text-sm text-slate-600 whitespace-nowrap">{{ $item->tanggal_pengajuan ? $item->tanggal_pengajuan->format('d/m/Y') : '-' }}</td>
+                                                <td class="px-4 py-3 text-sm text-slate-600 whitespace-nowrap">{{ $item->tanggal_selesai ? $item->tanggal_selesai->format('d/m/Y') : '-' }}</td>
                                                 <td class="px-4 py-3 text-sm text-slate-600 capitalize whitespace-nowrap">{{ $item->jenis }}</td>
                                                 <td class="px-4 py-3 text-sm text-slate-600 whitespace-nowrap">{{ $item->pelapor ? $item->pelapor->name : 'Sistem' }}</td>
                                                 <td class="px-4 py-3 text-sm text-slate-600">{{ $item->aggregated_deskripsi ?? $item->deskripsi_kerusakan ?? '-' }}</td>
@@ -183,8 +199,6 @@
                                                         -
                                                     @endif
                                                 </td>
-                                                <td class="px-4 py-3 text-sm text-slate-600 whitespace-nowrap">{{ $item->tanggal_pengajuan ? $item->tanggal_pengajuan->format('d/m/Y') : '-' }}</td>
-                                                <td class="px-4 py-3 text-sm text-slate-600 whitespace-nowrap">{{ $item->tanggal_selesai ? $item->tanggal_selesai->format('d/m/Y') : '-' }}</td>
                                             </tr>
                                         @empty
                                             <tr>
@@ -204,6 +218,7 @@
                                     <table class="text-sm">
                                         <tr><td class="font-bold text-slate-500 pr-4">Nama Aset</td><td class="font-bold text-slate-800">: {{ $previewData['aset']->nama_barang }}</td></tr>
                                         <tr><td class="font-bold text-slate-500 pr-4">Kode Aset</td><td class="font-bold text-slate-800">: {{ $previewData['aset']->kode_barang }}</td></tr>
+                                        <tr><td class="font-bold text-slate-500 pr-4">NUP</td><td class="font-bold text-slate-800">: {{ $previewData['aset']->nup }}</td></tr>
                                         <tr><td class="font-bold text-slate-500 pr-4">Merk/Tipe</td><td class="font-bold text-slate-800">: {{ $previewData['aset']->merk ?: '-' }} / {{ $previewData['aset']->tipe ?: '-' }}</td></tr>
                                     </table>
                                 </div>
@@ -251,6 +266,7 @@
                                     <table class="text-sm">
                                         <tr><td class="font-bold text-slate-500 pr-4">Nama Aset</td><td class="font-bold text-slate-800">: {{ $previewData['aset']->nama_barang }}</td></tr>
                                         <tr><td class="font-bold text-slate-500 pr-4">Kode Aset</td><td class="font-bold text-slate-800">: {{ $previewData['aset']->kode_barang }}</td></tr>
+                                        <tr><td class="font-bold text-slate-500 pr-4">NUP</td><td class="font-bold text-slate-800">: {{ $previewData['aset']->nup }}</td></tr>
                                         <tr><td class="font-bold text-slate-500 pr-4">Merk/Tipe</td><td class="font-bold text-slate-800">: {{ $previewData['aset']->merk ?: '-' }} / {{ $previewData['aset']->tipe ?: '-' }}</td></tr>
                                     </table>
                                 </div>
@@ -366,6 +382,7 @@
                                     <table class="text-sm">
                                         <tr><td class="font-bold text-slate-500 pr-4">Nama Aset</td><td class="font-bold text-slate-800">: {{ $previewData['aset']->nama_barang }}</td></tr>
                                         <tr><td class="font-bold text-slate-500 pr-4">Kode Aset</td><td class="font-bold text-slate-800">: {{ $previewData['aset']->kode_barang }}</td></tr>
+                                        <tr><td class="font-bold text-slate-500 pr-4">NUP</td><td class="font-bold text-slate-800">: {{ $previewData['aset']->nup }}</td></tr>
                                         <tr><td class="font-bold text-slate-500 pr-4">Merk/Tipe</td><td class="font-bold text-slate-800">: {{ $previewData['aset']->merk ?: '-' }} / {{ $previewData['aset']->tipe ?: '-' }}</td></tr>
                                     </table>
                                 </div>
@@ -457,7 +474,7 @@
                                     <table class="text-sm">
                                         <tr><td class="font-bold text-slate-500 pr-4">Ruangan</td><td class="font-bold text-slate-800">: {{ $previewData['ruangan']->nama_ruangan }}</td></tr>
                                         <tr><td class="font-bold text-slate-500 pr-4">Keterangan</td><td class="font-bold text-slate-800">: {{ $previewData['ruangan']->keterangan ?? '-' }}</td></tr>
-                                        <tr><td class="font-bold text-slate-500 pr-4">Jumlah</td><td class="font-bold text-slate-800">: {{ $previewData['asets']->sum('jumlah_item') }} Unit</td></tr>
+                                        <tr><td class="font-bold text-slate-500 pr-4">Jumlah</td><td class="font-bold text-slate-800">: {{ $previewData['asets']->count() }} Unit</td></tr>
                                     </table>
                                 </div>
                             </div>
@@ -468,8 +485,8 @@
                                         <tr>
                                             <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase">No</th>
                                             <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase">Kode Aset</th>
+                                            <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase">NUP</th>
                                             <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase">Nama Aset</th>
-                                            <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase">Tanggal Perolehan</th>
                                             <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase">Kondisi</th>
                                         </tr>
                                     </thead>
@@ -478,8 +495,8 @@
                                             <tr>
                                                 <td class="px-4 py-3 text-sm text-slate-900">{{ $index + 1 }}</td>
                                                 <td class="px-4 py-3 text-sm font-mono text-slate-500">{{ $item->kode_barang }}</td>
-                                                <td class="px-4 py-3 text-sm font-bold text-slate-800">{{ $item->nama_barang }} <span class="text-xs text-slate-500 font-normal">({{ $item->jumlah_item }} Unit)</span></td>
-                                                <td class="px-4 py-3 text-sm text-slate-600">{{ $item->max_tanggal_perolehan ? \Carbon\Carbon::parse($item->max_tanggal_perolehan)->format('d F Y') : '-' }}</td>
+                                                <td class="px-4 py-3 text-sm text-slate-800 font-bold">{{ $item->nup }}</td>
+                                                <td class="px-4 py-3 text-sm text-slate-800">{{ $item->nama_barang }}</td>
                                                 <td class="px-4 py-3 text-sm text-slate-600 capitalize">{{ $item->status }}</td>
                                             </tr>
                                         @empty
@@ -516,13 +533,16 @@
         }
     </style>
 
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
         function toggleFilters() {
             const jenis = document.getElementById('jenis_laporan').value;
             const filterTanggal = document.getElementById('filter_tanggal');
             const filterAset = document.getElementById('filter_aset');
             const filterRuangan = document.getElementById('filter_ruangan');
-            const asetInput = document.getElementById('kode_barang');
+            const asetInput = document.getElementById('aset_id');
             const ruanganInput = document.getElementById('ruangan_id');
 
             // Reset visibilitas
@@ -539,11 +559,77 @@
             } else if (jenis === 'riwayat_pemeliharaan_aset' || jenis === 'detail_pemeliharaan_aset' || jenis === 'riwayat_peminjaman_aset') {
                 filterAset.classList.remove('hidden');
                 asetInput.setAttribute('required', 'required');
+                
+                // Fetch Jenis BMN jika belum ada
+                if ($('#jenis_bmn option').length <= 1) {
+                    $.ajax({
+                        url: '{{ route("ajax.jenis_aset") }}',
+                        type: 'GET',
+                        success: function(data) {
+                            $('#jenis_bmn').empty().append('<option value="">-- Pilih Jenis Aset --</option>');
+                            $.each(data, function(index, value) {
+                                $('#jenis_bmn').append('<option value="'+value+'">'+value.toUpperCase()+'</option>');
+                            });
+                        }
+                    });
+                }
             } else if (jenis === 'dbr') {
                 filterRuangan.classList.remove('hidden');
                 ruanganInput.setAttribute('required', 'required');
             }
         }
+
+        $(document).ready(function() {
+            $('.select2').select2();
+
+            $('#jenis_bmn').on('change', function() {
+                var jenis = $(this).val();
+                if(jenis) {
+                    $('#nama_barang').prop('disabled', false).empty().append('<option value="">Sedang memuat...</option>');
+                    $('#aset_id').prop('disabled', true).empty().append('<option value="">-- Pilih NUP Aset --</option>');
+                    
+                    $.ajax({
+                        url: '{{ route("ajax.nama_aset") }}',
+                        type: 'GET',
+                        data: { jenis_bmn: jenis },
+                        success: function(data) {
+                            $('#nama_barang').empty().append('<option value="">-- Pilih Nama Aset --</option>');
+                            $.each(data, function(key, value) {
+                                $('#nama_barang').append('<option value="'+value.nama_barang+'|'+value.kode_barang+'">['+value.kode_barang+'] '+value.nama_barang+'</option>');
+                            });
+                        }
+                    });
+                } else {
+                    $('#nama_barang').prop('disabled', true).empty().append('<option value="">-- Pilih Nama Aset --</option>');
+                    $('#aset_id').prop('disabled', true).empty().append('<option value="">-- Pilih NUP Aset --</option>');
+                }
+            });
+
+            $('#nama_barang').on('change', function() {
+                var val = $(this).val();
+                if(val) {
+                    var parts = val.split('|');
+                    var kode = parts[1];
+                    
+                    $('#aset_id').prop('disabled', false).empty().append('<option value="">Sedang memuat...</option>');
+                    
+                    $.ajax({
+                        url: '{{ route("ajax.nup_aset") }}',
+                        type: 'GET',
+                        data: { kode_barang: kode },
+                        success: function(data) {
+                            $('#aset_id').empty().append('<option value="">-- Pilih NUP Aset --</option>');
+                            $.each(data, function(key, value) {
+                                var statusText = value.status ? ' - ' + value.status.toUpperCase() : '';
+                                $('#aset_id').append('<option value="'+value.id+'">NUP: '+value.nup+' ('+(value.merk||'-')+'/'+(value.tipe||'-')+')'+statusText+'</option>');
+                            });
+                        }
+                    });
+                } else {
+                    $('#aset_id').prop('disabled', true).empty().append('<option value="">-- Pilih NUP Aset --</option>');
+                }
+            });
+        });
         
         // Panggil saat load untuk mengembalikan state jika ada query parameter
         window.addEventListener('DOMContentLoaded', toggleFilters);

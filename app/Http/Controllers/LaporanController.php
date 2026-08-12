@@ -13,6 +13,33 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class LaporanController extends Controller
 {
+    public function getJenisAset()
+    {
+        $jenis = AsetBmn::select('jenis_bmn')->distinct()->orderBy('jenis_bmn')->pluck('jenis_bmn');
+        return response()->json($jenis);
+    }
+
+    public function getNamaAset(Request $request)
+    {
+        $jenis = $request->jenis_bmn;
+        $aset = AsetBmn::where('jenis_bmn', $jenis)
+            ->select('nama_barang', 'kode_barang')
+            ->distinct()
+            ->orderBy('nama_barang')
+            ->get();
+        return response()->json($aset);
+    }
+
+    public function getNupAset(Request $request)
+    {
+        $kode_barang = $request->kode_barang;
+        $aset = AsetBmn::where('kode_barang', $kode_barang)
+            ->select('id', 'nup', 'merk', 'tipe', 'status')
+            ->orderBy('nup')
+            ->get();
+        return response()->json($aset);
+    }
+
     public function index(Request $request)
     {
         $asets = AsetBmn::select('kode_barang', 'nama_barang', 'merk', 'tipe', 'nama', 'jenis_bmn')
@@ -66,94 +93,40 @@ class LaporanController extends Controller
                     break;
 
                 case 'riwayat_pemeliharaan_aset':
-                    if ($request->filled('kode_barang')) {
-                        $kode_barang = $request->input('kode_barang');
-                        $aset = AsetBmn::where('kode_barang', $kode_barang)->first();
+                    if ($request->filled('aset_id')) {
+                        $aset_id = $request->input('aset_id');
+                        $aset = AsetBmn::find($aset_id);
                         if ($aset) {
                             $previewData['aset'] = $aset;
-                            $pemeliharaans = Pemeliharaan::with(['pelapor', 'approver'])
-                                ->whereHas('asetBmn', function($q) use ($kode_barang) {
-                                    $q->where('kode_barang', $kode_barang);
-                                })
+                            $previewData['pemeliharaans'] = Pemeliharaan::with(['pelapor', 'approver'])
+                                ->where('aset_id', $aset_id)
                                 ->orderBy('tanggal_pengajuan', 'desc')->get();
-                                
-                            $previewData['pemeliharaans'] = $pemeliharaans->groupBy('batch_id')->map(function ($group) {
-                                $first = $group->first();
-                                $first->jumlah_item = $group->count();
-                                $deskripsiCounts = [];
-                                foreach($group as $item) {
-                                    $desc = $item->deskripsi_kerusakan ?: 'Tanpa Keterangan';
-                                    if (!isset($deskripsiCounts[$desc])) $deskripsiCounts[$desc] = 0;
-                                    $deskripsiCounts[$desc]++;
-                                }
-                                $aggregatedDesc = [];
-                                foreach($deskripsiCounts as $desc => $count) {
-                                    if ($count == $first->jumlah_item) {
-                                        $aggregatedDesc[] = $desc;
-                                    } else {
-                                        $aggregatedDesc[] = "$desc ($count Unit)";
-                                    }
-                                }
-                                $first->aggregated_deskripsi = implode(', ', $aggregatedDesc);
-                                return $first;
-                            })->values();
                         }
                     }
                     break;
 
                 case 'detail_pemeliharaan_aset':
-                    if ($request->filled('kode_barang')) {
-                        $kode_barang = $request->input('kode_barang');
-                        $aset = AsetBmn::where('kode_barang', $kode_barang)->first();
+                    if ($request->filled('aset_id')) {
+                        $aset_id = $request->input('aset_id');
+                        $aset = AsetBmn::find($aset_id);
                         if ($aset) {
                             $previewData['aset'] = $aset;
-                            $pemeliharaans = Pemeliharaan::with(['pelapor', 'approver'])
-                                ->whereHas('asetBmn', function($q) use ($kode_barang) {
-                                    $q->where('kode_barang', $kode_barang);
-                                })
+                            $previewData['pemeliharaans'] = Pemeliharaan::with(['pelapor', 'approver'])
+                                ->where('aset_id', $aset_id)
                                 ->orderBy('tanggal_pengajuan', 'desc')->get();
-                                
-                            $previewData['pemeliharaans'] = $pemeliharaans->groupBy('batch_id')->map(function ($group) {
-                                $first = $group->first();
-                                $first->jumlah_item = $group->count();
-                                $deskripsiCounts = [];
-                                foreach($group as $item) {
-                                    $desc = $item->deskripsi_kerusakan ?: 'Tanpa Keterangan';
-                                    if (!isset($deskripsiCounts[$desc])) $deskripsiCounts[$desc] = 0;
-                                    $deskripsiCounts[$desc]++;
-                                }
-                                $aggregatedDesc = [];
-                                foreach($deskripsiCounts as $desc => $count) {
-                                    if ($count == $first->jumlah_item) {
-                                        $aggregatedDesc[] = $desc;
-                                    } else {
-                                        $aggregatedDesc[] = "$desc ($count Unit)";
-                                    }
-                                }
-                                $first->aggregated_deskripsi = implode(', ', $aggregatedDesc);
-                                return $first;
-                            })->values();
                         }
                     }
                     break;
 
                 case 'riwayat_peminjaman_aset':
-                    if ($request->filled('kode_barang')) {
-                        $kode_barang = $request->input('kode_barang');
-                        $aset = AsetBmn::where('kode_barang', $kode_barang)->first();
+                    if ($request->filled('aset_id')) {
+                        $aset_id = $request->input('aset_id');
+                        $aset = AsetBmn::find($aset_id);
                         if ($aset) {
                             $previewData['aset'] = $aset;
-                            $peminjamans = Peminjaman::with(['user', 'approver'])
-                                ->whereHas('asetBmn', function($q) use ($kode_barang) {
-                                    $q->where('kode_barang', $kode_barang);
-                                })
+                            $previewData['peminjamans'] = Peminjaman::with(['user', 'approver'])
+                                ->where('aset_id', $aset_id)
                                 ->orderBy('created_at', 'desc')->get();
-                                
-                            $previewData['peminjamans'] = $peminjamans->groupBy('batch_id')->map(function ($group) {
-                                $first = $group->first();
-                                $first->jumlah_item = $group->count();
-                                return $first;
-                            })->values();
                         }
                     }
                     break;
@@ -164,9 +137,7 @@ class LaporanController extends Controller
                         if ($ruangan) {
                             $previewData['ruangan'] = $ruangan;
                             $previewData['asets'] = AsetBmn::where('ruangan_id', $ruangan->id)
-                                ->select('kode_barang', 'nama_barang', 'status', \DB::raw('COUNT(id) as jumlah_item'), \DB::raw('MAX(tanggal_perolehan) as max_tanggal_perolehan'))
-                                ->groupBy('kode_barang', 'nama_barang', 'status')
-                                ->orderBy('nama_barang')->get();
+                                ->orderBy('nama_barang')->orderBy('nup')->get();
                         }
                     }
                     break;
@@ -229,96 +200,49 @@ class LaporanController extends Controller
                 break;
 
             case 'riwayat_pemeliharaan_aset':
-                $kode_barang = $request->input('kode_barang');
-                $aset = AsetBmn::where('kode_barang', $kode_barang)->first();
+                $request->validate(['aset_id' => 'required']);
+                $aset_id = $request->input('aset_id');
+                $aset = AsetBmn::find($aset_id);
                 if (!$aset) return redirect()->back()->with('error', 'Aset tidak ditemukan');
                 
                 $pemeliharaans = Pemeliharaan::with(['pelapor', 'approver'])
-                                    ->whereHas('asetBmn', function($q) use ($kode_barang) {
-                                        $q->where('kode_barang', $kode_barang);
-                                    })
+                                    ->where('aset_id', $aset_id)
                                     ->orderBy('tanggal_pengajuan', 'desc')->get();
                                     
                 $data['aset'] = $aset;
-                $data['pemeliharaans'] = $pemeliharaans->groupBy('batch_id')->map(function ($group) {
-                    $first = $group->first();
-                    $first->jumlah_item = $group->count();
-                    $deskripsiCounts = [];
-                    foreach($group as $item) {
-                        $desc = $item->deskripsi_kerusakan ?: 'Tanpa Keterangan';
-                        if (!isset($deskripsiCounts[$desc])) $deskripsiCounts[$desc] = 0;
-                        $deskripsiCounts[$desc]++;
-                    }
-                    $aggregatedDesc = [];
-                    foreach($deskripsiCounts as $desc => $count) {
-                        if ($count == $first->jumlah_item) {
-                            $aggregatedDesc[] = $desc;
-                        } else {
-                            $aggregatedDesc[] = "$desc ($count Unit)";
-                        }
-                    }
-                    $first->aggregated_deskripsi = implode(', ', $aggregatedDesc);
-                    return $first;
-                })->values();
+                $data['pemeliharaans'] = $pemeliharaans;
                 $viewName = 'laporan.pdf.riwayat_pemeliharaan_aset';
-                $filename = 'Laporan_Riwayat_Pemeliharaan_Aset_' . $aset->kode_barang;
+                $filename = 'Laporan_Riwayat_Pemeliharaan_Aset_' . $aset->nup;
                 break;
 
             case 'detail_pemeliharaan_aset':
-                $request->validate(['kode_barang' => 'required']);
-                $kode_barang = $request->input('kode_barang');
-                $aset = AsetBmn::where('kode_barang', $kode_barang)->firstOrFail();
+                $request->validate(['aset_id' => 'required']);
+                $aset_id = $request->input('aset_id');
+                $aset = AsetBmn::findOrFail($aset_id);
                 
                 $pemeliharaans = Pemeliharaan::with(['pelapor', 'approver'])
-                                    ->whereHas('asetBmn', function($q) use ($kode_barang) {
-                                        $q->where('kode_barang', $kode_barang);
-                                    })
+                                    ->where('aset_id', $aset_id)
                                     ->orderBy('tanggal_pengajuan', 'desc')->get();
                                     
                 $data['aset'] = $aset;
-                $data['pemeliharaans'] = $pemeliharaans->groupBy('batch_id')->map(function ($group) {
-                    $first = $group->first();
-                    $first->jumlah_item = $group->count();
-                    $deskripsiCounts = [];
-                    foreach($group as $item) {
-                        $desc = $item->deskripsi_kerusakan ?: 'Tanpa Keterangan';
-                        if (!isset($deskripsiCounts[$desc])) $deskripsiCounts[$desc] = 0;
-                        $deskripsiCounts[$desc]++;
-                    }
-                    $aggregatedDesc = [];
-                    foreach($deskripsiCounts as $desc => $count) {
-                        if ($count == $first->jumlah_item) {
-                            $aggregatedDesc[] = $desc;
-                        } else {
-                            $aggregatedDesc[] = "$desc ($count Unit)";
-                        }
-                    }
-                    $first->aggregated_deskripsi = implode(', ', $aggregatedDesc);
-                    return $first;
-                })->values();
+                $data['pemeliharaans'] = $pemeliharaans;
                 $viewName = 'laporan.pdf.detail_pemeliharaan_aset';
-                $filename = 'Laporan_Detail_Pemeliharaan_Aset_' . $aset->kode_barang;
+                $filename = 'Laporan_Detail_Pemeliharaan_Aset_' . $aset->nup;
                 break;
 
             case 'riwayat_peminjaman_aset':
-                $request->validate(['kode_barang' => 'required']);
-                $kode_barang = $request->input('kode_barang');
-                $aset = AsetBmn::where('kode_barang', $kode_barang)->firstOrFail();
+                $request->validate(['aset_id' => 'required']);
+                $aset_id = $request->input('aset_id');
+                $aset = AsetBmn::findOrFail($aset_id);
                 
                 $peminjamans = Peminjaman::with(['user', 'approver'])
-                                    ->whereHas('asetBmn', function($q) use ($kode_barang) {
-                                        $q->where('kode_barang', $kode_barang);
-                                    })
+                                    ->where('aset_id', $aset_id)
                                     ->orderBy('created_at', 'desc')->get();
                                     
                 $data['aset'] = $aset;
-                $data['peminjamans'] = $peminjamans->groupBy('batch_id')->map(function ($group) {
-                    $first = $group->first();
-                    $first->jumlah_item = $group->count();
-                    return $first;
-                })->values();
+                $data['peminjamans'] = $peminjamans;
                 $viewName = 'laporan.pdf.riwayat_peminjaman_aset';
-                $filename = 'Laporan_Riwayat_Peminjaman_Aset_' . $aset->kode_barang;
+                $filename = 'Laporan_Riwayat_Peminjaman_Aset_' . $aset->nup;
                 break;
 
             case 'dbr':
@@ -327,9 +251,7 @@ class LaporanController extends Controller
                 
                 $data['ruangan'] = $ruangan;
                 $data['asets'] = AsetBmn::where('ruangan_id', $ruangan->id)
-                    ->select('kode_barang', 'nama_barang', 'status', \DB::raw('COUNT(id) as jumlah_item'), \DB::raw('MAX(tanggal_perolehan) as max_tanggal_perolehan'))
-                    ->groupBy('kode_barang', 'nama_barang', 'status')
-                    ->orderBy('nama_barang')->get();
+                    ->orderBy('nama_barang')->orderBy('nup')->get();
                 $viewName = 'laporan.pdf.dbr';
                 $filename = 'Laporan_Daftar_Barang_Ruangan_' . str_replace(' ', '_', $ruangan->nama_ruangan);
                 break;
@@ -339,8 +261,10 @@ class LaporanController extends Controller
         }
 
         if ($format === 'excel') {
+            $data['is_pdf'] = false;
             return Excel::download(new LaporanExport($viewName, $data), $filename . '.xlsx');
         } else {
+            $data['is_pdf'] = true;
             $pdf = Pdf::loadView($viewName, $data)->setPaper('a4', 'landscape');
             return $pdf->download($filename . '.pdf');
         }

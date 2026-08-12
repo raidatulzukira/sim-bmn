@@ -15,6 +15,24 @@
     </style>
 </head>
 <body>
+    @if(!isset($is_pdf) || $is_pdf)
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
+        <tr>
+            <td style="width: 20%; text-align: center; vertical-align: middle;">
+                <img src="{{ public_path('storage/images/LOGO KEMENTERIAN EPS [Converted].png') }}" style="width: 120px; height: auto;">
+            </td>
+            <td style="width: 80%; text-align: center; vertical-align: middle;">
+                <div style="font-size: 14px; margin-bottom: 2px;">BADAN PENGEMBANGAN SUMBER DAYA MANUSIA INDUSTRI</div>
+                <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">BALAI DIKLAT INDUSTRI PADANG</div>
+                <div style="font-size: 10px; margin-bottom: 2px;">Jl. Bungo Pasang, Tabing, Padang, Sumatera Barat – 25171 | Telp. (0751) 7051879, Fax. (0751) 447784</div>
+                <div style="font-size: 10px;">Website: http://bdipadang.kemenperin.go.id | e-mail: bdipadang@kemenperin.go.id</div>
+            </td>
+        </tr>
+    </table>
+    <div style="border-bottom: 3px solid black; margin-bottom: 2px;"></div>
+    <div style="border-bottom: 1px solid black; margin-bottom: 20px;"></div>
+    @endif
+
     <div class="header">
         <div class="title">LAPORAN DETAIL PEMELIHARAAN PER ASET</div>
         <div>SIM-BMN (Sistem Informasi Manajemen Barang Milik Negara)</div>
@@ -28,16 +46,22 @@
             <td width="30%">: {{ $aset->tanggal_perolehan ? \Carbon\Carbon::parse($aset->tanggal_perolehan)->format('Y') : '-' }}</td>
         </tr>
         <tr>
+            <td width="20%"><strong>NUP</strong></td>
+            <td width="30%">: {{ $aset->nup }}</td>
+            <td width="20%"><strong>Nilai Perolehan</strong></td>
+            <td width="30%">: Rp {{ number_format($aset->nilai_perolehan_pertama, 0, ',', '.') }}</td>
+        </tr>
+        <tr>
             <td><strong>Nama Barang</strong></td>
             <td>: {{ $aset->nama_barang }}</td>
-            <td><strong>Nilai Perolehan</strong></td>
-            <td>: Rp {{ number_format($aset->nilai_perolehan_pertama, 0, ',', '.') }}</td>
+            <td><strong>Lokasi Ruangan</strong></td>
+            <td>: {{ $aset->ruangan ? $aset->ruangan->nama_ruangan : '-' }}</td>
         </tr>
         <tr>
             <td><strong>Merk/Tipe</strong></td>
             <td>: {{ $aset->merk ?: '-' }} / {{ $aset->tipe ?: '-' }}</td>
-            <td><strong>Lokasi Ruangan</strong></td>
-            <td>: {{ $aset->ruangan ? $aset->ruangan->nama_ruangan : '-' }}</td>
+            <td></td>
+            <td></td>
         </tr>
     </table>
 
@@ -45,7 +69,7 @@
 
     @forelse($pemeliharaans as $index => $item)
         <div class="content-box" style="{{ !$loop->first ? 'page-break-before: always;' : '' }}">
-            <div class="box-title">Pemeliharaan #{{ $index + 1 }} ({{ $item->jumlah_item }} Unit) - Status: {{ strtoupper($item->status_label) }}</div>
+            <div class="box-title">Pemeliharaan #{{ $index + 1 }} - Status: {{ strtoupper($item->status_label) }}</div>
             <table style="width: 100%; font-size: 12px; border-collapse: collapse;">
                 <tr>
                     <td style="width: 25%; padding: 3px 0;"><strong>Tanggal Pengajuan</strong></td>
@@ -69,7 +93,7 @@
 
             <div class="detail-row" style="margin-top: 10px;">
                 <span class="detail-label">Deskripsi / Tindakan</span>: <br/>
-                <div style="padding: 5px 10px; margin-top: 5px; border-left: 2px solid #ccc;">{{ $item->aggregated_deskripsi ?? $item->deskripsi_kerusakan ?? '-' }}</div>
+                <div style="padding: 5px 10px; margin-top: 5px; border-left: 2px solid #ccc;">{{ $item->deskripsi_kerusakan ?? '-' }}</div>
             </div>
 
             @if($item->catatan_validasi)
@@ -132,6 +156,19 @@
             Belum ada catatan pemeliharaan untuk aset ini.
         </div>
     @endforelse
+
+    @if(!isset($is_pdf) || $is_pdf)
+    <table style="width: 100%; border: none; margin-top: 40px; page-break-inside: avoid;">
+        <tr>
+            <td style="width: 70%; border: none;"></td>
+            <td style="width: 30%; border: none; text-align: left;">
+                <p style="margin-bottom: 60px;">Padang, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}<br>Mengetahui,<br>Kasubag Tata Usaha</p>
+                <p style="margin: 0; font-weight: bold; text-decoration: underline;">Teguh arifianto</p>
+                <p style="margin: 0;">NIP. 198412232012121002</p>
+            </td>
+        </tr>
+    </table>
+    @endif
 
 </body>
 </html>

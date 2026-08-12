@@ -56,6 +56,13 @@ Route::get('/dashboard', function () {
     };
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+// AJAX Routes for Laporan Filters
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/ajax/jenis-aset', [\App\Http\Controllers\LaporanController::class, 'getJenisAset'])->name('ajax.jenis_aset');
+    Route::get('/ajax/nama-aset', [\App\Http\Controllers\LaporanController::class, 'getNamaAset'])->name('ajax.nama_aset');
+    Route::get('/ajax/nup-aset', [\App\Http\Controllers\LaporanController::class, 'getNupAset'])->name('ajax.nup_aset');
+});
+
 // Operator Routes
 Route::middleware(['auth', 'verified', 'role:operator'])->prefix('operator')->name('operator.')->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\Operator\DashboardController::class, 'index'])->name('dashboard');

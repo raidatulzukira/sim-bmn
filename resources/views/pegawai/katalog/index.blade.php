@@ -30,10 +30,9 @@
                     <div class="w-full sm:w-48">
                         <select name="jenis_bmn" class="block w-full rounded-xl border-slate-200 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm bg-slate-50">
                             <option value="">Semua Jenis BMN</option>
-                            <option value="Peralatan dan Mesin" {{ request('jenis_bmn') == 'Peralatan dan Mesin' ? 'selected' : '' }}>Peralatan dan Mesin</option>
-                            <option value="Gedung dan Bangunan" {{ request('jenis_bmn') == 'Gedung dan Bangunan' ? 'selected' : '' }}>Gedung dan Bangunan</option>
-                            <option value="Aset Tetap Lainnya" {{ request('jenis_bmn') == 'Aset Tetap Lainnya' ? 'selected' : '' }}>Aset Tetap Lainnya</option>
-                            <option value="Aset Tak Berwujud" {{ request('jenis_bmn') == 'Aset Tak Berwujud' ? 'selected' : '' }}>Aset Tak Berwujud</option>
+                            @foreach($jenis_bmn_list as $jenis)
+                                <option value="{{ $jenis }}" {{ request('jenis_bmn') == $jenis ? 'selected' : '' }}>{{ $jenis }}</option>
+                            @endforeach
                         </select>
                     </div>
                     

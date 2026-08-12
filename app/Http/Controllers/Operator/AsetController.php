@@ -39,7 +39,9 @@ class AsetController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('operator.aset.index', compact('asets', 'search', 'jenis_bmn', 'status'));
+        $jenis_bmn_list = AsetBmn::select('jenis_bmn')->distinct()->whereNotNull('jenis_bmn')->orderBy('jenis_bmn')->pluck('jenis_bmn');
+
+        return view('operator.aset.index', compact('asets', 'search', 'jenis_bmn', 'status', 'jenis_bmn_list'));
     }
 
     public function rekap(Request $request)

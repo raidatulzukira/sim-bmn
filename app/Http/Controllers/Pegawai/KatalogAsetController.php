@@ -44,7 +44,9 @@ class KatalogAsetController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('pegawai.katalog.index', compact('asets', 'search', 'kategori'));
+        $jenis_bmn_list = AsetBmn::select('jenis_bmn')->distinct()->whereNotNull('jenis_bmn')->orderBy('jenis_bmn')->pluck('jenis_bmn');
+
+        return view('pegawai.katalog.index', compact('asets', 'search', 'kategori', 'jenis_bmn_list'));
     }
 
     public function show(AsetBmn $katalog_aset)
