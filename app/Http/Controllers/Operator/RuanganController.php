@@ -25,6 +25,15 @@ class RuanganController extends Controller
         return view('operator.ruangan.index', compact('ruangans', 'search'));
     }
 
+    public function show(Ruangan $ruangan)
+    {
+        $ruangan->load(['asetBmn' => function ($query) {
+            $query->orderBy('tanggal_perolehan', 'desc');
+        }]);
+        
+        return view('operator.ruangan.show', compact('ruangan'));
+    }
+
     public function create()
     {
         return view('operator.ruangan.create');

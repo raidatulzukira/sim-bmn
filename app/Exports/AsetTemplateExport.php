@@ -14,6 +14,7 @@ class AsetTemplateExport implements FromArray, WithHeadings, ShouldAutoSize, Wit
     {
         return [
             [
+                '1',
                 'PERALATAN DAN MESIN',
                 '3010204002',
                 '1',
@@ -23,8 +24,12 @@ class AsetTemplateExport implements FromArray, WithHeadings, ShouldAutoSize, Wit
                 'Laptop Asus Vivobook',
                 '2023-01-15',
                 '15000000',
+                'Ruang Server',
+                '6',
+                '2024-01-01',
             ],
             [
+                '2',
                 'PERALATAN DAN MESIN',
                 '3010204003',
                 '2',
@@ -34,8 +39,12 @@ class AsetTemplateExport implements FromArray, WithHeadings, ShouldAutoSize, Wit
                 'Printer Ruang Rapat',
                 '2024-02-10',
                 '2500000',
+                'Ruang Rapat',
+                '',
+                '',
             ],
             [
+                '3',
                 'ALAT ANGKUTAN BERMOTOR',
                 '3.1.02.01.01.03',
                 '3',
@@ -45,6 +54,9 @@ class AsetTemplateExport implements FromArray, WithHeadings, ShouldAutoSize, Wit
                 '',
                 '1998-08-20',
                 '140450000',
+                'Garasi',
+                '3',
+                '2024-05-15',
             ],
         ];
     }
@@ -52,6 +64,7 @@ class AsetTemplateExport implements FromArray, WithHeadings, ShouldAutoSize, Wit
     public function headings(): array
     {
         return [
+            'No',
             'Jenis BMN',
             'Kode Barang',
             'NUP',
@@ -61,6 +74,9 @@ class AsetTemplateExport implements FromArray, WithHeadings, ShouldAutoSize, Wit
             'Nama',
             'Tanggal Perolehan',
             'Nilai Perolehan Pertama',
+            'Ruangan',
+            'Interval Servis (Bulan)',
+            'Tanggal Servis Terakhir',
         ];
     }
 
@@ -81,7 +97,7 @@ class AsetTemplateExport implements FromArray, WithHeadings, ShouldAutoSize, Wit
                     'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
                 ],
             ],
-            'A1:I4' => [
+            'A1:M4' => [
                 'borders' => [
                     'allBorders' => [
                         'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,

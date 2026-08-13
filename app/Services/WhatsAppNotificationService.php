@@ -21,6 +21,7 @@ class WhatsAppNotificationService
         $tglPinjam = $peminjaman->estimasi_waktu_pinjam->format('d M Y');
         
         $pesan = "Halo, terdapat pengajuan peminjaman baru.\n\n"
+               . "No. Nota: {$peminjaman->batch_id}\n"
                . "Pegawai: {$pegawaiName}\n"
                . "Aset: {$asetName}\n"
                . "Tgl Pinjam: {$tglPinjam}\n\n"

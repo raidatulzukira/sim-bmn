@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('aset_bmn', function (Blueprint $table) {
-            $table->foreignId('ruangan_id')->nullable()->change();
+            $table->unsignedInteger('ruangan_id')->nullable()->change();
         });
     }
 

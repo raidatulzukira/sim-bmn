@@ -43,6 +43,7 @@ class LaporanKerusakanController extends Controller
         $request->validate([
             'foto' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'deskripsi_kerusakan' => 'required|string',
+            'lokasi' => 'required|string|max:100',
         ]);
         
         $fotoPath = null;
@@ -52,9 +53,10 @@ class LaporanKerusakanController extends Controller
 
         // Simpan sebagai laporan situasional dengan aset_id null
         $pemeliharaan = Pemeliharaan::create([
-            'batch_id' => (string) \Illuminate\Support\Str::uuid(),
+            'batch_id' => 'MTC-' . date('Ymd') . '-' . strtoupper(\Illuminate\Support\Str::random(5)),
             'aset_id' => null,
             'jenis' => 'situasional',
+            'lokasi' => $request->lokasi,
             'dilaporkan_oleh' => auth()->id(),
             'deskripsi_kerusakan' => $request->deskripsi_kerusakan,
             'foto' => $fotoPath,

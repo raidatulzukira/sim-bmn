@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\Models\AsetBmn;
+use App\Models\Ruangan;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
@@ -27,6 +28,29 @@ class AsetBmnImport implements ToModel, WithHeadingRow, WithValidation
         // Clean numeric
         $nilai = preg_replace('/[^0-9\.]/', '', $row['nilai_perolehan_pertama'] ?? 0);
 
+        $ruangan_id = null;
+        if (!empty($row['ruangan'])) {
+            $ruanganName = trim($row['ruangan']);
+            $ruangan = Ruangan::firstOrCreate(
+                ['nama_ruangan' => $ruanganName]
+            );
+            $ruangan_id = $ruangan->id;
+        }
+
+        $intervalServis = null;
+        if (isset($row['interval_servis_bulan']) && trim($row['interval_servis_bulan']) !== '') {
+            $intervalServis = (int) $row['interval_servis_bulan'];
+        }
+
+        $tanggalServis = null;
+        if (isset($row['tanggal_servis_terakhir']) && trim($row['tanggal_servis_terakhir']) !== '') {
+            if (is_numeric($row['tanggal_servis_terakhir'])) {
+                $tanggalServis = Date::excelToDateTimeObject($row['tanggal_servis_terakhir']);
+            } else {
+                $tanggalServis = Carbon::parse($row['tanggal_servis_terakhir']);
+            }
+        }
+
         return new AsetBmn([
             'jenis_bmn'               => $row['jenis_bmn'] ?? '-',
             'kode_barang'             => $row['kode_barang'],
@@ -37,6 +61,9 @@ class AsetBmnImport implements ToModel, WithHeadingRow, WithValidation
             'nama'                    => $row['nama'] ?? null,
             'tanggal_perolehan'       => $tanggalPerolehan,
             'nilai_perolehan_pertama' => $nilai !== '' ? $nilai : 0,
+            'ruangan_id'              => $ruangan_id,
+            'interval_servis_bulan'   => $intervalServis,
+            'tanggal_servis_terakhir' => $tanggalServis,
             'status'                  => 'tersedia',
         ]);
     }

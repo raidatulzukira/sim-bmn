@@ -42,6 +42,13 @@
                                 <x-input-error :messages="$errors->get('deskripsi_kerusakan')" class="mt-2" />
                             </div>
 
+                            <!-- Lokasi Kerusakan -->
+                            <div>
+                                <label for="lokasi" class="block text-sm font-bold text-slate-700 mb-2">Lokasi Kerusakan / Ruangan <span class="text-sky-500">*</span></label>
+                                <input type="text" id="lokasi" name="lokasi" class="block w-full p-4 border-slate-200 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 sm:text-sm rounded-xl transition-colors bg-slate-50 hover:bg-white" required placeholder="Contoh: Gedung A Lantai 2, Ruang Server, dll" value="{{ old('lokasi') }}">
+                                <x-input-error :messages="$errors->get('lokasi')" class="mt-2" />
+                            </div>
+
                             <!-- Foto Bukti -->
                             <div>
                                 <label for="foto" class="block text-sm font-bold text-slate-700 mb-2">Foto Bukti Kerusakan <span class="text-sky-500">*</span></label>
@@ -71,6 +78,17 @@
                                 </button>
                             </div>
                         </form>
+
+                        <!-- <form action="/tes-dosen" method="post">
+                            @csrf
+                            <label for="input-tes" class="font-bold mb-8 mr-2"> Masukkan Teks :  </label>
+                            <input type="text" name="input-tes" class="border-slate-400 rounded-md mr-2">
+                            <button type="submit" class="rounded-xl bg-sky-700 text-white px-4 py-2 mb-8"> Submit</button>
+                        </form>
+
+                        @if (session('hasil'))
+                        <p> Hasil : {{session('hasil')}}</p>
+                        @endif -->
                 </div>
             </div>
         </div>

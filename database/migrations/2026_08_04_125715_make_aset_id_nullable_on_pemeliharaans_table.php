@@ -16,7 +16,7 @@ return new class extends Migration
         });
 
         Schema::table('pemeliharaan', function (Blueprint $table) {
-            $table->unsignedBigInteger('aset_id')->nullable()->change();
+            $table->unsignedInteger('aset_id')->nullable()->change();
             $table->foreign('aset_id')->references('id')->on('aset_bmn')->nullOnDelete();
         });
     }
@@ -31,7 +31,7 @@ return new class extends Migration
         });
 
         Schema::table('pemeliharaan', function (Blueprint $table) {
-            $table->unsignedBigInteger('aset_id')->nullable(false)->change();
+            $table->unsignedInteger('aset_id')->nullable(false)->change();
             $table->foreign('aset_id')->references('id')->on('aset_bmn')->cascadeOnDelete();
         });
     }

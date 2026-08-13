@@ -69,6 +69,7 @@
                     <table class="min-w-full divide-y divide-slate-100">
                         <thead>
                             <tr class="bg-slate-50/50">
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">No. Nota</th>
                                 <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Aset BMN</th>
                                 <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Estimasi Pinjam</th>
                                 <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Rencana Kembali</th>
@@ -79,6 +80,9 @@
                         <tbody class="divide-y divide-slate-100 bg-white">
                             @forelse($peminjamans as $pinjam)
                                 <tr class="hover:bg-slate-50/50 transition-colors group">
+                                    <td class="px-6 py-4 whitespace-nowrap text-left">
+                                        <div class="text-sm font-bold text-slate-900">{{ $pinjam->batch_id }}</div>
+                                    </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center gap-3">
                                             <div class="w-10 h-10 rounded-lg bg-sky-50 flex items-center justify-center text-sky-600 border border-sky-100 shrink-0">

@@ -40,7 +40,9 @@ class SendMaintenanceNotificationJob implements ShouldQueue
         // 1. Jika aset_id belum ditentukan (laporan baru dari pegawai) -> Kirim WA ke Operator
         if (is_null($pemeliharaan->aset_id)) {
             $operators = User::where('role', 'operator')->get();
-            $pesan = "Halo Bapak/Ibu Operator, terdapat pelaporan kerusakan (situasional) baru dari pegawai. Mohon untuk segera meninjau laporan tersebut dan menentukan Aset BMN yang dimaksud melalui sistem.";
+            $pesan = "Halo Bapak/Ibu Operator, terdapat pelaporan kerusakan (situasional) baru dari pegawai.\n"
+                   . "No. Nota: {$pemeliharaan->batch_id}\n"
+                   . "Mohon untuk segera meninjau laporan tersebut dan menentukan Aset BMN yang dimaksud melalui sistem.";
             
             foreach ($operators as $operator) {
                 if ($operator->no_wa) {
@@ -54,11 +56,12 @@ class SendMaintenanceNotificationJob implements ShouldQueue
         $kasubags = User::where('role', 'kasubag_tu')->get();
         $namaAset = $pemeliharaan->asetBmn->nama_barang ?? 'Tidak diketahui';
         
-        $pesan = "Halo Bapak/Ibu Kasubag TU, terdapat pengajuan pemeliharaan/servis baru untuk ";
+        $pesan = "Halo Bapak/Ibu Kasubag TU, terdapat pengajuan pemeliharaan/servis baru.\n"
+               . "No. Nota: {$pemeliharaan->batch_id}\n";
         if ($totalUnit > 1) {
-            $pesan .= "{$totalUnit} unit aset {$namaAset}. ";
+            $pesan .= "Aset: {$totalUnit} unit {$namaAset}\n";
         } else {
-            $pesan .= "aset {$namaAset}. ";
+            $pesan .= "Aset: {$namaAset}\n";
         }
         $pesan .= "Mohon untuk segera divalidasi melalui sistem.";
 

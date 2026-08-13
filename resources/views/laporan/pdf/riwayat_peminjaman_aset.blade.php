@@ -15,12 +15,12 @@
 </head>
 <body>
     @if(!isset($is_pdf) || $is_pdf)
-    <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px; border: none;">
         <tr>
-            <td style="width: 20%; text-align: center; vertical-align: middle;">
+            <td style="width: 20%; text-align: center; vertical-align: middle; border: none;">
                 <img src="{{ public_path('storage/images/LOGO KEMENTERIAN EPS [Converted].png') }}" style="width: 120px; height: auto;">
             </td>
-            <td style="width: 80%; text-align: center; vertical-align: middle;">
+            <td style="width: 80%; text-align: center; vertical-align: middle; border: none;">
                 <div style="font-size: 14px; margin-bottom: 2px;">BADAN PENGEMBANGAN SUMBER DAYA MANUSIA INDUSTRI</div>
                 <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">BALAI DIKLAT INDUSTRI PADANG</div>
                 <div style="font-size: 10px; margin-bottom: 2px;">Jl. Bungo Pasang, Tabing, Padang, Sumatera Barat – 25171 | Telp. (0751) 7051879, Fax. (0751) 447784</div>
@@ -59,7 +59,7 @@
 
     @forelse($peminjamans as $index => $item)
         <div style="border: 1px solid #000; margin-bottom: 20px; padding: 10px; {{ !$loop->first ? 'page-break-before: always;' : '' }}">
-            <div style="font-weight: bold; border-bottom: 1px dashed #ccc; margin-bottom: 10px; padding-bottom: 5px;">Peminjaman #{{ $index + 1 }} - Status: {{ strtoupper($item->status_label) }}</div>
+            <div style="font-weight: bold; border-bottom: 1px dashed #ccc; margin-bottom: 10px; padding-bottom: 5px;">Peminjaman #{{ $index + 1 }} - No. Nota: {{ $item->batch_id }} - Status: {{ strtoupper($item->status_label) }}</div>
             
             <table style="width: 100%; font-size: 12px; border-collapse: collapse;">
                 <tr>
@@ -102,7 +102,11 @@
                         <td style="width: 50%; border: none; padding: 0; vertical-align: top;">
                             <strong>Foto Serah Terima:</strong><br/>
                             <div style="margin-top: 5px;">
-                                <img src="{{ public_path('storage/' . $item->foto_serah_terima) }}" style="max-width: 200px; max-height: 150px; border: 1px solid #ccc; padding: 2px;" alt="Foto Serah Terima">
+                                @if(!isset($is_pdf) || $is_pdf)
+                                    <img src="{{ public_path('storage/' . $item->foto_serah_terima) }}" style="max-width: 200px; max-height: 150px; border: 1px solid #ccc; padding: 2px;" alt="Foto Serah Terima">
+                                @else
+                                    (Lihat di aplikasi)
+                                @endif
                             </div>
                         </td>
                         @endif
@@ -110,7 +114,11 @@
                         <td style="width: 50%; border: none; padding: 0; vertical-align: top;">
                             <strong>Foto Pengembalian:</strong><br/>
                             <div style="margin-top: 5px;">
-                                <img src="{{ public_path('storage/' . $item->foto_pengembalian) }}" style="max-width: 200px; max-height: 150px; border: 1px solid #ccc; padding: 2px;" alt="Foto Pengembalian">
+                                @if(!isset($is_pdf) || $is_pdf)
+                                    <img src="{{ public_path('storage/' . $item->foto_pengembalian) }}" style="max-width: 200px; max-height: 150px; border: 1px solid #ccc; padding: 2px;" alt="Foto Pengembalian">
+                                @else
+                                    (Lihat di aplikasi)
+                                @endif
                             </div>
                         </td>
                         @endif

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 Route::get('/', function () {
     $totalAset = \App\Models\AsetBmn::count();
@@ -75,7 +76,7 @@ Route::middleware(['auth', 'verified', 'role:operator'])->prefix('operator')->na
     Route::post('aset/import', [\App\Http\Controllers\Operator\AsetController::class, 'import'])->name('aset.import');
     Route::get('aset/rekap', [\App\Http\Controllers\Operator\AsetController::class, 'rekap'])->name('aset.rekap');
     Route::resource('aset', \App\Http\Controllers\Operator\AsetController::class);
-    Route::resource('ruangan', \App\Http\Controllers\Operator\RuanganController::class)->except(['show']);
+    Route::resource('ruangan', \App\Http\Controllers\Operator\RuanganController::class);
 
     Route::get('peminjaman', [\App\Http\Controllers\Operator\PeminjamanController::class, 'index'])->name('peminjaman.index');
     Route::get('peminjaman/{peminjaman}', [\App\Http\Controllers\Operator\PeminjamanController::class, 'show'])->name('peminjaman.show');
@@ -105,7 +106,7 @@ Route::middleware(['auth', 'verified', 'role:kasubag_tu'])->prefix('kasubag')->n
 
     Route::get('aset/rekap', [\App\Http\Controllers\Kasubag\AsetController::class, 'rekap'])->name('aset.rekap');
     Route::resource('aset', \App\Http\Controllers\Kasubag\AsetController::class)->only(['index', 'show']);
-    Route::resource('ruangan', \App\Http\Controllers\Kasubag\RuanganController::class)->only(['index']);
+    Route::resource('ruangan', \App\Http\Controllers\Kasubag\RuanganController::class)->only(['index', 'show']);
 
     Route::get('persetujuan-peminjaman', [\App\Http\Controllers\Kasubag\PersetujuanPeminjamanController::class, 'index'])->name('persetujuan.index');
     Route::get('persetujuan-peminjaman/{peminjaman}', [\App\Http\Controllers\Kasubag\PersetujuanPeminjamanController::class, 'show'])->name('persetujuan.show');
@@ -142,5 +143,9 @@ Route::middleware(['auth', 'verified', 'role:pegawai'])->prefix('pegawai')->name
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+// Route::post('/tes-dosen', function(Request $request) {
+//     return back()->with('hasil', $request->input('input-tes'));
+// });
 
 require __DIR__.'/auth.php';

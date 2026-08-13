@@ -156,7 +156,9 @@
                                     <thead class="bg-slate-50">
                                         <tr>
                                             <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase whitespace-nowrap">No</th>
+                                            <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase whitespace-nowrap">No. Nota</th>
                                             <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase whitespace-nowrap">Aset</th>
+                                            <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase whitespace-nowrap">Lokasi</th>
                                             <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase whitespace-nowrap">Tgl Pengajuan</th>
                                             <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase whitespace-nowrap">Tgl Selesai</th>
                                             <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase whitespace-nowrap">Jenis</th>
@@ -173,10 +175,12 @@
                                         @forelse($previewData['pemeliharaans'] as $index => $item)
                                             <tr class="hover:bg-slate-50/50 transition-colors">
                                                 <td class="px-4 py-3 text-sm text-slate-900">{{ $index + 1 }}</td>
+                                                <td class="px-4 py-3 text-sm text-slate-600 whitespace-nowrap">{{ $item->batch_id }}</td>
                                                 <td class="px-4 py-3 text-sm font-bold text-slate-800 whitespace-nowrap">
                                                     {{ $item->jumlah_item }}x {{ $item->asetBmn->nama_barang }}
                                                     <div class="text-xs font-mono text-slate-400 font-normal">{{ $item->asetBmn->kode_barang }}</div>
                                                 </td>
+                                                <td class="px-4 py-3 text-sm text-slate-600 whitespace-nowrap">{{ $item->lokasi ?? '-' }}</td>
                                                 <td class="px-4 py-3 text-sm text-slate-600 whitespace-nowrap">{{ $item->tanggal_pengajuan ? $item->tanggal_pengajuan->format('d/m/Y') : '-' }}</td>
                                                 <td class="px-4 py-3 text-sm text-slate-600 whitespace-nowrap">{{ $item->tanggal_selesai ? $item->tanggal_selesai->format('d/m/Y') : '-' }}</td>
                                                 <td class="px-4 py-3 text-sm text-slate-600 capitalize whitespace-nowrap">{{ $item->jenis }}</td>
@@ -202,7 +206,7 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="12" class="px-4 py-8 text-center text-slate-500">Tidak ada data untuk periode ini.</td>
+                                                <td colspan="14" class="px-4 py-8 text-center text-slate-500">Tidak ada data untuk periode ini.</td>
                                             </tr>
                                         @endforelse
                                     </tbody>
@@ -228,8 +232,10 @@
                                 <table class="min-w-full divide-y divide-slate-200">
                                     <thead class="bg-slate-50">
                                             <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase whitespace-nowrap">No</th>
+                                            <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase whitespace-nowrap">No. Nota</th>
                                             <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase whitespace-nowrap">Tgl Pengajuan</th>
                                             <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase whitespace-nowrap">Jenis</th>
+                                            <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase whitespace-nowrap">Lokasi</th>
                                             <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase whitespace-nowrap">Dilaporkan Oleh</th>
                                             <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase whitespace-nowrap min-w-[200px]">Deskripsi Kerusakan</th>
                                             <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase whitespace-nowrap">Status</th>
@@ -240,8 +246,10 @@
                                         @forelse($previewData['pemeliharaans'] as $index => $item)
                                             <tr class="hover:bg-slate-50/50 transition-colors">
                                                 <td class="px-4 py-3 text-sm text-slate-900">{{ $index + 1 }}</td>
+                                                <td class="px-4 py-3 text-sm text-slate-600 whitespace-nowrap">{{ $item->batch_id }}</td>
                                                 <td class="px-4 py-3 text-sm text-slate-600 whitespace-nowrap">{{ $item->tanggal_pengajuan ? $item->tanggal_pengajuan->format('d/m/Y') : '-' }}</td>
                                                 <td class="px-4 py-3 text-sm text-slate-600 capitalize whitespace-nowrap">{{ $item->jenis }}</td>
+                                                <td class="px-4 py-3 text-sm text-slate-600 whitespace-nowrap">{{ $item->lokasi ?? '-' }}</td>
                                                 <td class="px-4 py-3 text-sm text-slate-600 whitespace-nowrap">{{ $item->pelapor ? $item->pelapor->name : 'Sistem' }}</td>
                                                 <td class="px-4 py-3 text-sm text-slate-600">{{ $item->aggregated_deskripsi ?? $item->deskripsi_kerusakan ?? '-' }}</td>
                                                 <td class="px-4 py-3 text-sm font-bold capitalize whitespace-nowrap {{ $item->status === 'selesai' ? 'text-emerald-600' : 'text-slate-600' }}">{{ $item->status }}</td>
@@ -249,7 +257,7 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="6" class="px-4 py-8 text-center text-slate-500">Belum ada riwayat pemeliharaan untuk aset ini.</td>
+                                                <td colspan="8" class="px-4 py-8 text-center text-slate-500">Belum ada riwayat pemeliharaan untuk aset ini.</td>
                                             </tr>
                                         @endforelse
                                     </tbody>
@@ -279,6 +287,7 @@
                                             <div>
                                                 <span class="font-bold text-slate-800">{{ $item->tanggal_pengajuan->format('d F Y') }}</span>
                                                 <span class="ml-2 px-2 py-0.5 text-xs font-bold rounded-md bg-slate-100 text-slate-600">{{ ucfirst($item->jenis) }}</span>
+                                                <span class="ml-2 text-sm text-slate-500">Nota: {{ $item->batch_id }}</span>
                                             </div>
                                             <div class="flex flex-col items-end gap-1">
                                                 <span class="font-bold text-sm {{ $item->status === 'selesai' ? 'text-emerald-600' : 'text-slate-600' }}">{{ $item->status_label }}</span>
@@ -286,10 +295,14 @@
                                             </div>
                                         </div>
                                         
-                                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm mb-4">
+                                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm mb-4">
                                             <div>
                                                 <span class="block text-slate-500 font-bold mb-1">Dilaporkan Oleh:</span>
                                                 <span class="text-slate-800">{{ $item->pelapor ? $item->pelapor->name : 'Sistem (Rutin)' }}</span>
+                                            </div>
+                                            <div>
+                                                <span class="block text-slate-500 font-bold mb-1">Lokasi:</span>
+                                                <span class="text-slate-800">{{ $item->lokasi ?? '-' }}</span>
                                             </div>
                                             <div>
                                                 <span class="block text-slate-500 font-bold mb-1">Disetujui Oleh:</span>

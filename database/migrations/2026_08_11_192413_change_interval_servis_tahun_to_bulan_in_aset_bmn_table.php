@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('aset_bmn', function (Blueprint $table) {
-            $table->integer('interval_servis_bulan')->nullable()->after('interval_servis_tahun')->comment('Interval servis rutin dalam satuan bulan (misal: 6 atau 12)');
+            $table->tinyInteger('interval_servis_bulan')->nullable()->after('interval_servis_tahun')->comment('Interval servis rutin dalam satuan bulan (misal: 6 atau 12)');
         });
 
         \Illuminate\Support\Facades\DB::table('aset_bmn')->whereNotNull('interval_servis_tahun')->update([

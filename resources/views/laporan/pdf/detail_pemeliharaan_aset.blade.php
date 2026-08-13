@@ -16,12 +16,12 @@
 </head>
 <body>
     @if(!isset($is_pdf) || $is_pdf)
-    <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px; border: none;">
         <tr>
-            <td style="width: 20%; text-align: center; vertical-align: middle;">
+            <td style="width: 20%; text-align: center; vertical-align: middle; border: none;">
                 <img src="{{ public_path('storage/images/LOGO KEMENTERIAN EPS [Converted].png') }}" style="width: 120px; height: auto;">
             </td>
-            <td style="width: 80%; text-align: center; vertical-align: middle;">
+            <td style="width: 80%; text-align: center; vertical-align: middle; border: none;">
                 <div style="font-size: 14px; margin-bottom: 2px;">BADAN PENGEMBANGAN SUMBER DAYA MANUSIA INDUSTRI</div>
                 <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">BALAI DIKLAT INDUSTRI PADANG</div>
                 <div style="font-size: 10px; margin-bottom: 2px;">Jl. Bungo Pasang, Tabing, Padang, Sumatera Barat – 25171 | Telp. (0751) 7051879, Fax. (0751) 447784</div>
@@ -69,7 +69,7 @@
 
     @forelse($pemeliharaans as $index => $item)
         <div class="content-box" style="{{ !$loop->first ? 'page-break-before: always;' : '' }}">
-            <div class="box-title">Pemeliharaan #{{ $index + 1 }} - Status: {{ strtoupper($item->status_label) }}</div>
+            <div class="box-title">Pemeliharaan #{{ $index + 1 }} - No. Nota: {{ $item->batch_id }} - Status: {{ strtoupper($item->status_label) }}</div>
             <table style="width: 100%; font-size: 12px; border-collapse: collapse;">
                 <tr>
                     <td style="width: 25%; padding: 3px 0;"><strong>Tanggal Pengajuan</strong></td>
@@ -80,14 +80,18 @@
                 <tr>
                     <td style="padding: 3px 0;"><strong>Jenis Pemeliharaan</strong></td>
                     <td style="padding: 3px 0; text-transform: capitalize;">: {{ $item->jenis }}</td>
-                    <td style="padding: 3px 0;"><strong>Foto Bukti</strong></td>
-                    <td style="padding: 3px 0;">: {{ $item->foto ? 'Ada' : 'Tidak Ada' }}</td>
+                    <td style="padding: 3px 0;"><strong>Lokasi</strong></td>
+                    <td style="padding: 3px 0;">: {{ $item->lokasi ?? '-' }}</td>
                 </tr>
                 <tr>
                     <td style="padding: 3px 0;"><strong>Dilaporkan Oleh</strong></td>
                     <td style="padding: 3px 0;">: {{ $item->pelapor ? $item->pelapor->name : 'Sistem' }}</td>
                     <td style="padding: 3px 0;"><strong>Disetujui Oleh</strong></td>
                     <td style="padding: 3px 0;">: {{ $item->approver ? $item->approver->name : '-' }}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 3px 0;"><strong>Foto Bukti</strong></td>
+                    <td style="padding: 3px 0;" colspan="3">: {{ $item->foto ? 'Ada' : 'Tidak Ada' }}</td>
                 </tr>
             </table>
 
@@ -132,9 +136,13 @@
                     <td style="width: 50%; vertical-align: top;">
                         <span class="detail-label">Nota Teknisi (Gambar)</span>: <br/>
                         <div style="margin-top: 5px;">
-                            @foreach($notaImages as $img)
-                            <img src="{{ public_path('storage/' . $img) }}" style="max-width: 150px; max-height: 150px; border: 1px solid #ccc; padding: 2px; margin-right: 5px; margin-bottom: 5px; display: inline-block;" alt="Nota Teknisi">
-                            @endforeach
+                            @if(!isset($is_pdf) || $is_pdf)
+                                @foreach($notaImages as $img)
+                                <img src="{{ public_path('storage/' . $img) }}" style="max-width: 150px; max-height: 150px; border: 1px solid #ccc; padding: 2px; margin-right: 5px; margin-bottom: 5px; display: inline-block;" alt="Nota Teknisi">
+                                @endforeach
+                            @else
+                                (Lihat di aplikasi)
+                            @endif
                         </div>
                     </td>
                     @endif
@@ -143,7 +151,11 @@
                     <td style="width: 50%; vertical-align: top;">
                         <span class="detail-label">Lampiran Foto Kerusakan</span>: <br/>
                         <div style="margin-top: 5px;">
-                            <img src="{{ public_path('storage/' . $item->foto) }}" style="max-width: 250px; max-height: 200px; border: 1px solid #ccc; padding: 2px;" alt="Foto Bukti">
+                            @if(!isset($is_pdf) || $is_pdf)
+                                <img src="{{ public_path('storage/' . $item->foto) }}" style="max-width: 250px; max-height: 200px; border: 1px solid #ccc; padding: 2px;" alt="Foto Bukti">
+                            @else
+                                (Lihat di aplikasi)
+                            @endif
                         </div>
                     </td>
                     @endif

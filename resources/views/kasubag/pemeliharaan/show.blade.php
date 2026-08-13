@@ -58,6 +58,7 @@
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 pb-8 border-b border-slate-100 gap-4">
                         <div>
                             <div class="flex items-center space-x-2 mb-2">
+                                <span class="px-3 py-1 inline-flex text-xs font-bold font-mono rounded-full border bg-slate-50 border-slate-200 text-slate-700">No. Nota: {{ $pemeliharaan->batch_id }}</span>
                                 <span class="px-3 py-1 inline-flex text-xs font-bold rounded-full border {{ $pemeliharaan->jenis === 'rutin' ? 'bg-slate-100 border-slate-200 text-slate-700' : 'bg-pink-50 border-pink-200 text-pink-700' }}">
                                     {{ ucfirst($pemeliharaan->jenis) }}
                                 </span>
@@ -111,6 +112,17 @@
                                 </div>
                             </div>
                             @endif
+
+                            <!-- Lokasi Kerusakan -->
+                            <div class="mb-6">
+                                <h4 class="text-sm font-extrabold text-emerald-600 uppercase tracking-wider mb-4 flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.242-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                    Lokasi Kerusakan
+                                </h4>
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 w-full text-left font-medium text-sm text-slate-700">
+                                    {{ $pemeliharaan->lokasi ?? '-' }}
+                                </div>
+                            </div>
 
                             <!-- Deskripsi Kerusakan / Tindakan -->
                             <div>

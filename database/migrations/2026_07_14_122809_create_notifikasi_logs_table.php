@@ -9,12 +9,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('notifikasi_log', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('referensi_tipe')->nullable();
-            $table->unsignedBigInteger('referensi_id')->nullable();
+            $table->increments('id');
+            $table->unsignedInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->string('referensi_tipe', 50)->nullable();
+            $table->unsignedInteger('referensi_id')->nullable();
             $table->text('pesan');
-            $table->enum('status_kirim', ['terkirim', 'gagal']);
+            $table->enum('status_kirim', ['pending', 'terkirim', 'gagal']);
             $table->timestamps();
         });
     }

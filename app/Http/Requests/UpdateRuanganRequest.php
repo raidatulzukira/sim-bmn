@@ -18,8 +18,10 @@ class UpdateRuanganRequest extends FormRequest
         $ruanganId = $ruangan ? $ruangan->id : null;
 
         return [
-            'nama_ruangan' => ['required', 'string', 'max:255', Rule::unique('ruangan')->ignore($ruanganId)],
-            'keterangan' => ['nullable', 'string'],
+            'nama_ruangan' => ['required', 'string', 'max:50', Rule::unique('ruangan')->ignore($ruanganId)],
+            'peruntukan' => ['nullable', 'string', 'max:70'],
+            'lokasi' => ['nullable', 'string', 'max:50'],
+            'lantai' => ['nullable', 'string', 'max:10'],
         ];
     }
 }

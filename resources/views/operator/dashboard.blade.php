@@ -287,6 +287,7 @@
                                             <th class="px-4 py-3 text-left text-[11px] font-black text-slate-500 uppercase tracking-wider">Peminjam</th>
                                             <th class="px-4 py-3 text-left text-[11px] font-black text-slate-500 uppercase tracking-wider">Aset</th>
                                             <th class="px-4 py-3 text-left text-[11px] font-black text-slate-500 uppercase tracking-wider">Rencana Kembali</th>
+                                            <th class="px-4 py-3 text-right text-[11px] font-black text-slate-500 uppercase tracking-wider">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody class="bg-white divide-y divide-slate-100">
@@ -308,6 +309,12 @@
                                                         <span class="w-1.5 h-1.5 rounded-full bg-rose-500 urgent-dot inline-block"></span>
                                                         {{ $pinjam->tanggal_kembali_rencana->format('d M Y') }}
                                                     </span>
+                                                </td>
+                                                <td class="px-4 py-3.5 whitespace-nowrap text-right">
+                                                    <a href="{{ route('operator.peminjaman.show', $pinjam->id) }}" class="inline-flex items-center gap-1 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-600 hover:text-sky-600 hover:border-sky-200 hover:bg-sky-50 transition-colors shadow-sm">
+                                                        <span>Lihat</span>
+                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                                    </a>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -355,6 +362,7 @@
                                             <th class="px-4 py-3 text-left text-[11px] font-black text-slate-500 uppercase tracking-wider">Aset</th>
                                             <th class="px-4 py-3 text-left text-[11px] font-black text-slate-500 uppercase tracking-wider">Jenis</th>
                                             <th class="px-4 py-3 text-left text-[11px] font-black text-slate-500 uppercase tracking-wider">Status</th>
+                                            <th class="px-4 py-3 text-right text-[11px] font-black text-slate-500 uppercase tracking-wider">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody class="bg-white divide-y divide-slate-100">
@@ -377,6 +385,12 @@
                                                             <span class="w-1.5 h-1.5 rounded-full bg-amber-500 inline-block"></span>{{ $rawat->status_label }}
                                                         </span>
                                                     @endif
+                                                </td>
+                                                <td class="px-4 py-3.5 whitespace-nowrap text-right">
+                                                    <a href="{{ route('operator.pemeliharaan.show', $rawat->id) }}" class="inline-flex items-center gap-1 px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-600 hover:text-sky-600 hover:border-sky-200 hover:bg-sky-50 transition-colors shadow-sm">
+                                                        <span>Lihat</span>
+                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                                    </a>
                                                 </td>
                                             </tr>
                                         @endforeach

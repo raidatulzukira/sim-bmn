@@ -12,16 +12,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('pemeliharaan', function (Blueprint $table) {
-            $table->uuid('batch_id')->nullable()->after('id');
+            $table->string('batch_id', 50)->nullable()->after('id');
         });
 
         // Set unique UUID for existing records
         $pemeliharaans = \Illuminate\Support\Facades\DB::table('pemeliharaan')->get();
         foreach ($pemeliharaans as $p) {
+            $nota = 'MTC-' . date('Ymd') . '-' . str_pad($p->id, 4, '0', STR_PAD_LEFT);
             \Illuminate\Support\Facades\DB::table('pemeliharaan')
                 ->where('id', $p->id)
-                ->update(['batch_id' => (string) \Illuminate\Support\Str::uuid()]);
+                ->update(['batch_id' => $nota]);
         }
+
+        Schema::table('pemeliharaan', function (Blueprint $table) {
+            $table->string('batch_id', 50)->nullable(false)->change();
+        });
     }
 
     /**

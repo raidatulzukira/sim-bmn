@@ -54,6 +54,7 @@
                     <table class="min-w-full divide-y divide-slate-100">
                         <thead class="bg-slate-50/50">
                             <tr>
+                                <th class="px-6 py-4 text-center text-xs font-extrabold text-slate-500 uppercase tracking-wider">No. Nota</th>
                                 <th class="px-6 py-4 text-center text-xs font-extrabold text-slate-500 uppercase tracking-wider">Peminjam</th>
                                 <th class="px-6 py-4 text-center text-xs font-extrabold text-slate-500 uppercase tracking-wider">Aset</th>
                                 <th class="px-6 py-4 text-center text-xs font-extrabold text-slate-500 uppercase tracking-wider">Tanggal Pengajuan</th>
@@ -73,6 +74,9 @@
                                     }
                                 @endphp
                                 <tr class="hover:bg-sky-50/50 transition-colors duration-200 group {{ $isWarning ? 'animate-pulse-red-soft border-l-4 border-l-red-500' : '' }}">
+                                    <td class="px-6 py-4 whitespace-nowrap text-left text-sm font-bold text-slate-900">
+                                        {{ $pinjam->batch_id }}
+                                    </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-left text-sm font-bold text-slate-900">
                                         <div class="flex items-center gap-3">
                                             <div class="w-10 h-10 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-sm">

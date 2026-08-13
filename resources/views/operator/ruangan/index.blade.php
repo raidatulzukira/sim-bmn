@@ -57,7 +57,8 @@
                         <thead class="bg-slate-50/50">
                             <tr>
                                 <th class="px-6 py-4 text-center text-xs font-extrabold text-slate-500 uppercase tracking-wider">Nama Ruangan</th>
-                                <th class="px-6 py-4 text-center text-xs font-extrabold text-slate-500 uppercase tracking-wider">Keterangan</th>
+                                <th class="px-6 py-4 text-center text-xs font-extrabold text-slate-500 uppercase tracking-wider">Lokasi</th>
+                                <th class="px-6 py-4 text-center text-xs font-extrabold text-slate-500 uppercase tracking-wider">Lantai</th>
                                 <th class="px-6 py-4 text-center text-xs font-extrabold text-slate-500 uppercase tracking-wider">Jumlah Aset</th>
                                 <th class="px-6 py-4 text-center text-xs font-extrabold text-slate-500 uppercase tracking-wider">Aksi</th>
                             </tr>
@@ -73,15 +74,19 @@
                                             {{ $ruangan->nama_ruangan }}
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 text-left text-sm text-slate-500 max-w-xs truncate">{{ $ruangan->keterangan ?? '-' }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-left">
+                                    <td class="px-6 py-4 text-center text-sm text-slate-500">{{ $ruangan->lokasi ?? '-' }}</td>
+                                    <td class="px-6 py-4 text-center text-sm text-slate-500">{{ $ruangan->lantai ?? '-' }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-center">
                                         <span class="px-3 py-1 inline-flex items-center gap-1.5 text-xs font-bold rounded-full bg-slate-100 text-slate-700">
                                             <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
                                             {{ $ruangan->aset_bmn_count }} Aset
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-left text-sm font-medium">
-                                        <div class="flex justify-start gap-2 items-center transition-opacity duration-200">
+                                        <div class="flex justify-center gap-2 items-center transition-opacity duration-200">
+                                            <a href="{{ route('operator.ruangan.show', $ruangan->id) }}" title="Detail" class="w-10 h-10 inline-flex items-center justify-center text-sky-600 hover:text-sky-900 bg-sky-50 rounded-lg hover:bg-sky-100 transition-colors shadow-sm">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                            </a>
                                             <a href="{{ route('operator.ruangan.edit', $ruangan->id) }}" title="Edit" class="w-10 h-10 inline-flex items-center justify-center text-indigo-600 hover:text-indigo-900 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors shadow-sm">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                             </a>
@@ -97,7 +102,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="px-6 py-12 whitespace-nowrap text-center">
+                                    <td colspan="5" class="px-6 py-12 whitespace-nowrap text-center">
                                         <div class="flex flex-col items-center justify-center">
                                             <svg class="w-12 h-12 text-slate-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
                                             <p class="text-slate-500 font-medium text-sm">Tidak ada data ruangan yang ditemukan.</p>

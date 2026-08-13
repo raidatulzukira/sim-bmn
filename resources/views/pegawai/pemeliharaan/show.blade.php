@@ -31,6 +31,7 @@
                             </div>
                             <div>
                                 <div class="flex gap-2 mb-1.5">
+                                    <span class="px-2.5 py-0.5 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold font-mono border border-slate-200">No. Nota: {{ $laporan_kerusakan->batch_id }}</span>
                                     <span class="px-2.5 py-0.5 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold font-mono border border-slate-200">
                                         {{ $laporan_kerusakan->asetBmn ? $laporan_kerusakan->asetBmn->kode_barang : 'N/A' }}
                                     </span>
@@ -190,6 +191,17 @@
                                         <span class="text-sm font-medium">Tidak ada foto</span>
                                     </div>
                                 @endif
+                            </div>
+                        </div>
+
+                        <!-- Lokasi Kerusakan -->
+                        <div class="mb-6">
+                            <h4 class="text-md font-bold text-slate-800 mb-3 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.242-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                Lokasi Kerusakan
+                            </h4>
+                            <div class="bg-emerald-50/50 p-4 rounded-xl border border-emerald-100 text-sm text-slate-800 leading-relaxed font-medium">
+                                {{ $laporan_kerusakan->lokasi ?? '-' }}
                             </div>
                         </div>
 

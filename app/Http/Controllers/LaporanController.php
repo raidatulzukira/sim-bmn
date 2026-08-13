@@ -60,7 +60,7 @@ class LaporanController extends Controller
                     
                     $query = Pemeliharaan::with(['asetBmn', 'pelapor', 'approver']);
                     if ($start && $end) {
-                        $query->whereBetween('tanggal_pengajuan', [$start, $end]);
+                        $query->whereBetween('tanggal_pengajuan', [$start . ' 00:00:00', $end . ' 23:59:59']);
                     }
                     
                     $pemeliharaans = $query->orderBy('tanggal_pengajuan', 'desc')->get();
@@ -168,7 +168,7 @@ class LaporanController extends Controller
                 
                 $query = Pemeliharaan::with(['asetBmn', 'pelapor', 'approver']);
                 if ($start && $end) {
-                    $query->whereBetween('tanggal_pengajuan', [$start, $end]);
+                    $query->whereBetween('tanggal_pengajuan', [$start . ' 00:00:00', $end . ' 23:59:59']);
                 }
                 
                 $pemeliharaans = $query->orderBy('tanggal_pengajuan', 'desc')->get();

@@ -164,7 +164,7 @@ class PeminjamanController extends Controller
             $namaAsetString = $groupedNames->first() ?? 'Aset BMN';
         }
 
-        $pesan = "Halo pegawai atas nama {$peminjaman->user->name}, mengingatkan bahwa batas waktu pengembalian untuk peminjaman {$totalBarang} unit {$namaAsetString} adalah pada tanggal {$peminjaman->tanggal_kembali_rencana->format('d M Y')}. Harap untuk segera dikembalikan ke ruangan Operator.";
+        $pesan = "Halo pegawai atas nama {$peminjaman->user->name}, mengingatkan bahwa batas waktu pengembalian untuk *Nota Peminjaman No: {$peminjaman->batch_id}* sejumlah {$totalBarang} unit {$namaAsetString} adalah pada tanggal {$peminjaman->tanggal_kembali_rencana->format('d M Y')}. Harap untuk segera dikembalikan ke ruangan Operator.";
         
         $phone = $peminjaman->user->no_wa;
         

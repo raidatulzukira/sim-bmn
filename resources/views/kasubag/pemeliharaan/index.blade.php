@@ -36,6 +36,7 @@
                     <table class="min-w-full divide-y divide-slate-100">
                         <thead class="bg-slate-50/50">
                             <tr>
+                                <th class="px-6 py-4 text-left text-xs font-extrabold text-slate-500 uppercase tracking-wider">No. Nota</th>
                                 <th class="px-6 py-4 text-left text-xs font-extrabold text-slate-500 uppercase tracking-wider">Aset</th>
                                 <th class="px-6 py-4 text-center text-xs font-extrabold text-slate-500 uppercase tracking-wider">Jenis</th>
                                 <th class="px-6 py-4 text-left text-xs font-extrabold text-slate-500 uppercase tracking-wider">Pelapor</th>
@@ -49,6 +50,9 @@
                         <tbody class="bg-white divide-y divide-slate-50">
                             @forelse($pemeliharaans as $rawat)
                                 <tr class="hover:bg-indigo-50/50 transition-colors duration-200 group">
+                                    <td class="px-6 py-4 whitespace-nowrap text-left text-sm font-bold text-slate-900">
+                                        {{ $rawat->batch_id }}
+                                    </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-left">
                                         <p class="text-sm font-bold text-slate-900">{{ $rawat->asetBmn ? $rawat->asetBmn->nama_barang : 'Belum Diidentifikasi' }}</p>
                                         <p class="text-xs text-slate-500 mt-0.5">Kode: {{ $rawat->asetBmn ? $rawat->asetBmn->kode_barang : '-' }}</p>

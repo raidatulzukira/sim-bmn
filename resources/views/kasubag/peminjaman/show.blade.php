@@ -34,12 +34,14 @@
                             @endphp
                             @if($jenisCount > 1)
                                 <div class="flex gap-2 mb-1.5">
+                                    <span class="px-2.5 py-0.5 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold font-mono border border-slate-200">No. Nota: {{ $peminjaman->batch_id }}</span>
                                     <span class="px-2.5 py-0.5 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold font-mono border border-slate-200">Multi</span>
                                     <span class="px-2.5 py-0.5 bg-sky-100 text-sky-700 rounded-lg text-xs font-bold border border-sky-200">{{ isset($batch) ? $batch->count() : 1 }} Unit ({{ $jenisCount }} Jenis)</span>
                                 </div>
                                 <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-2">Pengajuan Multi-Aset</h3>
                             @else
                                 <div class="flex gap-2 mb-1.5">
+                                    <span class="px-2.5 py-0.5 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold font-mono border border-slate-200">No. Nota: {{ $peminjaman->batch_id }}</span>
                                     <span class="px-2.5 py-0.5 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold font-mono border border-slate-200">{{ $peminjaman->asetBmn->kode_barang }}</span>
                                     <span class="px-2.5 py-0.5 bg-sky-100 text-sky-700 rounded-lg text-xs font-bold border border-sky-200">{{ isset($batch) ? $batch->count() : 1 }} Unit</span>
                                 </div>

@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('aset_bmn', function (Blueprint $table) {
-            $table->dropUnique('aset_bmn_kode_aset_unique');
+            // $table->dropUnique('aset_bmn_kode_aset_unique');
         });
     }
 

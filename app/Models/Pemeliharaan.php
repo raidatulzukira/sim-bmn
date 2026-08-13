@@ -12,7 +12,7 @@ class Pemeliharaan extends Model
 
     protected $table = 'pemeliharaan';
     protected $fillable = [
-        'batch_id', 'aset_id', 'jenis', 'dilaporkan_oleh', 'deskripsi_kerusakan', 'foto',
+        'batch_id', 'aset_id', 'jenis', 'lokasi', 'dilaporkan_oleh', 'deskripsi_kerusakan', 'foto',
         'status', 'catatan_validasi', 'approved_by', 'nota_teknisi',
         'tanggal_pengajuan', 'tanggal_selesai'
     ];

@@ -102,7 +102,7 @@ class PeminjamanController extends Controller
         }
 
         $peminjamanIds = [];
-        $batchId = (string) Str::uuid();
+        $batchId = 'PMJ-' . date('Ymd') . '-' . strtoupper(\Illuminate\Support\Str::random(5));
         $totalAsetDiminta = 0;
         $namaAsetArray = [];
 
@@ -162,7 +162,10 @@ class PeminjamanController extends Controller
 
         $namaPegawai = auth()->user()->name;
         $namaAsetSummary = implode(', ', $namaAsetArray);
-        $pesan = "Halo, terdapat pengajuan peminjaman baru dari pegawai {$namaPegawai}. Aset yang dipinjam adalah: {$namaAsetSummary}. Mohon untuk segera diproses di sistem SIM BMN.";
+        $pesan = "Halo, terdapat pengajuan peminjaman baru dari pegawai {$namaPegawai}.\n"
+               . "No. Nota: {$batchId}\n"
+               . "Aset yang dipinjam adalah: {$namaAsetSummary}.\n"
+               . "Mohon untuk segera diproses di sistem SIM BMN.";
 
         $waService = app(\App\Services\WhatsappService::class);
 

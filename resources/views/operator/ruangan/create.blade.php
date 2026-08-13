@@ -37,10 +37,28 @@
                             @enderror
                         </div>
 
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="lokasi" class="block text-sm font-bold text-slate-700 mb-2">Lokasi / Gedung <span class="text-slate-400 font-normal ml-1">(Opsional)</span></label>
+                                <input id="lokasi" name="lokasi" type="text" class="block w-full border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200 bg-slate-50/50 focus:bg-white px-4 py-3" value="{{ old('lokasi') }}" placeholder="Contoh: Gedung A" />
+                                @error('lokasi')
+                                    <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label for="lantai" class="block text-sm font-bold text-slate-700 mb-2">Lantai <span class="text-slate-400 font-normal ml-1">(Opsional)</span></label>
+                                <input id="lantai" name="lantai" type="text" class="block w-full border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200 bg-slate-50/50 focus:bg-white px-4 py-3" value="{{ old('lantai') }}" placeholder="Contoh: Lantai 1" />
+                                @error('lantai')
+                                    <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+
                         <div>
-                            <label for="keterangan" class="block text-sm font-bold text-slate-700 mb-2">Keterangan <span class="text-slate-400 font-normal ml-1">(Opsional)</span></label>
-                            <textarea id="keterangan" name="keterangan" rows="4" class="block w-full border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200 bg-slate-50/50 focus:bg-white px-4 py-3" placeholder="Tambahkan deskripsi atau lokasi spesifik ruangan...">{{ old('keterangan') }}</textarea>
-                            @error('keterangan')
+                            <label for="peruntukan" class="block text-sm font-bold text-slate-700 mb-2">Peruntukan / Keterangan <span class="text-slate-400 font-normal ml-1">(Opsional)</span></label>
+                            <textarea id="peruntukan" name="peruntukan" rows="3" class="block w-full border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200 bg-slate-50/50 focus:bg-white px-4 py-3" placeholder="Contoh: Tempat kegiatan operasional pegawai">{{ old('peruntukan') }}</textarea>
+                            @error('peruntukan')
                                 <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
                             @enderror
                         </div>

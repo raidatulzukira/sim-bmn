@@ -15,12 +15,12 @@
 </head>
 <body>
     @if(!isset($is_pdf) || $is_pdf)
-    <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px; border: none;">
         <tr>
-            <td style="width: 20%; text-align: center; vertical-align: middle;">
+            <td style="width: 20%; text-align: center; vertical-align: middle; border: none;">
                 <img src="{{ public_path('storage/images/LOGO KEMENTERIAN EPS [Converted].png') }}" style="width: 120px; height: auto;">
             </td>
-            <td style="width: 80%; text-align: center; vertical-align: middle;">
+            <td style="width: 80%; text-align: center; vertical-align: middle; border: none;">
                 <div style="font-size: 14px; margin-bottom: 2px;">BADAN PENGEMBANGAN SUMBER DAYA MANUSIA INDUSTRI</div>
                 <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">BALAI DIKLAT INDUSTRI PADANG</div>
                 <div style="font-size: 10px; margin-bottom: 2px;">Jl. Bungo Pasang, Tabing, Padang, Sumatera Barat – 25171 | Telp. (0751) 7051879, Fax. (0751) 447784</div>

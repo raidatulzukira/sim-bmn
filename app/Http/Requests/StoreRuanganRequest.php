@@ -14,8 +14,10 @@ class StoreRuanganRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nama_ruangan' => ['required', 'string', 'max:255', 'unique:ruangan,nama_ruangan'],
-            'keterangan' => ['nullable', 'string'],
+            'nama_ruangan' => ['required', 'string', 'max:50', 'unique:ruangan,nama_ruangan'],
+            'peruntukan' => ['nullable', 'string', 'max:70'],
+            'lokasi' => ['nullable', 'string', 'max:50'],
+            'lantai' => ['nullable', 'string', 'max:10'],
         ];
     }
 }

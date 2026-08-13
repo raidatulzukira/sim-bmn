@@ -23,12 +23,12 @@ return new class extends Migration
         // Terkadang SQLite tidak support rename+add di satu schema block yang sama, jadi kita pisahkan block baru.
         Schema::table('aset_bmn', function (Blueprint $table) {
             // Tambah kolom baru
-            $table->string('jenis_bmn')->nullable()->after('id');
-            $table->string('nup')->nullable()->after('kode_barang');
-            $table->string('merk')->nullable()->after('nama_barang');
-            $table->string('tipe')->nullable()->after('merk');
-            $table->string('nama')->nullable()->after('tipe');
-            $table->date('tanggal_perolehan')->nullable()->after('nama');
+            $table->string('jenis_bmn', 40)->after('id');
+            $table->string('nup', 5)->after('kode_barang');
+            $table->string('merk', 70)->nullable()->after('nama_barang');
+            $table->string('tipe', 50)->nullable()->after('merk');
+            $table->string('nama', 80)->nullable()->after('tipe');
+            $table->date('tanggal_perolehan')->after('nama');
             $table->decimal('nilai_perolehan_pertama', 20, 2)->nullable()->after('tanggal_perolehan');
         });
     }

@@ -22,4 +22,13 @@ class RuanganController extends Controller
 
         return view('kasubag.ruangan.index', compact('ruangans', 'search'));
     }
+
+    public function show(Ruangan $ruangan)
+    {
+        $ruangan->load(['asetBmn' => function ($query) {
+            $query->orderBy('tanggal_perolehan', 'desc');
+        }]);
+        
+        return view('kasubag.ruangan.show', compact('ruangan'));
+    }
 }

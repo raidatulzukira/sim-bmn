@@ -12,10 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('keranjang_peminjaman', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('template_aset_id')->constrained('aset_bmn')->onDelete('cascade');
-            $table->integer('jumlah');
+            $table->increments('id');
+            $table->unsignedInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->unsignedInteger('template_aset_id');
+            $table->foreign('template_aset_id')->references('id')->on('aset_bmn')->onDelete('cascade');
+            $table->unsignedInteger('jumlah');
             $table->timestamps();
         });
     }
