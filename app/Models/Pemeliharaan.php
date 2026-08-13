@@ -43,13 +43,6 @@ class Pemeliharaan extends Model
 
     public function getStatusLabelAttribute()
     {
-        return match($this->status) {
-            'pending' => is_null($this->aset_id) ? 'Menunggu Peninjauan' : 'Menunggu TU',
-            'disetujui' => 'Siap Diservis',
-            'proses' => 'Sedang Diservis',
-            'selesai' => 'Servis Selesai',
-            'ditolak' => 'Ditolak',
-            default => ucfirst($this->status)
-        };
+        return ucwords(str_replace('_', ' ', $this->status));
     }
 }

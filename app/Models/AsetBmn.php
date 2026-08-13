@@ -24,15 +24,7 @@ class AsetBmn extends Model
 
     public function getStatusLabelAttribute()
     {
-        return match ($this->status) {
-            'tersedia' => 'Tersedia',
-            'dipinjam' => 'Dipinjam',
-            'servis' => 'Servis',
-            'menunggu_persetujuan' => 'Menunggu Persetujuan',
-            'menunggu_serah_terima' => 'Menunggu Serah Terima',
-            'menunggu_servis' => 'Menunggu Servis',
-            default => ucfirst(str_replace('_', ' ', $this->status)),
-        };
+        return ucwords(str_replace('_', ' ', $this->status));
     }
 
     public function getJadwalServisBerikutnyaAttribute()

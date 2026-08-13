@@ -70,13 +70,6 @@ class Peminjaman extends Model
 
     public function getStatusLabelAttribute()
     {
-        return match($this->status) {
-            'pending' => 'Menunggu TU',
-            'disetujui' => 'Disetujui',
-            'dipinjam' => 'Sedang Dipinjam',
-            'dikembalikan' => 'Selesai Dikembalikan',
-            'ditolak' => 'Ditolak',
-            default => ucfirst($this->status)
-        };
+        return ucwords(str_replace('_', ' ', $this->status));
     }
 }

@@ -115,6 +115,12 @@ class PeminjamanController extends Controller
 
                 $path = $request->file('foto_pengembalian')->store('pengembalian', 'public');
                 
+                $hasExtended = $batchPeminjaman->count() > count($dikembalikanIds);
+                $newBatchId = null;
+                if ($hasExtended) {
+                    $newBatchId = 'PMJ-' . date('Ymd') . '-' . strtoupper(\Illuminate\Support\Str::random(5));
+                }
+
                 foreach ($batchPeminjaman as $item) {
                     if (in_array($item->aset_id, $dikembalikanIds)) {
                         $item->update([
@@ -128,7 +134,8 @@ class PeminjamanController extends Controller
                     } else {
                         if ($tanggalPerpanjangan) {
                             $item->update([
-                                'tanggal_kembali_rencana' => $tanggalPerpanjangan
+                                'tanggal_kembali_rencana' => $tanggalPerpanjangan,
+                                'batch_id' => $newBatchId // Pisahkan ke nota baru
                             ]);
                         }
                     }
