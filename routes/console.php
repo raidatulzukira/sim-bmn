@@ -9,4 +9,4 @@ Artisan::command('inspire', function () {
 
 use Illuminate\Support\Facades\Schedule;
 
-Schedule::command('app:auto-reject-pengajuan')->hourly();
+Schedule::command('app:auto-reject-pengajuan')->everyFiveMinutes();

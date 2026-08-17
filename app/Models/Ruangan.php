@@ -11,7 +11,7 @@ class Ruangan extends Model
     use HasFactory;
 
     protected $table = 'ruangan';
-    protected $fillable = ['nama_ruangan', 'keterangan'];
+    protected $fillable = ['nama_ruangan', 'peruntukan', 'lokasi', 'lantai'];
 
     public function asetBmn(): HasMany
     {

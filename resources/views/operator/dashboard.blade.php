@@ -7,13 +7,13 @@
                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
             </div>
             <div>
-                <h2 class="font-black text-2xl text-slate-800 leading-tight tracking-tight">{{ __('Dashboard Operator') }}</h2>
+                <h2 class="font-black text-2xl text-slate-800 leading-tight tracking-tight">{{ __('Dashboard Admin') }}</h2>
                 <p class="text-sm text-slate-500 font-medium">Monitoring aset, peminjaman & pemeliharaan BMN.</p>
             </div>
         </div>
         <div class="text-right">
             <p class="text-sm font-bold text-slate-800">{{ Auth::user()->name }}</p>
-            <p class="text-xs font-medium text-sky-600 bg-sky-50 border border-sky-100 px-2.5 py-0.5 rounded-full inline-block mt-0.5">Operator</p>
+            <p class="text-xs font-medium text-sky-600 bg-sky-50 border border-sky-100 px-2.5 py-0.5 rounded-full inline-block mt-0.5">Admin</p>
         </div>
     </div>
 @endsection
@@ -118,9 +118,9 @@
                                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                                     <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                                 </span>
-                                Portal Operator &bull; BDI Padang
+                                Portal Admin &bull; BDI Padang
                             </div>
-                            <p class="text-slate-500 text-sm font-semibold mb-0.5">Selamat datang kembali,</p>
+                            <p class="text-slate-500 text-sm font-semibold mb-0.5"></p>
                             <h1 class="text-2xl sm:text-3xl font-black leading-tight tracking-tight">
                                 <span class="shimmer-text">{{ Auth::user()->name }}</span>!
                             </h1>
@@ -488,7 +488,7 @@
                             <svg class="w-10 h-10 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         </div>
                         <p class="text-slate-700 font-black text-base">Semua Jadwal Aman</p>
-                        <p class="text-slate-400 text-sm mt-1 font-medium max-w-sm">Saat ini tidak ada aset yang jadwal servis rutinnya mendekati (H-30) atau terlewat.</p>
+                        <p class="text-slate-400 text-sm mt-1 font-medium max-w-sm">Saat ini tidak ada aset yang jadwal servis rutinnya mendekati (H-7) atau terlewat.</p>
                     </div>
                 @endif
             </div>
@@ -578,3 +578,4 @@
 </script>
 
 @endsection
+

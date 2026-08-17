@@ -57,7 +57,7 @@
                                 <label for="role" class="block text-sm font-bold text-slate-700 mb-2">Peran (Role) <span class="text-red-500">*</span></label>
                                 <select id="role" name="role" class="block w-full border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200 bg-slate-50/50 focus:bg-white px-4 py-3" required>
                                     <option value="" disabled {{ old('role') ? '' : 'selected' }}>Pilih peran untuk pengguna ini...</option>
-                                    <option value="operator" {{ old('role') == 'operator' ? 'selected' : '' }}>Operator System</option>
+                                    <option value="operator" {{ old('role') == 'operator' ? 'selected' : '' }}>Admin System</option>
                                     <option value="kasubag_tu" {{ old('role') == 'kasubag_tu' ? 'selected' : '' }}>Kepala Sub Bagian Tata Usaha (Kasubag TU)</option>
                                     <option value="pegawai" {{ old('role') == 'pegawai' ? 'selected' : '' }}>Pegawai / Staf</option>
                                 </select>
@@ -77,7 +77,7 @@
 
                             <!-- No WA -->
                             <div>
-                                <label for="no_wa" class="block text-sm font-bold text-slate-700 mb-2">No WhatsApp <span class="text-slate-400 font-normal ml-1">(Opsional)</span></label>
+                                <label for="no_wa" class="block text-sm font-bold text-slate-700 mb-2">No WhatsApp <span class="text-red-500">*</span></label>
                                 <input id="no_wa" name="no_wa" type="text" class="block w-full border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200 bg-slate-50/50 focus:bg-white px-4 py-3" value="{{ old('no_wa') }}" placeholder="Contoh: 08123456789" />
                                 @error('no_wa')
                                     <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
@@ -100,3 +100,4 @@
         </div>
     </div>
 @endsection
+

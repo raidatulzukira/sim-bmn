@@ -75,7 +75,7 @@ class PemeliharaanController extends Controller
     {
         $validated = $request->validated();
         
-        $batchId = (string) \Illuminate\Support\Str::uuid();
+        $batchId = 'MTC-' . date('Ymd') . '-' . strtoupper(\Illuminate\Support\Str::random(5));
         $firstPemeliharaanId = null;
 
         DB::transaction(function () use ($validated, $batchId, &$firstPemeliharaanId) {

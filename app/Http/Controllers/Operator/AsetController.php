@@ -126,9 +126,10 @@ class AsetController extends Controller
 
     public function destroy(AsetBmn $aset)
     {
-        if (in_array($aset->status, ['dipinjam', 'servis'])) {
+        if ($aset->status !== 'tersedia') {
+            $statusLabel = ucwords(str_replace('_', ' ', $aset->status));
             return redirect()->route('operator.aset.index')
-                ->with('error', 'Aset tidak dapat dihapus karena masih berstatus ' . $aset->status . '.');
+                ->with('error', 'Aset tidak dapat dihapus karena masih berstatus ' . $statusLabel . '. Hanya aset yang tersedia yang dapat dihapus.');
         }
 
         $aset->delete();

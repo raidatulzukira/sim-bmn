@@ -407,6 +407,7 @@
                                         <div class="flex justify-between items-start mb-4 pb-3 border-b border-slate-100">
                                             <div>
                                                 <span class="font-bold text-slate-800 text-lg">Peminjaman oleh {{ $item->user->name }}</span>
+                                                <span class="ml-2 text-sm text-slate-500">Nota: {{ $item->batch_id }}</span>
                                             </div>
                                             <div class="flex flex-col items-end gap-1">
                                                 <span class="font-bold text-sm px-3 py-1 rounded-full bg-slate-100 {{ $item->status === 'dikembalikan' ? 'text-emerald-600' : 'text-sky-600' }}">{{ strtoupper($item->status) }}</span>
@@ -486,7 +487,8 @@
                                 <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 inline-block">
                                     <table class="text-sm">
                                         <tr><td class="font-bold text-slate-500 pr-4">Ruangan</td><td class="font-bold text-slate-800">: {{ $previewData['ruangan']->nama_ruangan }}</td></tr>
-                                        <tr><td class="font-bold text-slate-500 pr-4">Keterangan</td><td class="font-bold text-slate-800">: {{ $previewData['ruangan']->keterangan ?? '-' }}</td></tr>
+                                        <tr><td class="font-bold text-slate-500 pr-4">Lokasi</td><td class="font-bold text-slate-800">: {{ $previewData['ruangan']->lokasi ?? '-' }}</td></tr>
+                                        <tr><td class="font-bold text-slate-500 pr-4">Lantai</td><td class="font-bold text-slate-800">: {{ $previewData['ruangan']->lantai ?? '-' }}</td></tr>
                                         <tr><td class="font-bold text-slate-500 pr-4">Jumlah</td><td class="font-bold text-slate-800">: {{ $previewData['asets']->count() }} Unit</td></tr>
                                     </table>
                                 </div>

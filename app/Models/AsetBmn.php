@@ -76,4 +76,9 @@ class AsetBmn extends Model
     {
         return $this->hasMany(Pemeliharaan::class, 'aset_id');
     }
+
+    public function keranjangPeminjaman(): HasMany
+    {
+        return $this->hasMany(KeranjangPeminjaman::class, 'template_aset_id');
+    }
 }

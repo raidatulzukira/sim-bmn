@@ -38,7 +38,7 @@
                                     <span class="px-2.5 py-0.5 bg-sky-50 text-sky-600 rounded-lg text-xs font-bold border border-sky-100 capitalize">{{ $laporan_kerusakan->jenis ?? 'Kerusakan' }}</span>
                                 </div>
                                 <h3 class="text-2xl font-extrabold text-slate-900">
-                                    {{ $laporan_kerusakan->asetBmn ? $laporan_kerusakan->asetBmn->nama_barang : 'Sedang diidentifikasi oleh Operator' }}
+                                    {{ $laporan_kerusakan->asetBmn ? $laporan_kerusakan->asetBmn->nama_barang : 'Sedang diidentifikasi oleh Admin' }}
                                 </h3>
                             </div>
                         </div>
@@ -223,3 +223,4 @@
         </div>
     </div>
 @endsection
+

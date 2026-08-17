@@ -63,11 +63,12 @@
 
                     @php $hasFoto = $pemeliharaan->foto ? true : false; @endphp
                     <!-- Main Grid Layout -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8 items-start">
+                    <div class="grid grid-cols-1 {{ $pemeliharaan->jenis === 'situasional' ? 'lg:grid-cols-2' : '' }} gap-8 mb-8 items-start">
                         
                         <!-- KOLOM KIRI: Media, Dokumen & Deskripsi -->
                         <div class="flex flex-col gap-6 w-full">
                             
+                            @if($pemeliharaan->jenis === 'situasional')
                             @if($hasFoto)
                             <!-- Foto Bukti Kerusakan -->
                             <div>
@@ -91,6 +92,7 @@
                                     {{ $pemeliharaan->lokasi ?? '-' }}
                                 </div>
                             </div>
+                            @endif
 
                             <!-- Deskripsi Kerusakan / Tindakan -->
                             <div>
@@ -156,7 +158,7 @@
                                             </div>
                                             <div>
                                                 <p class="text-xs text-slate-500 font-medium">Pelapor / Pengaju</p>
-                                                <p class="text-base font-bold text-slate-900">{{ $pemeliharaan->jenis === 'situasional' && $pemeliharaan->pelapor ? $pemeliharaan->pelapor->name : 'Operator (Sistem Rutin)' }}</p>
+                                                <p class="text-base font-bold text-slate-900">{{ $pemeliharaan->jenis === 'situasional' && $pemeliharaan->pelapor ? $pemeliharaan->pelapor->name : 'Admin (Sistem Rutin)' }}</p>
                                             </div>
                                         </div>
                                         <div class="pt-2 grid grid-cols-2 gap-4">
@@ -377,3 +379,4 @@
         </div>
     </div>
 @endsection
+

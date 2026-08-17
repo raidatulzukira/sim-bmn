@@ -18,7 +18,7 @@
                     <div class="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-blue-500 border-2 border-white flex items-center justify-center text-white text-xs font-black shadow-sm">1</div>
                 </div>
                 <h3 class="text-slate-800 font-black text-lg mb-2">Input Aset</h3>
-                <p class="text-slate-500 text-sm leading-relaxed font-medium">Operator mencatat data aset baru ke sistem dengan detail dan terstruktur.</p>
+                <p class="text-slate-500 text-sm leading-relaxed font-medium">Admin mencatat data aset baru ke sistem dengan detail dan terstruktur.</p>
             </div>
             <!-- Step 2 -->
             <div class="text-center reveal d-200 group">
@@ -51,8 +51,9 @@
                     <div class="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-indigo-500 border-2 border-white flex items-center justify-center text-white text-xs font-black shadow-sm">4</div>
                 </div>
                 <h3 class="text-slate-800 font-black text-lg mb-2">Eksekusi & Laporan</h3>
-                <p class="text-slate-500 text-sm leading-relaxed font-medium">Operator memproses dan sistem hasilkan laporan untuk diekspor.</p>
+                <p class="text-slate-500 text-sm leading-relaxed font-medium">Admin memproses dan sistem hasilkan laporan untuk diekspor.</p>
             </div>
         </div>
     </div>
 </section>
+

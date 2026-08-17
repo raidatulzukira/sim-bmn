@@ -20,5 +20,14 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
+        \Illuminate\Auth\Notifications\VerifyEmail::toMailUsing(function (object $notifiable, string $url) {
+            return (new \Illuminate\Notifications\Messages\MailMessage)
+                ->subject('Verifikasi Alamat Email - SIM BMN')
+                ->greeting('Halo!')
+                ->line('Silakan klik tombol di bawah ini untuk memverifikasi alamat email Anda.')
+                ->action('Verifikasi Email', $url)
+                ->line('Jika Anda tidak merasa mendaftar atau mengubah email, abaikan pesan ini.')
+                ->salutation("Hormat kami,\n\nAdmin SIM BMN");
+        });
     }
 }

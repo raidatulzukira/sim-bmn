@@ -32,6 +32,14 @@ class ProfileController extends Controller
             $request->user()->email_verified_at = null;
         }
 
+        // DINONAKTIFKAN SEMENTARA UNTUK KEAMANAN SIDANG (DEMO)
+        // Agar jika dosen/penguji mengubah email, aplikasi tidak error jika internet putus
+        // dan akun tidak terkunci.
+        // if ($request->user()->isDirty('email')) {
+        //     $request->user()->email_verified_at = null;
+        //     $request->user()->sendEmailVerificationNotification();
+        // }
+
         $request->user()->save();
 
         $role = $request->user()->role;

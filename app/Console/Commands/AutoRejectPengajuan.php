@@ -37,47 +37,50 @@ class AutoRejectPengajuan extends Command
         DB::beginTransaction();
         try {
             // 1. Peminjaman
-            // Tolak jika status 'pending' dan waktu saat ini >= H-1 jam dari tanggal_kembali_rencana
-            // Artinya: tanggal_kembali_rencana <= now() + 1 jam
-            $peminjamans = Peminjaman::where('status', 'pending')
-                ->where('tanggal_kembali_rencana', '<=', $now->copy()->addHour())
-                ->get();
+            // Tolak jika status 'pending' dan waktu saat ini >= H-1 jam dari estimasi_waktu_pinjam
+            // Artinya: estimasi_waktu_pinjam <= now() + 1 jam
+            $peminjamans = Peminjaman::where('status', 'pending')->get();
 
             $peminjamanCount = 0;
             foreach ($peminjamans as $peminjaman) {
-                $peminjaman->update([
-                    'status' => 'ditolak',
-                    'catatan_penolakan' => 'Waktu pengajuan/validasi oleh Kasubag telah habis.',
-                ]);
+                if (!$peminjaman->estimasi_waktu_pinjam) continue;
 
-                if ($peminjaman->aset_id) {
-                    AsetBmn::where('id', $peminjaman->aset_id)->update(['status' => 'tersedia']);
+                // Batas akhir validasi Kasubag adalah pukul 23:00 pada tanggal peminjaman tersebut
+                $batasPenolakan = $peminjaman->estimasi_waktu_pinjam->copy()->setTime(23, 0, 0);
+
+                if ($now->greaterThanOrEqualTo($batasPenolakan)) {
+                    $peminjaman->update([
+                        'status' => 'ditolak',
+                        'catatan_penolakan' => 'Waktu pengajuan/validasi oleh Kasubag telah habis.',
+                    ]);
+
+                    if ($peminjaman->aset_id) {
+                        AsetBmn::where('id', $peminjaman->aset_id)->update(['status' => 'tersedia']);
+                    }
+                    $peminjamanCount++;
                 }
-                $peminjamanCount++;
             }
             $this->info("- Berhasil menolak {$peminjamanCount} pengajuan peminjaman.");
 
             // 2. Pemeliharaan Rutin
-            // Tolak jika status 'pending', jenis 'rutin', dan waktu saat ini >= H-1 jam dari jadwal_servis_berikutnya
+            // Tolak jika status 'pending', jenis 'rutin', dan sudah > 3 hari sejak diajukan (dihitung dari updated_at)
             $pemeliharaanRutins = Pemeliharaan::with('asetBmn')
                 ->where('status', 'pending')
                 ->where('jenis', 'rutin')
+                ->where('updated_at', '<=', $now->copy()->subDays(3))
                 ->get();
                 
             $rutinCount = 0;
             foreach ($pemeliharaanRutins as $pr) {
-                $aset = $pr->asetBmn;
-                if ($aset) {
-                    $jadwalBerikutnya = $aset->jadwal_servis_berikutnya;
-                    if ($jadwalBerikutnya && $now->copy()->addHour()->greaterThanOrEqualTo($jadwalBerikutnya)) {
-                        $pr->update([
-                            'status' => 'ditolak',
-                            'catatan_validasi' => 'Waktu pengajuan/validasi oleh Kasubag telah habis.',
-                        ]);
-                        AsetBmn::where('id', $pr->aset_id)->update(['status' => 'tersedia']);
-                        $rutinCount++;
-                    }
+                $pr->update([
+                    'status' => 'ditolak',
+                    'catatan_validasi' => 'Waktu pengajuan/validasi oleh Kasubag telah habis.',
+                ]);
+                
+                if ($pr->aset_id) {
+                    AsetBmn::where('id', $pr->aset_id)->update(['status' => 'tersedia']);
                 }
+                $rutinCount++;
             }
             $this->info("- Berhasil menolak {$rutinCount} pengajuan pemeliharaan rutin.");
 

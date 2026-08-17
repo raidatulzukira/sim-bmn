@@ -87,9 +87,9 @@
                     </div>
                     <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase text-cyan-700 bg-cyan-100 border border-cyan-200 mb-4">Akses Peran</span>
                     <h3 class="text-xl font-bold text-slate-800 mb-3">Manajemen Multi-Peran</h3>
-                    <p class="text-slate-600 leading-relaxed text-sm mb-5">Tiga level akses: Operator (admin aset), Kasubag TU (persetujuan), dan Pegawai (peminjaman & laporan kerusakan).</p>
+                    <p class="text-slate-600 leading-relaxed text-sm mb-5">Tiga level akses: Admin (pengelola aset), Kasubag TU (persetujuan), dan Pegawai (peminjaman & laporan kerusakan).</p>
                     <div class="flex flex-wrap gap-2">
-                        <span class="px-2.5 py-1 rounded-md text-[11px] font-bold bg-white text-slate-500 border border-slate-200 shadow-sm">Operator</span>
+                        <span class="px-2.5 py-1 rounded-md text-[11px] font-bold bg-white text-slate-500 border border-slate-200 shadow-sm">Admin</span>
                         <span class="px-2.5 py-1 rounded-md text-[11px] font-bold bg-white text-slate-500 border border-slate-200 shadow-sm">Kasubag TU</span>
                         <span class="px-2.5 py-1 rounded-md text-[11px] font-bold bg-white text-slate-500 border border-slate-200 shadow-sm">Pegawai</span>
                     </div>
@@ -114,3 +114,4 @@
         </div>
     </div>
 </section>
+

@@ -60,4 +60,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(NotifikasiLog::class);
     }
+
+    public function keranjangPeminjaman(): HasMany
+    {
+        return $this->hasMany(KeranjangPeminjaman::class, 'user_id');
+    }
 }

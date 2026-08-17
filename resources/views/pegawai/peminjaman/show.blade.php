@@ -128,7 +128,7 @@
                                         </div>
                                         <div>
                                             <p class="text-sm font-bold text-emerald-900">{{ $peminjaman->approver->name }}</p>
-                                            <p class="text-xs font-medium text-emerald-600">Penyetuju (Kasubag TU / Operator)</p>
+                                            <p class="text-xs font-medium text-emerald-600">Penyetuju (Kasubag TU / Admin)</p>
                                         </div>
                                     </div>
                                 </div>
@@ -280,3 +280,4 @@
         </div>
     </div>
 @endsection
+

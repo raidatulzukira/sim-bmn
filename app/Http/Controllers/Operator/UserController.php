@@ -97,10 +97,31 @@ class UserController extends Controller
                 ->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
         }
 
+        // Syarat Pertama: Akun harus dinonaktifkan terlebih dahulu
+        if ($pengguna->is_active) {
+            return redirect()->route('operator.pengguna.index')
+                ->with('error', 'Pengguna tidak dapat dihapus karena akunnya masih aktif. Silakan Non-Aktifkan terlebih dahulu.');
+        }
+
+        // Cek apakah pengguna memiliki histori transaksi (Peminjaman / Pemeliharaan / Persetujuan)
+        $hasHistory = $pengguna->peminjaman()->exists() || 
+                      $pengguna->laporanPemeliharaan()->exists() || 
+                      $pengguna->persetujuanPeminjaman()->exists() || 
+                      $pengguna->persetujuanPemeliharaan()->exists();
+
+        if ($hasHistory) {
+            return redirect()->route('operator.pengguna.index')
+                ->with('error', 'Pengguna tidak dapat dihapus karena memiliki histori transaksi (peminjaman/pemeliharaan). Silakan ubah status akun menjadi Non-Aktif.');
+        }
+
+        // Jika hanya ada data di keranjang atau notifikasi, lebih baik dihapus dulu agar tidak error constraint
+        $pengguna->keranjangPeminjaman()->delete();
+        $pengguna->notifikasiLog()->delete();
+
         $pengguna->delete();
 
         return redirect()->route('operator.pengguna.index')
-            ->with('success', 'Pengguna berhasil dihapus.');
+            ->with('success', 'Pengguna berhasil dihapus karena tidak memiliki histori transaksi.');
     }
 
     public function toggleActive(User $pengguna)

@@ -67,7 +67,7 @@
                                             <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-xs">
                                                 {{ strtoupper(substr($rawat->jenis === 'situasional' ? $rawat->pelapor->name : 'Op', 0, 1)) }}
                                             </div>
-                                            {{ $rawat->jenis === 'situasional' ? $rawat->pelapor->name : 'Operator' }}
+                                            {{ $rawat->jenis === 'situasional' ? $rawat->pelapor->name : 'Admin' }}
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-left">
@@ -127,3 +127,4 @@
         </div>
     </div>
 @endsection
+

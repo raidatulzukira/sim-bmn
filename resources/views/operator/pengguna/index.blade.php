@@ -41,7 +41,7 @@
                         <label for="role" class="block text-sm font-bold text-slate-700 mb-2">Filter Role</label>
                         <select name="role" id="role" class="block w-full border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors duration-200">
                             <option value="">Semua Role</option>
-                            <option value="operator" {{ request('role') == 'operator' ? 'selected' : '' }}>Operator</option>
+                            <option value="operator" {{ request('role') == 'operator' ? 'selected' : '' }}>Admin</option>
                             <option value="kasubag_tu" {{ request('role') == 'kasubag_tu' ? 'selected' : '' }}>Kasubag TU</option>
                             <option value="pegawai" {{ request('role') == 'pegawai' ? 'selected' : '' }}>Pegawai</option>
                         </select>
@@ -139,3 +139,4 @@
         </div>
     </div>
 @endsection
+
