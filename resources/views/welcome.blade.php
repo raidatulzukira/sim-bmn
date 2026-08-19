@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>SIM BMN - Sistem Informasi Manajemen Barang Milik Negara | Balai Diklat Industri Padang</title>
     
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('storage/images/logo-server.png') }}">
+    
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700,800,900" rel="stylesheet" />
