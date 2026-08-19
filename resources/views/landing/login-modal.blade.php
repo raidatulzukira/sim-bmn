@@ -15,9 +15,9 @@
                 <!-- Content -->
                 <div class="relative z-10">
                     <div class="flex items-center gap-3 mb-10 p-3 bg-white/10 backdrop-blur-md rounded-xl w-max border border-white/20">
-                        <img src="{{ asset('storage/images/LOGO KEMENTERIAN EPS [Converted].png') }}" alt="Kemenperin" class="h-7 object-contain filter brightness-0 invert opacity-100">
+                        <img src="{{ asset('storage/images/kemenperin-logo.png') }}" alt="Kemenperin" class="h-7 object-contain filter brightness-0 invert opacity-100">
                         <div class="h-5 w-px bg-white/30"></div>
-                        <img src="{{ asset('storage/images/Logo BDI Padang horizontal (NEW).png') }}" alt="BDI Padang" class="h-6 object-contain filter brightness-0 invert opacity-100">
+                        <img src="{{ asset('storage/images/bdi-logo.png') }}" alt="BDI Padang" class="h-6 object-contain filter brightness-0 invert opacity-100">
                     </div>
                     <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase text-white bg-white/20 border border-white/30 mb-5">Sistem Resmi</span>
                     <h2 class="text-3xl font-black text-white mb-4 leading-tight">Manajemen<br><span class="text-sky-200">Aset Digital</span></h2>
@@ -56,7 +56,7 @@
                     <!-- Header -->
                     <div class="mb-8">
                         <div class="flex md:hidden items-center gap-2 mb-6">
-                            <img src="{{ asset('storage/images/LOGO KEMENTERIAN EPS [Converted].png') }}" alt="Kemenperin" class="h-7 object-contain">
+                            <img src="{{ asset('storage/images/kemenperin-logo.png') }}" alt="Kemenperin" class="h-7 object-contain">
                         </div>
                         <h3 class="text-2xl font-black text-slate-900 mb-1.5">Selamat Datang</h3>
                         <p class="text-slate-500 text-sm font-medium">Masuk dengan akun Anda untuk ke sistem.</p>

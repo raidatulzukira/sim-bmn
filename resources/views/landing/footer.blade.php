@@ -9,9 +9,9 @@
             <div class="md:col-span-5">
                 <div class="flex items-center gap-3 mb-6 p-4 bg-slate-900/50 border border-slate-800 rounded-2xl w-max shadow-sm backdrop-blur-sm">
                     <!-- Added invert to make the logo white for dark background -->
-                    <img src="{{ asset('storage/images/LOGO KEMENTERIAN EPS [Converted].png') }}" alt="Kemenperin" class="h-10 object-contain filter brightness-0 invert opacity-90">
+                    <img src="{{ asset('storage/images/kemenperin-logo.png') }}" alt="Kemenperin" class="h-10 object-contain filter brightness-0 invert opacity-90">
                     <div class="w-px h-10 bg-slate-700"></div>
-                    <img src="{{ asset('storage/images/Logo BDI Padang horizontal (NEW).png') }}" alt="BDI Padang" class="h-10 object-contain filter brightness-0 invert opacity-90">
+                    <img src="{{ asset('storage/images/bdi-logo.png') }}" alt="BDI Padang" class="h-10 object-contain filter brightness-0 invert opacity-90">
                 </div>
                 <p class="text-slate-400 text-sm leading-relaxed mb-6 max-w-sm font-medium">
                     SIM BMN dikembangkan untuk solusi digital terpadu dalam pencatatan, pemeliharaan, dan pelaporan aset negara di lingkungan Balai Diklat Industri Padang.

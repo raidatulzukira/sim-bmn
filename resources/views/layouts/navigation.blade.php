@@ -12,9 +12,9 @@
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route($dashboardRoute) }}" class="flex items-center gap-4 hover:opacity-90 transition-opacity">
                         <div class="flex items-center gap-3 border-r border-slate-200 pr-4">
-                            <img src="{{ asset('storage/images/LOGO KEMENTERIAN EPS [Converted].png') }}" alt="Kemenperin" class="h-9 object-contain">
+                            <img src="{{ asset('storage/images/kemenperin-logo.png') }}" alt="Kemenperin" class="h-9 object-contain">
                             <div class="h-6 w-px bg-slate-300"></div>
-                            <img src="{{ asset('storage/images/Logo BDI Padang horizontal (NEW).png') }}" alt="BDI Padang" class="h-8 object-contain">
+                            <img src="{{ asset('storage/images/bdi-logo.png') }}" alt="BDI Padang" class="h-8 object-contain">
                         </div>
                         <div class="hidden sm:flex flex-col">
                             <span class="font-black text-lg text-slate-900 tracking-tight leading-none">SIM <span class="bg-clip-text text-transparent bg-gradient-to-r from-sky-500 to-blue-600">BMN</span></span>

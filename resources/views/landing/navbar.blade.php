@@ -5,9 +5,9 @@
             <div class="flex items-center gap-4">
                 <div class="flex items-center gap-3 border-r border-slate-200 pr-4">
                     <!-- Note: For light theme, removed invert filter if the original logo is colored. If the original logo is white, we must use invert to make it dark. Assuming colored original based on 'EPS [Converted]'. -->
-                    <img src="{{ asset('storage/images/LOGO KEMENTERIAN EPS [Converted].png') }}" alt="Kemenperin" class="h-9 object-contain">
+                    <img src="{{ asset('storage/images/kemenperin-logo.png') }}" alt="Kemenperin" class="h-9 object-contain">
                     <div class="h-6 w-px bg-slate-300"></div>
-                    <img src="{{ asset('storage/images/Logo BDI Padang horizontal (NEW).png') }}" alt="BDI Padang" class="h-8 object-contain">
+                    <img src="{{ asset('storage/images/bdi-logo.png') }}" alt="BDI Padang" class="h-8 object-contain">
                 </div>
                 <div class="hidden sm:flex flex-col">
                     <span class="font-black text-lg text-slate-900 tracking-tight leading-none">SIM <span class="grad-blue">BMN</span></span>

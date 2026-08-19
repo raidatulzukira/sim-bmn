@@ -17,7 +17,7 @@
     <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px; border: none;">
         <tr>
             <td style="width: 20%; text-align: center; vertical-align: middle; border: none;">
-                <img src="{{ public_path('storage/images/LOGO KEMENTERIAN EPS [Converted].png') }}" style="width: 120px; height: auto;">
+                <img src="{{ public_path('storage/images/kemenperin-logo.png') }}" style="width: 120px; height: auto;">
             </td>
             <td style="width: 80%; text-align: center; vertical-align: middle; border: none;">
                 <div style="font-size: 14px; margin-bottom: 2px;">BADAN PENGEMBANGAN SUMBER DAYA MANUSIA INDUSTRI</div>
